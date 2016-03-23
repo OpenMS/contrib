@@ -89,12 +89,12 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
     endif( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
 
 		# configure with with prefix
-    message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR} ${ZLIB_EXTRA_FLAGS} CC=${CMAKE_C_COMPILER}) .. ")
+    message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR} ${ZLIB_EXTRA_FLAGS}) .. ")
+    set(CC "") # clear $CC to avoid silly configure issues (SPW)
     exec_program("./configure" ${ZLIB_DIR}
       ARGS
       --prefix=${CMAKE_BINARY_DIR}
       ${ZLIB_EXTRA_FLAGS}
-      #CC=${CMAKE_C_COMPILER}
       OUTPUT_VARIABLE ZLIB_CONFIGURE_OUT
       RETURN_VALUE ZLIB_CONFIGURE_SUCCESS
       )  
@@ -103,10 +103,10 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
     file(APPEND ${LOGFILE} ${ZLIB_CONFIGURE_OUT})
 
     if( NOT ZLIB_CONFIGURE_SUCCESS EQUAL 0)
-      message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR} ${ZLIB_EXTRA_FLAGS} CC=${CMAKE_C_COMPILER}) .. failed")
+      message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR} ${ZLIB_EXTRA_FLAGS}) .. failed")
       message( FATAL_ERROR ${ZLIB_CONFIGURE_OUT})
     else()
-      message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR} ${ZLIB_EXTRA_FLAGS} CC=${CMAKE_C_COMPILER}) .. done")
+      message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR} ${ZLIB_EXTRA_FLAGS}) .. done")
     endif()
 		
 
