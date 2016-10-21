@@ -40,8 +40,6 @@
 ## SEQAN:  headers only library, no compilation necessary for OpenMS
 ## LibSVM: comes with a Makefile.win, but libsvm needed some serious tweaking to support debug mode and to build a lib (instead of object files only)
 ## XERCES-C: they offer a VS version on their website (http://xerces.apache.org/xerces-c/), usually not for bleeding egde release though - bad luck for us.
-## GSL:    get the src package from http://gnuwin32.sourceforge.net/packages/gsl.htm,
-##         This should still contain the Linux Makefiles.
 ## GLPK:   download from http://ftp.gnu.org/gnu/glpk/glpk-4.46.tar.gz
 ## COIN-OR: we use the CoinMP package available from
 ##         http://www.coin-or.org/download/source/CoinMP/CoinMP-1.3.3.tgz
@@ -103,7 +101,6 @@ set(BZIP2_DIR ${CONTRIB_BIN_SOURCE_DIR}/bzip2-1.0.5)
 set(ZLIB_DIR ${CONTRIB_BIN_SOURCE_DIR}/zlib-1.2.5)
 set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost_1_52_0)
 set(XERCES_DIR ${CONTRIB_BIN_SOURCE_DIR}/xerces-c-3.1.1)
-set(GSL_DIR ${CONTRIB_BIN_SOURCE_DIR}/gsl-1.13)
 set(LIBSVM_DIR ${CONTRIB_BIN_SOURCE_DIR}/libsvm-3.12)
 set(SEQAN_DIR ${CONTRIB_BIN_SOURCE_DIR}/seqan-r13067)
 set(GLPK_DIR ${CONTRIB_BIN_SOURCE_DIR}/glpk-4.46)
@@ -141,10 +138,6 @@ set(ARCHIVE_XERCES xerces-c-3.1.1.tar.gz)
 set(ARCHIVE_XERCES_TAR  xerces-c-3.1.1.tar)
 set(ARCHIVE_XERCES_SHA1 "1f9b1bf419526dbaa8d2aff177a5048ca66093cb")
 
-set(ARCHIVE_GSL gsl-1.13.tar.gz)
-set(ARCHIVE_GSL_TAR  gsl-1.13.tar)
-set(ARCHIVE_GSL_SHA1 "704845d46d4a1fd807543a42a58b3fb17f13dfaa")
-
 set(ARCHIVE_LIBSVM libsvm-3.12.tar.gz)
 set(ARCHIVE_LIBSVM_TAR  libsvm-3.12.tar)
 set(ARCHIVE_LIBSVM_SHA1 "6ee77eb3d89af07fe48058dba0dcc24c85020b85")
@@ -172,7 +165,6 @@ set(ARCHIVE_WILDMAGIC_SHA1 "e30b6f7f955c640dadfea09385a0a0ddec5b2997")
 ## necessary for cleanup .. change if install process of library changes
 set(INCLUDE_DIR_BOOST ${CONTRIB_BIN_INCLUDE_DIR}/boost)
 set(INCLUDE_DIR_XERCES ${CONTRIB_BIN_INCLUDE_DIR}/xercesc)
-set(INCLUDE_DIR_GSL ${CONTRIB_BIN_INCLUDE_DIR}/gsl)
 set(INCLUDE_DIR_SEQAN ${CONTRIB_BIN_INCLUDE_DIR}/seqan)
 set(INCLUDE_DIR_GLPK ${CONTRIB_BIN_INCLUDE_DIR}/GLPK)
 set(INCLUDE_DIR_COINOR ${CONTRIB_BIN_INCLUDE_DIR}/coin)
@@ -331,9 +323,9 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 ##determine what to build (all or single library)
-set( BUILD_TYPE ALL CACHE STRING "Can be used to restrict building to a single library: ALL,SEQAN,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK")
+set( BUILD_TYPE ALL CACHE STRING "Can be used to restrict building to a single library: ALL,SEQAN,LIBSVM,XERCESC,BOOST,COINOR,BZIP2,ZLIB,GLPK")
 
-set( VALID_BUILD_TYPES "ALL" "SEQAN" "LIBSVM" "XERCESC" "BOOST" "GSL" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC")
+set( VALID_BUILD_TYPES "ALL" "SEQAN" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC")
 # check build type
 list(FIND VALID_BUILD_TYPES ${BUILD_TYPE} list_pos)
 if( ${list_pos} EQUAL -1 )
@@ -413,16 +405,6 @@ endif()
 if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "BOOST")
   OPENMS_CLEAN_LIB("BOOST")
   OPENMS_CONTRIB_BUILD_BOOST()
-endif()
-
-##################################################
-###       GSL                                  ###
-##################################################
-
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "GSL")
-  OPENMS_CLEAN_LIB("GSL")
-  OPENMS_CONTRIB_BUILD_GSL()
-  OPENMS_COPY_LIBS("GSL")
 endif()
 
 
