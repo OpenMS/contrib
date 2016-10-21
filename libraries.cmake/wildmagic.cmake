@@ -27,6 +27,10 @@ macro( OPENMS_CONTRIB_BUILD_WILDMAGIC )
   set(_PATCHED_FILE "${WILDMAGIC_DIR}/LibMathematics/Algebra/Wm5Vector2.inl")
   OPENMS_PATCH( _PATCH_FILE WILDMAGIC_DIR _PATCHED_FILE)
 
+  set(_PATCH_FILE "${PATCH_DIR}/wildmagic/Wm5CoreLIB.patch")
+  set(_PATCHED_FILE "${WILDMAGIC_DIR}/LibCore/Wm5CoreLIB.h")
+  OPENMS_PATCH( _PATCH_FILE WILDMAGIC_DIR _PATCHED_FILE)
+
   # copy build-system addon
 	configure_file(${PROJECT_SOURCE_DIR}/patches/wildmagic/root_CMakeLists.txt ${WILDMAGIC_DIR}/CMakeLists.txt COPYONLY)
 	configure_file(${PROJECT_SOURCE_DIR}/patches/wildmagic/libcore_CMakeLists.txt ${WILDMAGIC_DIR}/LibCore/CMakeLists.txt COPYONLY)

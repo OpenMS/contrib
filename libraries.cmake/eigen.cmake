@@ -14,8 +14,14 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_EIGEN "EIGEN" "CMakeLists.txt")
 
-  # eigen doesn't allow insource builds
+	if(MSVC)
+    # fixes MSVC 2012 compiler detection
+    set(_PATCH_FILE "${PATCH_DIR}/eigen/EigenDetermineVSServicePack.cmake.patch")
+    set(_PATCHED_FILE "${EIGEN_DIR}/cmake/EigenDetermineVSServicePack.cmake")
+    OPENMS_PATCH( _PATCH_FILE EIGEN_DIR _PATCHED_FILE)
+  endif()
 
+  # eigen doesn't allow insource builds
   set(_EIGEN_BUILD_DIR "${EIGEN_DIR}/build")
   file(TO_NATIVE_PATH "${_EIGEN_BUILD_DIR}" _EIGEN_NATIVE_BUILD_DIR)
 

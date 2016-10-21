@@ -77,8 +77,12 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
 
 	else()  ## LINUX & Mac
     set(PATCH_FILE "${PROJECT_SOURCE_DIR}/patches/coinor/CbcEventHandler.hpp.diff")
-	  set(PATCHED_FILE "${COINOR_DIR}/Cbc/src/CbcEventHandler.hpp")
-	  OPENMS_PATCH( PATCH_FILE COINOR_DIR PATCHED_FILE)
+    set(PATCHED_FILE "${COINOR_DIR}/Cbc/src/CbcEventHandler.hpp")
+    OPENMS_PATCH( PATCH_FILE COINOR_DIR PATCHED_FILE)
+
+    set(PATCH_FILE "${PROJECT_SOURCE_DIR}/patches/coinor/CoinTypes.hpp.diff")
+    set(PATCHED_FILE "${COINOR_DIR}/CoinUtils/src/CoinTypes.hpp")
+    OPENMS_PATCH( PATCH_FILE COINOR_DIR PATCHED_FILE)	  
   
     # configure -- 
     if( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )

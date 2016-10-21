@@ -80,6 +80,14 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
   
 	else() ## Linux/MacOS  
 
+    # Workaround for bug https://github.com/OpenMS/contrib/issues/5 
+    # Basically, the configure script of zlib has a nasty property of checking
+    # whether the current compiler is gcc or not by direct string comparison.
+    # Apparently it really likes gcc and if the $CC variable is set to anything
+    # else (or even set at all), it will likely refuse to work.
+    set(old_CC $ENV{CC})
+    UNSET(ENV{CC})
+
 	  # CFLAGS for libsvm compiler (see libsvm Makefile)
     set(ZLIB_CFLAGS "-Wall -O3 -fPIC")
 
@@ -89,12 +97,11 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
     endif( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
 
 		# configure with with prefix
-    message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR} ${ZLIB_EXTRA_FLAGS} CC=${CMAKE_C_COMPILER}) .. ")
+    message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR} ${ZLIB_EXTRA_FLAGS}) .. ")
     exec_program("./configure" ${ZLIB_DIR}
       ARGS
       --prefix=${CMAKE_BINARY_DIR}
       ${ZLIB_EXTRA_FLAGS}
-      #CC=${CMAKE_C_COMPILER}
       OUTPUT_VARIABLE ZLIB_CONFIGURE_OUT
       RETURN_VALUE ZLIB_CONFIGURE_SUCCESS
       )  
@@ -103,19 +110,20 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
     file(APPEND ${LOGFILE} ${ZLIB_CONFIGURE_OUT})
 
     if( NOT ZLIB_CONFIGURE_SUCCESS EQUAL 0)
-      message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR} ${ZLIB_EXTRA_FLAGS} CC=${CMAKE_C_COMPILER}) .. failed")
+      message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR} ${ZLIB_EXTRA_FLAGS}) .. failed")
       message( FATAL_ERROR ${ZLIB_CONFIGURE_OUT})
     else()
-      message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR} ${ZLIB_EXTRA_FLAGS} CC=${CMAKE_C_COMPILER}) .. done")
+      message( STATUS "Configuring zlib library (./configure --prefix=${CMAKE_BINARY_DIR} ${ZLIB_EXTRA_FLAGS}) .. done")
     endif()
 		
 
 		# make
-    message(STATUS "Building zlib library (make CC='${CMAKE_C_COMPILER}' CFLAGS='${ZLIB_CFLAGS}') .. ")
+    message(STATUS "Building zlib library (make CFLAGS='${ZLIB_CFLAGS}') .. ")
     exec_program(${CMAKE_MAKE_PROGRAM} ${ZLIB_DIR}
       ARGS # setting compiler and flags
       clean all
-      CC=${CMAKE_C_COMPILER}
+      # We let ./configure choose the compiler, lets not interfere
+      # CC=${CMAKE_C_COMPILER}
       CFLAGS='${ZLIB_CFLAGS}'
       OUTPUT_VARIABLE ZLIB_MAKE_OUT
       RETURN_VALUE BUILD_SUCCESS)
@@ -124,10 +132,10 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
     file(APPEND ${LOGFILE} ${ZLIB_MAKE_OUT})
 
 	  if (NOT BUILD_SUCCESS EQUAL 0)
-      message(STATUS "Building zlib library (make CC='${CMAKE_C_COMPILER}' CFLAGS='${ZLIB_CFLAGS}') .. done")
+      message(STATUS "Building zlib library (make CFLAGS='${ZLIB_CFLAGS}') .. done")
 	    Message(FATAL_ERROR ${ZLIB_MAKE_OUT})
     else()
-      message(STATUS "Building zlib library (make CC='${CMAKE_C_COMPILER}' CFLAGS='${ZLIB_CFLAGS}') .. done")
+      message(STATUS "Building zlib library (make CFLAGS='${ZLIB_CFLAGS}') .. done")
 	  endif()
     
     # make install
@@ -147,6 +155,9 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
     else()
       message( STATUS "Installing zlib library (make install) .. done")
     endif()
+
+    # reset CC, see https://github.com/OpenMS/contrib/issues/5 
+    SET(ENV{CC} ${old_CC})
 
 endif()
 
