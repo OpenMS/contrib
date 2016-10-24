@@ -187,7 +187,7 @@ set(ARCHIVE_BOOST_SHA1 "7cddbfd33fc99ed69343cd5cf8461648f8eae75a")
 
 set(ARCHIVE_XERCES xerces-c-3.1.1.tar.gz)
 set(ARCHIVE_XERCES_TAR  xerces-c-3.1.1.tar)
-set(ARCHIVE_XERCES_SHA1 "1f9b1bf419526dbaa8d2aff177a5048ca66093cb")
+set(ARCHIVE_XERCES_SHA1 "9ec2c6993a9c72b73b2819b2ad33856ad39089d9")
 
 set(ARCHIVE_GSL gsl-1.13.tar.gz)
 set(ARCHIVE_GSL_TAR  gsl-1.13.tar)
