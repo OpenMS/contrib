@@ -27,4 +27,3 @@ Using the ```-DBUILD_TYPE``` switch on the command line, you can customize which
 external libraries should be built (depending on your system, you might already
 have some of them installed and may not want to re-install them). 
 CMake will then download the requested libraries and compile them for you.
-
