@@ -1,7 +1,7 @@
 OpenMS contrib
 =============
 
-This directory contains the OpenMS contrib package.
+This repository contains the OpenMS contrib package.
 
 If you downloaded a stable release, detailed installation
 instructions and other information can be found in the
