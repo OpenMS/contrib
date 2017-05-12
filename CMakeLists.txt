@@ -86,7 +86,7 @@
 
 ## required software:
 ## Windows: 7-Zip & GNUWin32-patch
-## Linux&MinGW: Tar & patch
+## Linux & MinGW: Tar & patch
 ## (these are searched for and an appropriate error message is given when not found)
 
 
@@ -94,8 +94,13 @@
 ##       - however: exec_process seems to handle our arguments incorrectly (at least on Windows). Check functionality before you commit!
 
 # Determine what to build (all or single library)
+<<<<<<< HEAD
 set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,SEQAN,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK,KISSFFT")
 set( VALID_BUILD_TYPES "ALL" "SEQAN" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC" "KISSFFT")
+=======
+set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,SEQAN,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK")
+set( VALID_BUILD_TYPES "ALL" "SEQAN" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC" "SQLITE")
+>>>>>>> master
 # check build type
 if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
   message(STATUS "===========================================================================")
@@ -158,6 +163,7 @@ set(COINOR_DIR ${CONTRIB_BIN_SOURCE_DIR}/CoinMP-1.8.3)
 set(EIGEN_DIR ${CONTRIB_BIN_SOURCE_DIR}/eigen-eigen-491bc9c5a46b)
 set(WILDMAGIC_DIR ${CONTRIB_BIN_SOURCE_DIR}/WildMagic5)
 set(KISSFFT_DIR ${CONTRIB_BIN_SOURCE_DIR}/kissfft-130)
+set(SQLITE_DIR ${CONTRIB_BIN_SOURCE_DIR}/sqlite-autoconf-3150000)
 
 
 ## source(archive) paths
@@ -232,7 +238,9 @@ set(ARCHIVE_WILDMAGIC WildMagic5.tar.gz)
 set(ARCHIVE_WILDMAGIC_TAR  WildMagic5.tar)
 set(ARCHIVE_WILDMAGIC_SHA1 "e30b6f7f955c640dadfea09385a0a0ddec5b2997")
 
-
+set(ARCHIVE_SQLITE sqlite-autoconf-3150000.tar.gz)
+set(ARCHIVE_SQLITE_TAR  sqlite-autoconf-3150000.tar)
+set(ARCHIVE_SQLITE_SHA1 "b34cb4ee9710368598c62df0222f5c24dfc9c860")
 
 ## necessary for clean up .. change if install process of library changes
 set(INCLUDE_DIR_BOOST ${CONTRIB_BIN_INCLUDE_DIR}/boost)
@@ -248,6 +256,7 @@ set(INCLUDE_DIR_KISSFFT ${CONTRIB_BIN_INCLUDE_DIR}/kissfft)
 set(INCLUDE_FILES_LIBSVM ${CONTRIB_BIN_INCLUDE_DIR}/svm.h)
 set(INCLUDE_FILES_BZIP2 ${CONTRIB_BIN_INCLUDE_DIR}/bzlib.h ${CONTRIB_BIN_INCLUDE_DIR}/bzlib_private.h)
 set(INCLUDE_FILES_ZLIB ${CONTRIB_BIN_INCLUDE_DIR}/zlib.h)
+set(INCLUDE_FILES_SQLITE ${CONTRIB_BIN_INCLUDE_DIR}/sqlite3.h)
 
 ## address model of contrib
 if (CMAKE_SIZEOF_VOID_P MATCHES "8")
@@ -388,6 +397,7 @@ include ("${CMAKE_SOURCE_DIR}/libraries.cmake/coinor.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/eigen.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/wildmagic.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/kissfft.cmake")
+include ("${CMAKE_SOURCE_DIR}/libraries.cmake/sqlite.cmake")
 
 ## build mac os x specific C/C++ flags
 set( OPENMS_CONTRIB_MACOSX_MIXED_MODE 0 CACHE INTERNAL "building multiple architectures on MacOSX" FORCE)
@@ -543,6 +553,15 @@ endif()
 if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "KISSFFT")
   OPENMS_CLEAN_LIB("KISSFFT")
   OPENMS_CONTRIB_BUILD_KISSFFT()
+endif()
+##################################################
+###       SQLITE                               ###
+##################################################
+
+if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "SQLITE")
+  OPENMS_CLEAN_LIB("SQLITE")
+  OPENMS_CONTRIB_BUILD_SQLITE()
+  OPENMS_COPY_LIBS("SQLITE")
 endif()
 
 ## finally copy README.txt to project-binary directory to mark process complete
