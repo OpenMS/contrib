@@ -76,7 +76,7 @@ macro(download_contrib_archive libname)
   # constant
   # Currently this points to an FTP at FU Berlin
   # Sources are checked out regularly from OpenMS/contrib-sources via a cron job
-  set(_BASE_URL "http://ftp.mi.fu-berlin.de/pub/OpenMS/contrib-sources/")
+  set(_BASE_URL "http://vmi79711.contabo.host:666/OpenMS/contrib/")
 
   # the files/folders where downloads are stored
   set(_archive_folder "${PROJECT_BINARY_DIR}/archives")
