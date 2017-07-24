@@ -10,10 +10,11 @@ if(NOT DEFINED BUILD_SHARED_LIBS)
 endif()
 
 if(NOT WIN32)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -mtune=native -ffast-math -fomit-frame-pointer -Dkiss_fft_scalar=double -unroll-loops -dA -fverbose-asm")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -O3 -mtune=native -ffast-math -fomit-frame-pointer -Dkiss_fft_scalar=double -unroll-loops -dA -fverbose-asm")
 endif()
 	
 	
+set(CMAKE_VERBOSE_MAKEFILE ON)
 # create debug libs with d suffix
 set(CMAKE_DEBUG_POSTFIX d)
 
