@@ -19,13 +19,13 @@ set(CMAKE_DEBUG_POSTFIX d)
 
 set(kissfft_lib_sources 
   kiss_fft.c
-  tools/fftutil.c  
+  #tools/fftutil.c  
   tools/kfc.c  
-  tools/kiss_fastfir.c  
+  #tools/kiss_fastfir.c  
   tools/kiss_fftnd.c  
   tools/kiss_fftndr.c  
   tools/kiss_fftr.c  
-  tools/psdpng.c
+  #tools/psdpng.c
 )
 
 
