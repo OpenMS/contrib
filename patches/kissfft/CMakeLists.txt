@@ -12,40 +12,35 @@ endif()
 if(NOT WIN32)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -O3 -mtune=native -ffast-math -fomit-frame-pointer -Dkiss_fft_scalar=double -unroll-loops -dA -fverbose-asm")
 endif()
-	
-	
-set(CMAKE_VERBOSE_MAKEFILE ON)
+
 # create debug libs with d suffix
 set(CMAKE_DEBUG_POSTFIX d)
 
-set(kissfft_lib_sources 
+set(kissfft_lib_sources
   kiss_fft.c
-  #tools/fftutil.c  
-  tools/kfc.c  
-  #tools/kiss_fastfir.c  
-  tools/kiss_fftnd.c  
-  tools/kiss_fftndr.c  
-  tools/kiss_fftr.c  
-  #tools/psdpng.c
+  tools/kfc.c
+  tools/kiss_fftnd.c
+  tools/kiss_fftndr.c
+  tools/kiss_fftr.c
 )
 
 
 
 set(kissfft_public_headers
   kiss_fft.h
-  tools/kfc.h  
-  tools/kiss_fftnd.h  
-  tools/kiss_fftndr.h  
+  tools/kfc.h
+  tools/kiss_fftnd.h
+  tools/kiss_fftndr.h
   tools/kiss_fftr.h
 )
 
 set(kissfft_private_headers
-  _kiss_fft_guts.h  
+  _kiss_fft_guts.h
 )
 
 add_library(libkfft ${kissfft_lib_sources} ${kissfft_public_headers} ${kissfft_private_headers})
 #add_library(libkfft ${kissfft_lib_sources} ${kissfft_public_headers})
-# embed version in dll 
+# embed version in dll
 if(NOT CYGWIN)
     set_target_properties(libkfft PROPERTIES VERSION ${KISSFFT_FULL_VERSION})
 endif()
@@ -64,7 +59,7 @@ install(TARGETS libkfft
   LIBRARY DESTINATION lib )
 
 install(FILES ${kissfft_public_headers} DESTINATION include)
-	
+
 # if MSVC we want the dll to be also in the lib-folder
 if (MSVC AND BUILD_SHARED_LIBS)
 	install(TARGETS libkfft DESTINATION lib	)
