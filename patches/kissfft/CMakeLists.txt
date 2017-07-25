@@ -13,6 +13,9 @@ if(NOT WIN32)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -O3 -mtune=native -ffast-math -fomit-frame-pointer -Dkiss_fft_scalar=double -unroll-loops -dA -fverbose-asm")
 endif()
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} "tools")
+
+
 # create debug libs with d suffix
 set(CMAKE_DEBUG_POSTFIX d)
 
@@ -39,7 +42,7 @@ set(kissfft_private_headers
 )
 
 add_library(libkfft ${kissfft_lib_sources} ${kissfft_public_headers} ${kissfft_private_headers})
-#add_library(libkfft ${kissfft_lib_sources} ${kissfft_public_headers})
+
 # embed version in dll
 if(NOT CYGWIN)
     set_target_properties(libkfft PROPERTIES VERSION ${KISSFFT_FULL_VERSION})
