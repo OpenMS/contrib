@@ -20,10 +20,18 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
     ##    or in VS2017: $(OutDir)$(TargetName)$(TargetExt) to $(OutDir)$(TargetName)d$(TargetExt)
 		## - changed used runtime library to dynamic version (Release & Debug mode)
 		## - deleted contents of CoinMP-1.3.3\CoinMP\MSVisualStudio\v8\release (there were precompiled dll's and lib's)
+		## - in all vcxproj files: replace
+		##   '<WindowsTargetPlatformVersion> ...some version ... </WindowsTargetPlatformVersion>' with '<WindowsTargetPlatformVersion>$(WindowsSDKVersion)</WindowsTargetPlatformVersion>
+		## which will use the environment variable %WindowsSDKVersion%
+		## Omitting this step will fix the Sln to a certain SDK and force other users to install this very SDK or retarget their solution manually
+		## This problem has (hopefully) been fixed in VS2019...
 
-    # set(PATCH_FILE "${PATCH_DIR}/coinor/CoinLpIO.diff")
-    # set(PATCHED_FILE "${COINOR_DIR}/CoinUtils/src/CoinLpIO.cpp")
-    # OPENMS_PATCH( PATCH_FILE COINOR_DIR PATCHED_FILE)
+	
+	if (NOT DEFINED ENV{WindowsSDKVersion} AND ${CONTRIB_MSVC_VERSION} EQUAL 15)
+	  ## make sure the SDK version is set, because it's used inside the vcxproj files (see above)
+	  MESSAGE(MESSAGE "Contrib-Error: Could not determine WindowsSDK version installed. Please make sure the environment variable %WindowsSDKVersion% is set to the version of your installed SDK. The Visual Studio installer should have taken care of that. We are falling back to SDK '10.0.17763.0', but this is likely not correct (you will see an error message right after if this did not work.")
+	  set(ENV{WindowsSDKVersion} "10.0.17763.0") # fallback, just to have a value. If this is incorrect, at least VS will tell you what to use
+	endif()
 	
     set(MSBUILD_ARGS_SLN "${COINOR_DIR}/CoinMP/MSVisualStudio/v${CONTRIB_MSVC_VERSION}/CoinMP.sln")
     set(MSBUILD_ARGS_TARGET "libCbc")

@@ -242,13 +242,9 @@ set(ARCHIVE_GLPK glpk-4.46.tar.gz)
 set(ARCHIVE_GLPK_TAR  glpk-4.46.tar)
 set(ARCHIVE_GLPK_SHA1 "73d589452dc1d8d6a784b3f86f4268cae37420d7")
 
-#set(ARCHIVE_COINOR CoinMP-1.3.3.tar.gz)
-#set(ARCHIVE_COINOR_TAR  CoinMP-1.3.3.tar)
-#set(ARCHIVE_COINOR_SHA1 "28d29dae6abf6cdef027dcfa4961bb10b7f540cb")
-
-set(ARCHIVE_COINOR CoinMP-1.8.3-vs17.tar.gz)
+set(ARCHIVE_COINOR CoinMP-1.8.3-vs17v3.tar.gz)
 set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3.tar)
-set(ARCHIVE_COINOR_SHA1 "3a6374a9dc4bb22e1ca4266dc16776c37eeef43c")
+set(ARCHIVE_COINOR_SHA1 "9ea19dfb81cd0e81e9b0cd3c5a3c435366a70317")
 
 set(ARCHIVE_EIGEN eigen-3.3.4.tar.gz)
 set(ARCHIVE_EIGEN_TAR  eigen-3.3.4.tar)
@@ -347,10 +343,12 @@ if (MSVC)
     message(FATAL_ERROR "Cannot find '7z.exe' on your system. Please install 7-zip and add the directory to your PATH environment variable!")
   endif()
 
-  ## http://gnuwin32.sourceforge.net/packages/patch.htm
-  find_program(PROGRAM_PATCH "patch.exe" PATHS "C:/Program Files/gnuwin32/bin" "C:/Program Files/patch/bin" "${PROJECT_SOURCE_DIR}/tools")
-  if (NOT PROGRAM_PATCH)
-    message(FATAL_ERROR "Cannot find 'patch.exe' on your system. Please install gnuwin32-patch and add the directory to your PATH environment variable!")
+  ## see contrib/tools/README_patch.txt. We do not want any other patch.exe (since ours does not require elevation, i.e. admin rights)
+  find_program(PROGRAM_PATCH "patch.exe" PATHS "${PROJECT_SOURCE_DIR}/tools" NO_DEFAULT_PATH)
+  if (PROGRAM_PATCH)
+    message(STATUS "Found patch.exe at '${PROGRAM_PATCH}'")
+  else()	
+    message(FATAL_ERROR "Cannot find 'patch.exe' in '${PROJECT_SOURCE_DIR}/tools' on your system. Please make sure its available!")
   endif()
 
   find_program(MSBUILD_EXECUTABLE MSBuild PATHS "C:/Program Files (x86)/MSBuild/${CONTRIB_MSVC_VERSION}.0/Bin/")
