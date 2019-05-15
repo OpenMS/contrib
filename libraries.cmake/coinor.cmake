@@ -16,7 +16,8 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
 
   if (MSVC)
 		## changes made to COIN-MP solution files (for all 6 libs):
-		## - changed name of output lib in debug mode from $(OutDir)\$(ProjectName).lib to  $(OutDir)\$(ProjectName)d.lib
+		## - in Properties -> Librarian -> OutputFile: output lib in debug mode X64 (!!!) from $(OutDir)\$(ProjectName).lib to $(OutDir)\$(ProjectName)d.lib
+    ##    or in VS2017: $(OutDir)$(TargetName)$(TargetExt) to $(OutDir)$(TargetName)d$(TargetExt)
 		## - changed used runtime library to dynamic version (Release & Debug mode)
 		## - deleted contents of CoinMP-1.3.3\CoinMP\MSVisualStudio\v8\release (there were precompiled dll's and lib's)
 		## - in all vcxproj files: replace
