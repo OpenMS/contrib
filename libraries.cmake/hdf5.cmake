@@ -86,5 +86,26 @@ MACRO( OPENMS_CONTRIB_BUILD_HDF5 )
     message(STATUS "Building HDF5 library (Release) .. done")
   endif()
 
+  # we also want the debug lib on windows
+  if(MSVC)
+    # build debug
+    message(STATUS "Building HDF5 library (Debug) .. ")
+    execute_process(COMMAND ${CMAKE_COMMAND} --build ${_HDF5_NATIVE_BUILD_DIR} --target ${_HDF5_INSTALL_TARGET} --config Debug
+                            WORKING_DIRECTORY ${_HDF5_NATIVE_BUILD_DIR}
+                            OUTPUT_VARIABLE _HDF5_BUILD_OUT
+                            ERROR_VARIABLE _HDF5_BUILD_ERR
+                            RESULT_VARIABLE _HDF5_BUILD_SUCCESS)
+
+    # output to logfile
+    file(APPEND ${LOGFILE} ${_HDF5_BUILD_OUT})
+    file(APPEND ${LOGFILE} ${_HDF5_BUILD_ERR})
+
+    if (NOT _HDF5_BUILD_SUCCESS EQUAL 0)
+      message(FATAL_ERROR "Building HDF5 library (Debug) .. failed")
+    else()
+      message(STATUS "Building HDF5 library (Debug) .. done")
+    endif()
+  endif()
+
 ENDMACRO( OPENMS_CONTRIB_BUILD_HDF5 )
 
