@@ -20,6 +20,10 @@ Eigen
 GLPK
 	- URL: http://www.gnu.org/s/glpk/
 	- License.gpl-3.0.txt
+	
+HDF5
+ 	- URL: https://www.hdfgroup.org/solutions/hdf5/
+ 	- License.hdf5.txt
 
 Kiss FFT
 	- URL: http://kissfft.sourceforge.net/
