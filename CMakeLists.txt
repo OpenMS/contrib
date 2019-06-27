@@ -317,22 +317,30 @@ if (MSVC)
   endif()
 
 
-  ## guess MSVC Version (we need this in order to correctly guess the names of the VS solution targets.
-  ## Since CMake 3.0 you can use the years (e.g. 2013) for every VS version. For VS 8 and 9 you have to use the year!
-  if (CMAKE_GENERATOR MATCHES ".*Visual Studio 14.*")
-    set(TMP_MSVC_VERSION "14")
-  elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 15.*")
-    set(TMP_MSVC_VERSION "15")
+  ## use the standard MSVC Toolset Version for each Visual Studio version
+  ## TODO we can make use of the new CMake toolset (-T) option and associated variables
+  if (CMAKE_GENERATOR MATCHES ".*Visual Studio 14.*") ## VS2015
+    set(TMP_VS_VERSION "14")
+    set(TMP_MSVC_TOOLSET_VERSION "14.0")
+  elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 15.*") ## VS2017
+    set(TMP_VS_VERSION "15")
+    set(TMP_MSVC_TOOLSET_VERSION "14.1")
+  elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 16.*") ## VS2019
+    set(TMP_VS_VERSION "16")
+    set(TMP_MSVC_TOOLSET_VERSION "14.2")
   else()
     if (OVERRIDE_GENERATOR)
       message(FATAL_ERROR "Chosen to override the Generator check, proceed with caution.")
     else()
-      message(FATAL_ERROR "Please use 'Visual Studio ?? [Win64]' (??={14, 15}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
+      message(FATAL_ERROR "Please use 'Visual Studio ?? [Win64]' (??={14, 15, 16}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
     endif()
   endif()
-  set(CONTRIB_MSVC_VERSION ${TMP_MSVC_VERSION} CACHE INTERNAL "Microsoft Visual Studio Version used. Valid values: 14 and above")
+  ## For coinor to find the correct names of the VS solutions
+  set(CONTRIB_VS_VERSION ${TMP_VS_VERSION} CACHE INTERNAL "Microsoft Visual Studio Version used. Valid values: 14 and above")
+  ## For boost to pass to the b2 build system so it doesnt just take the newest compiler available
+  set(CONTRIB_MSVC_TOOLSET_VERSION ${TMP_MSVC_TOOLSET_VERSION} CACHE INTERNAL "Microsoft Visual C++ Toolset Version used (we currently use the default for the given Visual Studio version)")
   ## parameter validity check
-  message(STATUS "MSVC Version is: ${CONTRIB_MSVC_VERSION}")
+  message(STATUS "Microsoft Visual C++ Toolset Version is: ${CONTRIB_MSVC_TOOLSET_VERSION}")
 
   ## some settings for Building the libs
   if (CONTRIB_ADDRESSMODEL MATCHES 32)
