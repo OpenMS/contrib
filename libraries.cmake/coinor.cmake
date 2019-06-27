@@ -27,13 +27,13 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
 		## This problem has (hopefully) been fixed in VS2019...
 
 	
-	if (NOT DEFINED ENV{WindowsSDKVersion} AND ${CONTRIB_MSVC_VERSION} EQUAL 15)
+	if (NOT DEFINED ENV{WindowsSDKVersion} AND ${CONTRIB_VS_VERSION} EQUAL 15)
 	  ## make sure the SDK version is set, because it's used inside the vcxproj files (see above)
 	  MESSAGE(MESSAGE "Contrib-Error: Could not determine WindowsSDK version installed. Please make sure the environment variable %WindowsSDKVersion% is set to the version of your installed SDK. The Visual Studio installer should have taken care of that. We are falling back to SDK '10.0.17763.0', but this is likely not correct (you will see an error message right after if this did not work.")
 	  set(ENV{WindowsSDKVersion} "10.0.17763.0") # fallback, just to have a value. If this is incorrect, at least VS will tell you what to use
 	endif()
 	
-    set(MSBUILD_ARGS_SLN "${COINOR_DIR}/CoinMP/MSVisualStudio/v${CONTRIB_MSVC_VERSION}/CoinMP.sln")
+    set(MSBUILD_ARGS_SLN "${COINOR_DIR}/CoinMP/MSVisualStudio/v${CONTRIB_VS_VERSION}/CoinMP.sln")
     set(MSBUILD_ARGS_TARGET "libCbc")
     OPENMS_BUILDLIB("CoinOR-Cbc (Debug)" MSBUILD_ARGS_SLN MSBUILD_ARGS_TARGET "Debug" COINOR_DIR)
     OPENMS_BUILDLIB("CoinOR-Cbc (Release)" MSBUILD_ARGS_SLN MSBUILD_ARGS_TARGET "Release" COINOR_DIR)
