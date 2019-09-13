@@ -21,7 +21,7 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
   if(MSVC) ## build boost library for windows
     
     ## omitting the version (i.e. 'toolset=msvc'), causes Boost to use the latest(!) VS it can find the system -- irrespective of the current env (and its cl.exe)
-    set(TOOLSET "toolset=msvc-${CONTRIB_MSVC_VERSION}.0") 
+    set(TOOLSET "toolset=msvc-${CONTRIB_MSVC_TOOLSET_VERSION}") 
     
     if (NOT QUICKBUILD)
       ## not a Visual Studio project .. just build by hand
