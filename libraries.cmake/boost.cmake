@@ -70,7 +70,7 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
 
      ## WARNING: boost call is not "space in path" save yet (the easy way of using \" does not work out of the box
      message(STATUS "Building Boost library (bjam ${BOOST_CMD_ARGS}) .. ")
-     execute_process(COMMAND bjam.exe ${BOOST_CMD_ARGS}
+     execute_process(COMMAND b2.exe ${BOOST_CMD_ARGS}
                      WORKING_DIRECTORY ${BOOST_DIR}
                      OUTPUT_VARIABLE BUILD_BOOST_OUT
                      ERROR_VARIABLE BUILD_BOOST_ERR
