@@ -117,13 +117,16 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
 
     ## In case CMake picked up / or you specified a different compiler than the default in the path
     ## (which the boost toolset "gcc" will use) we need to add the specific version to the user config.
-    #file(REMOVE ${BOOST_DIR}/tools/build/src/user-config.jam)
-    #file(APPEND ${BOOST_DIR}/tools/build/src/user-config.jam
-    #  "using ${_boost_toolchain} : ${CXX_COMPILER_VERSION_MAJOR}.${CXX_COMPILER_VERSION_MINOR} : \"${CMAKE_CXX_COMPILER}\" ;\n")
-
+    ## Do not use on macOS as we did not figure out how to inherit all the compiler flags from the darwin
+    ## or clang-darwin toolset
+    if (NOT APPLE)
+      file(REMOVE ${BOOST_DIR}/tools/build/src/user-config.jam)
+      file(APPEND ${BOOST_DIR}/tools/build/src/user-config.jam
+        "using ${_boost_toolchain} : ${CXX_COMPILER_VERSION_MAJOR}.${CXX_COMPILER_VERSION_MINOR} : \"${CMAKE_CXX_COMPILER}\" ;\n")
+    endif()
+    
     if(APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET)
       ## Boost looks for installed SDKs, but sometimes you dont have them. Add them still to not fail. Clang will handle it.
-      ## Note: this does not seem to work on 1.70+ anymore. It is needed on our build machines only so we can take care of that.
       file(APPEND ${BOOST_DIR}/tools/build/src/tools/darwin.jam
         "feature.extend macosx-version-min : ${CMAKE_OSX_DEPLOYMENT_TARGET} ;\n")
 
@@ -150,7 +153,7 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
       message(STATUS "Bootstrapping Boost libraries (./bootstrap.sh --prefix=${PROJECT_BINARY_DIR} --with-libraries=iostreams,math,date_time,regex,system,thread) ... done")
     endif()
 
-    # boost cmd
+    # boost cmd (use b2 since sometimes the copying/symlinking from b2 to bjam fails)
     set (BOOST_CMD "./b2 toolset=${_boost_toolchain} -j ${NUMBER_OF_JOBS} --disable-icu -sZLIB_SOURCE=${ZLIB_DIR} -sBZIP2_SOURCE=${BZIP2_DIR} ${OSX_DEPLOYMENT_TARGET_STRING} link=${BOOST_BUILD_TYPE} cxxflags='-fPIC ${OSX_LIB_FLAGS}' ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi")
     
     # boost install
