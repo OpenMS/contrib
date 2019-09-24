@@ -172,7 +172,7 @@ set (PATCH_DIR "${PROJECT_SOURCE_DIR}/patches/" CACHE STRING "Directory containi
 ## Warning: ensure these are all upper-case names!
 set(BZIP2_DIR ${CONTRIB_BIN_SOURCE_DIR}/bzip2-1.0.5)
 set(ZLIB_DIR ${CONTRIB_BIN_SOURCE_DIR}/zlib-1.2.11)
-set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost_1_67_0)
+set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost_1_71_0)
 set(XERCES_DIR ${CONTRIB_BIN_SOURCE_DIR}/Xerces-C_3_2_0)
 set(LIBSVM_DIR ${CONTRIB_BIN_SOURCE_DIR}/libsvm-3.12)
 set(SEQAN_DIR ${CONTRIB_BIN_SOURCE_DIR}/seqan-1.4.1)
@@ -215,13 +215,13 @@ set(ARCHIVE_ZLIB zlib-1.2.11.tar.gz)
 set(ARCHIVE_ZLIB_TAR  zlib-1.2.11.tar)
 set(ARCHIVE_ZLIB_SHA1 "56559d4c03beaedb0be1c7481d6a371e2458a496")
 
-# set(ARCHIVE_BOOST boost_1_61_0.tar.gz)
-# set(ARCHIVE_BOOST_TAR  boost_1_61_0.tar)
-# set(ARCHIVE_BOOST_SHA1 "2d2b80771f584f327827193fcf3abf836edcdfaa")
+set(ARCHIVE_BOOST boost_1_71_0.tar.gz)
+set(ARCHIVE_BOOST_TAR  boost_1_71_0.tar)
+set(ARCHIVE_BOOST_SHA1 "4f3846b0cd92ecdd56961484d757388fb07a2ada")
 
-set(ARCHIVE_BOOST boost_1_67_0.tar.gz)
-set(ARCHIVE_BOOST_TAR  boost_1_67_0.tar)
-set(ARCHIVE_BOOST_SHA1 "77e73c9fd7bf85b14067767b9e8fdc39b49ee0f2")
+#set(ARCHIVE_BOOST boost_1_67_0.tar.gz)
+#set(ARCHIVE_BOOST_TAR  boost_1_67_0.tar)
+#set(ARCHIVE_BOOST_SHA1 "77e73c9fd7bf85b14067767b9e8fdc39b49ee0f2")
 
 # set(ARCHIVE_XERCES xerces-c-3.1.1-vs17.tar.gz)
 # set(ARCHIVE_XERCES_TAR  xerces-c-3.1.1.tar)
