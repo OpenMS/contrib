@@ -112,6 +112,23 @@ if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
   return(0)
 endif()
 
+# This is a hack since CMake translates the compiler given via environment variables to its full path.
+# On MacOS though, we want the wrapper executable in /usr/bin/clang++ since it automatically
+# finds and links the right system headers/libraries and we implicitly pass this command to e.g. boost
+# since CMake resets the CXX env var to its resolved path and boosts bootstrap uses that.
+# Therefore we skip the resolution of the full path here by explicitly defining it. Only downside:
+# If you use xcodeselect and change the clang underneath, CMake wont notice/reconfigure.
+if (NOT DEFINED CMAKE_CXX_COMPILER)
+  if (DEFINED ENV{CXX})
+    set(CMAKE_CXX_COMPILER $ENV{CXX})
+  endif()
+endif()
+if (NOT DEFINED CMAKE_C_COMPILER)
+  if (DEFINED ENV{CC})
+    set(CMAKE_C_COMPILER $ENV{CC})
+  endif()
+endif()
+
 PROJECT("OpenMS_CONTRIB")
 
 # Heart of the BUILD system : only edit when you know what you are doing (we don't)
