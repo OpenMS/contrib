@@ -22,4 +22,9 @@ jobs:
       run: |
            mkdir ../contrib-build
            cd ../contrib-build
-           cmake -DBUILD_TYPE=ALL ../contrib
+           cmake -DBUILD_TYPE=SEQAN ../contrib
+    - uses: actions/upload-artifact@master
+      with:
+        name: ubuntu-contrib-build
+        path: contrib-build
+       
