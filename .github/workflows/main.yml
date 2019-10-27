@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install prerequisites
-      run: apt-get -y install make autoconf automake tar patch libtool gcc
+      run: sudo apt-get -y install make autoconf automake tar patch libtool gcc
     - name: Installing cmake
       run: |
           # Install a more recent version of CMake to test some 3.1+ features for e.g. coverage tests
