@@ -20,6 +20,6 @@ jobs:
           export PATH="/opt/cmake-3.15.3-Linux-x86_64/bin:$PATH"
     - name: Build contrib
       run: |
-           mkdir contrib-build
-           cd contrib-build
+           mkdir ../contrib-build
+           cd ../contrib-build
            cmake -DBUILD_TYPE=ALL ../contrib
