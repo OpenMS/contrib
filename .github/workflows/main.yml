@@ -26,5 +26,5 @@ jobs:
     - uses: actions/upload-artifact@master
       with:
         name: ubuntu-contrib-build
-        path: contrib-build
+        path: ../contrib-build
        
