@@ -260,9 +260,9 @@ set(ARCHIVE_GLPK glpk-4.46.tar.gz)
 set(ARCHIVE_GLPK_TAR  glpk-4.46.tar)
 set(ARCHIVE_GLPK_SHA1 "73d589452dc1d8d6a784b3f86f4268cae37420d7")
 
-set(ARCHIVE_COINOR CoinMP-1.8.3-vs17v3.tar.gz)
-set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3.tar)
-set(ARCHIVE_COINOR_SHA1 "9ea19dfb81cd0e81e9b0cd3c5a3c435366a70317")
+set(ARCHIVE_COINOR CoinMP-1.8.3-vs19.tar.gz)
+set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3-vs19.tar)
+set(ARCHIVE_COINOR_SHA1 "d5df5605b2f3cd4c414dc91ce538daa5bbbef9cb")
 
 set(ARCHIVE_EIGEN eigen-3.3.4.tar.gz)
 set(ARCHIVE_EIGEN_TAR  eigen-3.3.4.tar)
