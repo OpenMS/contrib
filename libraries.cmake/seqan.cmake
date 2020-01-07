@@ -29,6 +29,7 @@ MACRO( OPENMS_CONTRIB_BUILD_SEQAN )
   message(STATUS "Generating seqan build system .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
                         -G "${CMAKE_GENERATOR}"
+                        ${ARCHITECTURE_OPTION_CMAKE}
                         -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                         -DSEQAN_BUILD_SYSTEM=SEQAN_RELEASE_LIBRARY
                         ${SEQAN_DIR}

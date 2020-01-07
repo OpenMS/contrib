@@ -36,6 +36,7 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
 
   execute_process(COMMAND ${CMAKE_COMMAND}
                   -G "${CMAKE_GENERATOR}"
+                  ${ARCHITECTURE_OPTION_CMAKE}
                   -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                   -D BUILD_TESTING:BOOL=OFF
                   -D EIGEN_TEST_NOQT=ON
