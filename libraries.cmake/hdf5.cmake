@@ -38,6 +38,7 @@ MACRO( OPENMS_CONTRIB_BUILD_HDF5 )
   message(STATUS "Generating HDF5 build system .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
                         -G "${CMAKE_GENERATOR}"
+                        ${ARCHITECTURE_OPTION_CMAKE}
                         -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
                         -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                         -D BUILD_TESTING=Off
