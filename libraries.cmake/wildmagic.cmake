@@ -56,7 +56,7 @@ macro( OPENMS_CONTRIB_BUILD_WILDMAGIC )
   message(STATUS "Generating wildmagic build system .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
                         -G "${CMAKE_GENERATOR}"
-                        ${ARCHITECTURE_OPTION_CMAKE}
+                        "${ARCHITECTURE_OPTION_CMAKE}"
                         -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
                         -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                         ${_WILDMAGIC_CMAKE_ARGS}
