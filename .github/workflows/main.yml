@@ -61,9 +61,12 @@ jobs:
     - name: Clean build
       shell: bash
       run: |
+           # shopt -s extglob
            cd contrib-build
            rm -rf archives
            rm -rf src
+           rm -rf CMakeFiles
+           rm -v !("contrib_build.log")
            
     #TODO switch to V2 once it is released (this is to only upload relevant folders)
     - uses: actions/upload-artifact@konradpabjan/v2-is-almost-here
