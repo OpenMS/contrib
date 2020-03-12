@@ -56,9 +56,15 @@ jobs:
            cd ../contrib-build
            cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=SEQAN ../contrib
            
+    # TODO hope that they finally release a decent uploading action.
+    - name: Clean build
+      run: |
+           rm -rf archives
+           rm -rf src
+           
     #TODO switch to V2 once it is released (this is to only upload relevant folders)
     - uses: actions/upload-artifact@konradpabjan/v2-is-almost-here
       with:
-        name: contrib-build
-        path: contrib-build/{lib,bin,share}
+        name: contrib-build-${{runner.os}}
+        path: contrib-build/**
        
