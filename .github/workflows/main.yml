@@ -60,5 +60,5 @@ jobs:
     - uses: actions/upload-artifact@konradpabjan/v2-is-almost-here
       with:
         name: contrib-build
-        path: contrib-build/+(lib|bin|share)
+        path: contrib-build/{lib,bin,share}
        
