@@ -49,13 +49,10 @@ jobs:
     #      echo ::set-env PATH=$GITHUB_WORKSPACE/cmake/bin:$PATH
     - name: Configure x64 environment
       if: runner.os == 'Windows'
-      run: .github\workflows\vsenv.bat -arch=x64 -host_arch=x64
+      run: contrib\.github\workflows\vsenv.bat -arch=x64 -host_arch=x64
       
     - name: Build contrib
       run: |
-           echo $GITHUB_WORKSPACE
-           ls -la $GITHUB_WORKSPACE
-           ls -la $GITHUB_WORKSPACE/../
            mkdir $GITHUB_WORKSPACE/contrib-build
            cd $GITHUB_WORKSPACE/contrib-build
            cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=SEQAN $GITHUB_WORKSPACE/contrib
