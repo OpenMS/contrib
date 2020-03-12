@@ -65,7 +65,7 @@ jobs:
            rm -rf archives
            rm -rf src
            rm -rf CMakeFiles
-           find . -maxdepth 0 -type f -not -name 'contrib_build.log' -delete
+           find . -maxdepth 1 -type f -not -name 'contrib_build.log' -delete
            
     #TODO switch to V2 once it is released (this is to only upload relevant folders)
     - uses: actions/upload-artifact@konradpabjan/v2-is-almost-here
