@@ -2,7 +2,6 @@ name: CI
 
 on: [push]
 
-
 jobs:
   build:
 
@@ -53,8 +52,8 @@ jobs:
       
     - name: Build contrib
       run: |
-           mkdir contrib-build
-           cd contrib-build
+           mkdir ../contrib-build
+           cd ../contrib-build
            cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=SEQAN ../contrib
            
     #TODO switch to V2 once it is released (this is to only upload relevant folders)
