@@ -52,13 +52,15 @@ jobs:
       
     - name: Build contrib
       run: |
-           mkdir ../contrib-build
-           cd ../contrib-build
-           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=SEQAN ../contrib
+           mkdir $GITHUB_WORKSPACE/contrib-build
+           cd $GITHUB_WORKSPACE/contrib-build
+           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=SEQAN $GITHUB_WORKSPACE/contrib
            
     # TODO hope that they finally release a decent uploading action.
     - name: Clean build
+      shell: bash
       run: |
+           cd $GITHUB_WORKSPACE/contrib-build
            rm -rf archives
            rm -rf src
            
@@ -66,5 +68,5 @@ jobs:
     - uses: actions/upload-artifact@konradpabjan/v2-is-almost-here
       with:
         name: contrib-build-${{runner.os}}
-        path: contrib-build/**
+        path: contrib-build
        
