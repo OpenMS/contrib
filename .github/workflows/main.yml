@@ -61,7 +61,7 @@ jobs:
     - name: Clean build
       shell: bash
       run: |
-           # shopt -s extglob
+           shopt -s extglob
            cd contrib-build
            rm -rf archives
            rm -rf src
