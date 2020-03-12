@@ -54,6 +54,8 @@ jobs:
     - name: Build contrib
       run: |
            echo $GITHUB_WORKSPACE
+           ls -la $GITHUB_WORKSPACE
+           ls -la $GITHUB_WORKSPACE/../
            mkdir $GITHUB_WORKSPACE/contrib-build
            cd $GITHUB_WORKSPACE/contrib-build
            cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=SEQAN $GITHUB_WORKSPACE/contrib
