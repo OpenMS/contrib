@@ -20,7 +20,7 @@ jobs:
           CMAKE_ARGS: -G"Visual Studio 16 2019" -A"x64"
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
       with:
         path: contrib
       
