@@ -55,8 +55,9 @@ jobs:
            cd ../contrib-build
            cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=SEQAN ../contrib
            
-    - uses: actions/upload-artifact@master
+    #TODO switch to V2 once it is released (this is to only upload relevant folders)
+    - uses: actions/upload-artifact@konradpabjan/v2-is-almost-here
       with:
         name: contrib-build
-        path: ../contrib-build
+        path: ../contrib-build/+(lib|bin|share)
        
