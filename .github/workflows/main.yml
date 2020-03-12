@@ -23,6 +23,7 @@ jobs:
     - uses: actions/checkout@v1
       
     - name: Install prerequisites
+      shell: bash
       run: |
          if [ "$RUNNER_OS" == "Linux" ]; then
               sudo apt-get -y install make autoconf automake tar patch libtool gcc
