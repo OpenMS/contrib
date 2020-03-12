@@ -21,6 +21,8 @@ jobs:
           CMAKE_ARGS: -G"Visual Studio 16 2019" -A"x64"
     steps:
     - uses: actions/checkout@v1
+      with:
+        path: contrib
       
     - name: Install prerequisites
       shell: bash
@@ -51,13 +53,13 @@ jobs:
       
     - name: Build contrib
       run: |
-           mkdir ../contrib-build
-           cd ../contrib-build
+           mkdir contrib-build
+           cd contrib-build
            cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=SEQAN ../contrib
            
     #TODO switch to V2 once it is released (this is to only upload relevant folders)
     - uses: actions/upload-artifact@konradpabjan/v2-is-almost-here
       with:
         name: contrib-build
-        path: ../contrib-build/+(lib|bin|share)
+        path: contrib-build/+(lib|bin|share)
        
