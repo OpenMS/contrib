@@ -18,6 +18,7 @@ jobs:
 
         - os: windows-latest
           CMAKE_ARGS: -G"Visual Studio 16 2019" -A"x64"
+
     steps:
     - uses: actions/checkout@v1
       with:
@@ -52,6 +53,7 @@ jobs:
       
     - name: Build contrib
       run: |
+           echo $GITHUB_WORKSPACE
            mkdir $GITHUB_WORKSPACE/contrib-build
            cd $GITHUB_WORKSPACE/contrib-build
            cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=SEQAN $GITHUB_WORKSPACE/contrib
