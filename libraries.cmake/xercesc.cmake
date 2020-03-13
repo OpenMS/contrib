@@ -14,7 +14,11 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 	OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_XERCES "XERCES" "CREDITS")
 	## Regarding transcoder choices. Let Xerces figure it out.
 
-	if (WIN32)
+        set(_PATCH_FILE "${PATCH_DIR}/xercesc/XercesDLL.cmake.patch")
+        set(_PATCHED_FILE "${XERCES_DIR}/cmake/XercesDLL.cmake")
+        OPENMS_PATCH( _PATCH_FILE XERCES_DIR _PATCHED_FILE)
+	
+        if (WIN32)
 		#set(XERCES_EXTRA_CMAKE_FLAGS "-D...")
 		message( STATUS "Generating XERCES-C cmake build system for Debug and Release...")
 		execute_process(COMMAND ${CMAKE_COMMAND}
@@ -72,7 +76,9 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 		## Release
 		message( STATUS "Reconfiguring XERCES-C cmake build system for Release...")
 		execute_process(COMMAND ${CMAKE_COMMAND}
-                                                                -D CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                                                                -D CMAKE_CXX_VISIBILITY_PRESET=hidden
+                                                                -D CMAKE_VISIBILITY_INLINES_HIDDEN=1
+								-D CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                                                                 -D CMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 								-D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
 								-G "${CMAKE_GENERATOR}"

@@ -1,0 +1,21 @@
+--- cmake/XercesDLL.cmake	2018-02-02 16:50:20.000000000 +0100
++++ cmake/XercesDLL.cmake	2020-03-13 20:28:12.000000000 +0100
+@@ -36,12 +36,15 @@
+ set(XERCES_STATIC_LIBRARY)
+ if(NOT BUILD_SHARED_LIBS)
+   set(XERCES_STATIC_LIBRARY 1)
+-else()
+-  if(WIN32)
++endif()
++if(WIN32)
+     set(XERCES_PLATFORM_EXPORT "__declspec(dllexport)")
+     set(XERCES_PLATFORM_IMPORT "__declspec(dllimport)")
+     set(XERCES_DLL_EXPORT 1)
+-  endif()
++else()
++    set(XERCES_PLATFORM_EXPORT "__attribute__((visibility(\"default\")))")
++    set(XERCES_PLATFORM_IMPORT "__attribute__((visibility(\"default\")))")
++    set(XERCES_DLL_EXPORT 1)
+ endif()
+ 
+ # Versioning information
