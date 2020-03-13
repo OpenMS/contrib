@@ -69,7 +69,7 @@ jobs:
            find . -maxdepth 1 -type f -not -name 'contrib_build.log' -delete
            
     #TODO switch to V2 once it is released (this is to only upload relevant folders)
-    - uses: actions/upload-artifact@konradpabjan/v2-is-almost-here
+    - uses: actions/upload-artifact@v1
       with:
         name: contrib-build-${{runner.os}}
         path: contrib-build
