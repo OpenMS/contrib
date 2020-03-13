@@ -19,6 +19,7 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
                             -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
                             -D INSTALL_BIN_DIR=${PROJECT_BINARY_DIR}/lib
                             -G "${CMAKE_GENERATOR}"
+                            ${ARCHITECTURE_OPTION_CMAKE}
                             -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                             ${ZLIB_EXTRA_CMAKE_FLAG}
                             .

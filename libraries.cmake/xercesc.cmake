@@ -22,6 +22,7 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 								-D CMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 								-D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
 								-G "${CMAKE_GENERATOR}"
+								${ARCHITECTURE_OPTION_CMAKE}
 								-D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
 								-D CMAKE_POSITION_INDEPENDENT_CODE=ON
 								#${XERCES_EXTRA_CMAKE_FLAGS}
@@ -56,6 +57,16 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 		
 		file(APPEND ${LOGFILE} ${XERCES_Release_OUT} ${XERCES_Release_ERR})
 	else()
+
+		if(APPLE)
+			set( _XERCES_CMAKE_ARGS
+				"-DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}"
+				"-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+				"-DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}"
+			)
+		else()
+			set( _XERCES_CMAKE_ARGS "")
+		endif()
 		## Linux and Mac
                 set(_PATCH_FILE "${PATCH_DIR}/xercesc/xerces_dynlib_link_suffix.patch")
 		set(_PATCHED_FILE "${XERCES_DIR}/src/CMakeLists.txt")
@@ -71,8 +82,9 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 		## Release
 		message( STATUS "Reconfiguring XERCES-C cmake build system for Release...")
 		execute_process(COMMAND ${CMAKE_COMMAND}
-                                                                -D CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-                                                                -D CMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+								${_XERCES_CMAKE_ARGS}
+								-D CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+								-D CMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 								-D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
 								-G "${CMAKE_GENERATOR}"
 								-D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}

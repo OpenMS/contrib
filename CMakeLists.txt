@@ -260,9 +260,9 @@ set(ARCHIVE_GLPK glpk-4.46.tar.gz)
 set(ARCHIVE_GLPK_TAR  glpk-4.46.tar)
 set(ARCHIVE_GLPK_SHA1 "73d589452dc1d8d6a784b3f86f4268cae37420d7")
 
-set(ARCHIVE_COINOR CoinMP-1.8.3-vs17v3.tar.gz)
-set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3.tar)
-set(ARCHIVE_COINOR_SHA1 "9ea19dfb81cd0e81e9b0cd3c5a3c435366a70317")
+set(ARCHIVE_COINOR CoinMP-1.8.3-vs19.tar.gz)
+set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3-vs19.tar)
+set(ARCHIVE_COINOR_SHA1 "d5df5605b2f3cd4c414dc91ce538daa5bbbef9cb")
 
 set(ARCHIVE_EIGEN eigen-3.3.4.tar.gz)
 set(ARCHIVE_EIGEN_TAR  eigen-3.3.4.tar)
@@ -330,7 +330,7 @@ if (MSVC)
     message(FATAL_ERROR "Could not determine if cl.exe builds x86 or x64 apps. Make sure cl.exe is available in your environment!")
   endif()
   if (NOT (CL_ADDRESSMODEL EQUAL CONTRIB_ADDRESSMODEL))
-    message(FATAL_ERROR "cl.exe (${CL_ADDRESSMODEL}-bit) and Visual Studio Generator (${CONTRIB_ADDRESSMODEL}-bit) do not match. Please fix your PATH environment to find the proper cl.exe or use/omit the Win64 generator.")
+    message(FATAL_ERROR "cl.exe (${CL_ADDRESSMODEL}-bit) and Visual Studio Generator (${CONTRIB_ADDRESSMODEL}-bit) do not match. Please fix your PATH environment to find the proper cl.exe or use an appropriate generator by adding -A Win32/x64 to your CMake call.")
   endif()
 
 
@@ -349,7 +349,7 @@ if (MSVC)
     if (OVERRIDE_GENERATOR)
       message(FATAL_ERROR "Chosen to override the Generator check, proceed with caution.")
     else()
-      message(FATAL_ERROR "Please use 'Visual Studio ?? [Win64]' (??={14, 15, 16}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
+      message(FATAL_ERROR "Please use 'Visual Studio ??' (??={14, 15, 16}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
     endif()
   endif()
   ## For coinor to find the correct names of the VS solutions
@@ -363,9 +363,14 @@ if (MSVC)
   if (CONTRIB_ADDRESSMODEL MATCHES 32)
     set(BOOST_ARG "")
     set(WIN_PLATFORM_ARG "Win32")
+    set(ARCHITECTURE_OPTION_CMAKE "-A" "Win32")
   else()
     set(BOOST_ARG "address-model=64")
     set(WIN_PLATFORM_ARG "x64")
+    # Fix bug #95 (compile with MSVS 2015)
+    if (NOT CMAKE_GENERATOR MATCHES ".*Win64.*")
+      set(ARCHITECTURE_OPTION_CMAKE "-A" "x64")
+    endif()
   endif()
 
   find_program(PROGRAM_ZIP "7z.exe" PATHS "C:/Program Files/7-Zip" "C:/Programme/7-Zip")
@@ -402,6 +407,10 @@ if (MSVC)
   endif()
   
 else() ## linux/Mingw/macos
+
+  # except Visual Studio, no other generator supports the architecture option
+  set(ARCHITECTURE_OPTION_CMAKE )
+
   # tar
   find_program(PROGRAM_ZIP "tar")
   if (NOT PROGRAM_ZIP)
