@@ -51,11 +51,12 @@ jobs:
       if: runner.os == 'Windows'
       run: contrib\.github\workflows\vsenv.bat -arch=x64 -host_arch=x64
       
+    # TODO use appropriate number of cores
     - name: Build contrib
       run: |
            mkdir contrib-build
            cd contrib-build
-           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=SEQAN ../contrib
+           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=4 ../contrib
            
     # TODO hope that they finally release a decent uploading action.
     - name: Clean build
