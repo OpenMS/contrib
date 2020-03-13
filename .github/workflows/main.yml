@@ -14,7 +14,7 @@ jobs:
           CMAKE_ARGS: ""
 
         - os:  macos-latest
-          CMAKE_ARGS: -DMACOSX_DEPLOYMENT_TARGET=10.9   
+          CMAKE_ARGS: -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9   
 
         - os: windows-latest
           CMAKE_ARGS: -G"Visual Studio 16 2019" -A"x64"
