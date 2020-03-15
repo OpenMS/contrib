@@ -17,6 +17,10 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
         set(_PATCH_FILE "${PATCH_DIR}/xercesc/XercesDLL.cmake.patch")
         set(_PATCHED_FILE "${XERCES_DIR}/cmake/XercesDLL.cmake")
         OPENMS_PATCH( _PATCH_FILE XERCES_DIR _PATCHED_FILE)
+
+        set(_PATCH_FILE "${PATCH_DIR}/xercesc/CMakeLists.txt.patch")
+        set(_PATCHED_FILE "${XERCES_DIR}/CMakeLists.txt")
+        OPENMS_PATCH( _PATCH_FILE XERCES_DIR _PATCHED_FILE)
 	
         if (WIN32)
 		#set(XERCES_EXTRA_CMAKE_FLAGS "-D...")
