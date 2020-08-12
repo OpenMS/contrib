@@ -59,20 +59,21 @@ MACRO( OPENMS_CONTRIB_BUILD_SQLITE )
 	
   else()
     if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-     set (SQLITE_CUSTOM_FLAGS "${CXX_OSX_FLAGS}")
+     set (SQLITE_CUSTOM_FLAGS "${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG} ${OSX_LIB_FLAG}")
     endif()
     
     # configure -- 
     set( ENV{CC} ${CMAKE_C_COMPILER} )
     set( ENV{CXX} ${CMAKE_CXX_COMPILER} )
     set( ENV{CFLAGS} ${SQLITE_CUSTOM_FLAGS})
+    set( ENV{CXXFLAGS} ${SQLITE_CUSTOM_FLAGS})
 
     if (BUILD_SHARED_LIBRARIES)
       set(STATIC_BUILD "--enable-static=no")
       set(SHARED_BUILD "--enable-shared=yes")
     else()
       set(STATIC_BUILD "--enable-static=yes")
-      set(SHARED_BUILD "--enable-shared=no")        
+      set(SHARED_BUILD "--enable-shared=no")
     endif()
         
     message( STATUS "Configure SQLITE library (./configure --prefix ${CMAKE_BINARY_DIR} --with-pic --disable-shared) .. ")

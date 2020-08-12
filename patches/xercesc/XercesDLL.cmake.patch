@@ -1,0 +1,14 @@
+--- cmake/XercesDLL.cmake	2018-02-02 16:50:20.000000000 +0100
++++ cmake/XercesDLL.cmake	2020-03-13 20:28:12.000000000 +0100
+@@ -44,6 +44,11 @@
+   endif()
+ endif()
+
++if(NOT WIN32)
++  set(XERCES_PLATFORM_EXPORT "__attribute__((visibility(\"default\")))")
++  set(XERCES_PLATFORM_IMPORT "__attribute__((visibility(\"default\")))")
++endif()
++
+ # Versioning information
+
+ file(STRINGS "${PROJECT_SOURCE_DIR}/version.incl" icu_verinfo

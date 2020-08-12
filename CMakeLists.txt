@@ -112,6 +112,23 @@ if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
   return(0)
 endif()
 
+# This is a hack since CMake translates the compiler given via environment variables to its full path.
+# On MacOS though, we want the wrapper executable in /usr/bin/clang++ since it automatically
+# finds and links the right system headers/libraries and we implicitly pass this command to e.g. boost
+# since CMake resets the CXX env var to its resolved path and boosts bootstrap uses that.
+# Therefore we skip the resolution of the full path here by explicitly defining it. Only downside:
+# If you use xcodeselect and change the clang underneath, CMake wont notice/reconfigure.
+if (NOT DEFINED CMAKE_CXX_COMPILER)
+  if (DEFINED ENV{CXX})
+    set(CMAKE_CXX_COMPILER $ENV{CXX})
+  endif()
+endif()
+if (NOT DEFINED CMAKE_C_COMPILER)
+  if (DEFINED ENV{CC})
+    set(CMAKE_C_COMPILER $ENV{CC})
+  endif()
+endif()
+
 PROJECT("OpenMS_CONTRIB")
 
 # Heart of the BUILD system : only edit when you know what you are doing (we don't)
@@ -172,7 +189,7 @@ set (PATCH_DIR "${PROJECT_SOURCE_DIR}/patches/" CACHE STRING "Directory containi
 ## Warning: ensure these are all upper-case names!
 set(BZIP2_DIR ${CONTRIB_BIN_SOURCE_DIR}/bzip2-1.0.5)
 set(ZLIB_DIR ${CONTRIB_BIN_SOURCE_DIR}/zlib-1.2.11)
-set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost_1_67_0)
+set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost_1_71_0)
 set(XERCES_DIR ${CONTRIB_BIN_SOURCE_DIR}/Xerces-C_3_2_0)
 set(LIBSVM_DIR ${CONTRIB_BIN_SOURCE_DIR}/libsvm-3.12)
 set(SEQAN_DIR ${CONTRIB_BIN_SOURCE_DIR}/seqan-1.4.1)
@@ -215,13 +232,13 @@ set(ARCHIVE_ZLIB zlib-1.2.11.tar.gz)
 set(ARCHIVE_ZLIB_TAR  zlib-1.2.11.tar)
 set(ARCHIVE_ZLIB_SHA1 "56559d4c03beaedb0be1c7481d6a371e2458a496")
 
-# set(ARCHIVE_BOOST boost_1_61_0.tar.gz)
-# set(ARCHIVE_BOOST_TAR  boost_1_61_0.tar)
-# set(ARCHIVE_BOOST_SHA1 "2d2b80771f584f327827193fcf3abf836edcdfaa")
+set(ARCHIVE_BOOST boost_1_71_0.tar.gz)
+set(ARCHIVE_BOOST_TAR  boost_1_71_0.tar)
+set(ARCHIVE_BOOST_SHA1 "4f3846b0cd92ecdd56961484d757388fb07a2ada")
 
-set(ARCHIVE_BOOST boost_1_67_0.tar.gz)
-set(ARCHIVE_BOOST_TAR  boost_1_67_0.tar)
-set(ARCHIVE_BOOST_SHA1 "77e73c9fd7bf85b14067767b9e8fdc39b49ee0f2")
+#set(ARCHIVE_BOOST boost_1_67_0.tar.gz)
+#set(ARCHIVE_BOOST_TAR  boost_1_67_0.tar)
+#set(ARCHIVE_BOOST_SHA1 "77e73c9fd7bf85b14067767b9e8fdc39b49ee0f2")
 
 # set(ARCHIVE_XERCES xerces-c-3.1.1-vs17.tar.gz)
 # set(ARCHIVE_XERCES_TAR  xerces-c-3.1.1.tar)
@@ -243,9 +260,9 @@ set(ARCHIVE_GLPK glpk-4.46.tar.gz)
 set(ARCHIVE_GLPK_TAR  glpk-4.46.tar)
 set(ARCHIVE_GLPK_SHA1 "73d589452dc1d8d6a784b3f86f4268cae37420d7")
 
-set(ARCHIVE_COINOR CoinMP-1.8.3-vs17v3.tar.gz)
-set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3.tar)
-set(ARCHIVE_COINOR_SHA1 "9ea19dfb81cd0e81e9b0cd3c5a3c435366a70317")
+set(ARCHIVE_COINOR CoinMP-1.8.3-vs19.tar.gz)
+set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3-vs19.tar)
+set(ARCHIVE_COINOR_SHA1 "d5df5605b2f3cd4c414dc91ce538daa5bbbef9cb")
 
 set(ARCHIVE_EIGEN eigen-3.3.4.tar.gz)
 set(ARCHIVE_EIGEN_TAR  eigen-3.3.4.tar)
@@ -313,7 +330,7 @@ if (MSVC)
     message(FATAL_ERROR "Could not determine if cl.exe builds x86 or x64 apps. Make sure cl.exe is available in your environment!")
   endif()
   if (NOT (CL_ADDRESSMODEL EQUAL CONTRIB_ADDRESSMODEL))
-    message(FATAL_ERROR "cl.exe (${CL_ADDRESSMODEL}-bit) and Visual Studio Generator (${CONTRIB_ADDRESSMODEL}-bit) do not match. Please fix your PATH environment to find the proper cl.exe or use/omit the Win64 generator.")
+    message(FATAL_ERROR "cl.exe (${CL_ADDRESSMODEL}-bit) and Visual Studio Generator (${CONTRIB_ADDRESSMODEL}-bit) do not match. Please fix your PATH environment to find the proper cl.exe or use an appropriate generator by adding -A Win32/x64 to your CMake call.")
   endif()
 
 
@@ -332,7 +349,7 @@ if (MSVC)
     if (OVERRIDE_GENERATOR)
       message(FATAL_ERROR "Chosen to override the Generator check, proceed with caution.")
     else()
-      message(FATAL_ERROR "Please use 'Visual Studio ?? [Win64]' (??={14, 15, 16}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
+      message(FATAL_ERROR "Please use 'Visual Studio ??' (??={14, 15, 16}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
     endif()
   endif()
   ## For coinor to find the correct names of the VS solutions
@@ -346,9 +363,14 @@ if (MSVC)
   if (CONTRIB_ADDRESSMODEL MATCHES 32)
     set(BOOST_ARG "")
     set(WIN_PLATFORM_ARG "Win32")
+    set(ARCHITECTURE_OPTION_CMAKE "-A" "Win32")
   else()
     set(BOOST_ARG "address-model=64")
     set(WIN_PLATFORM_ARG "x64")
+    # Fix bug #95 (compile with MSVS 2015)
+    if (NOT CMAKE_GENERATOR MATCHES ".*Win64.*")
+      set(ARCHITECTURE_OPTION_CMAKE "-A" "x64")
+    endif()
   endif()
 
   find_program(PROGRAM_ZIP "7z.exe" PATHS "C:/Program Files/7-Zip" "C:/Programme/7-Zip")
@@ -385,6 +407,10 @@ if (MSVC)
   endif()
   
 else() ## linux/Mingw/macos
+
+  # except Visual Studio, no other generator supports the architecture option
+  set(ARCHITECTURE_OPTION_CMAKE )
+
   # tar
   find_program(PROGRAM_ZIP "tar")
   if (NOT PROGRAM_ZIP)

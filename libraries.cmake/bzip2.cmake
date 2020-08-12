@@ -19,9 +19,10 @@ MACRO( OPENMS_CONTRIB_BUILD_BZIP2 )
   ## build the obj/lib
   if (MSVC)
 		message(STATUS "Generating bzip2 build system .. ")
-    execute_process(COMMAND ${CMAKE_COMMAND}
+    	execute_process(COMMAND ${CMAKE_COMMAND}
 													-D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
 													-G "${CMAKE_GENERATOR}"
+													${ARCHITECTURE_OPTION_CMAKE}
 													-D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
 													.
 										WORKING_DIRECTORY ${BZIP2_DIR}

@@ -1,0 +1,11 @@
+--- CMakeLists.txt	2020-03-15 17:24:32.000000000 +0100
++++ CMakeLists.txt	2020-03-15 17:14:35.000000000 +0100
+@@ -19,7 +19,7 @@
+ 
+ # Run "cmake" to generate the build files for your platform
+ 
+-cmake_minimum_required(VERSION 3.2.0)
++cmake_minimum_required(VERSION 3.8.0)
+ 
+ # Use new variable expansion policy.
+ if (POLICY CMP0053)

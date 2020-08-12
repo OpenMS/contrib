@@ -17,6 +17,12 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
     set(ZIP_ARGS "xzf")
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_BOOST "BOOST" "index.htm")
+
+  ## https://github.com/boostorg/build/pull/560
+  ## can be removed with boost 1.73
+  set(_PATCH_FILE "${PATCH_DIR}boost/boost_xcode11.patch")		
+  set(_PATCHED_FILE "${BOOST_DIR}/tools/build/src/tools/darwin.jam")		
+  OPENMS_PATCH( _PATCH_FILE BOOST_DIR _PATCHED_FILE)	
   
   if(MSVC) ## build boost library for windows
     
@@ -70,7 +76,7 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
 
      ## WARNING: boost call is not "space in path" save yet (the easy way of using \" does not work out of the box
      message(STATUS "Building Boost library (bjam ${BOOST_CMD_ARGS}) .. ")
-     execute_process(COMMAND bjam.exe ${BOOST_CMD_ARGS}
+     execute_process(COMMAND b2.exe ${BOOST_CMD_ARGS}
                      WORKING_DIRECTORY ${BOOST_DIR}
                      OUTPUT_VARIABLE BUILD_BOOST_OUT
                      ERROR_VARIABLE BUILD_BOOST_ERR
@@ -98,43 +104,49 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
 
     # use proper toolchain (random guesses. There is not proper documentation)
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+      # since around boost 1.70 there is not bootstrap toolset called darwin anymore
+      set(_boost_bootstrap_toolchain "clang")
       if(APPLE)
-        set(_boost_bootstrap_toolchain "darwin")
-        set(_boost_toolchain "clang-darwin")
+        set(_boost_toolchain "darwin")
       else()
-        set(_boost_bootstrap_toolchain "clang")
         set(_boost_toolchain "clang")
       endif()
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+      set(_boost_booststrap_toolchain "gcc")
       if(APPLE)
         ## For Apples old GCC (tag in lib name will be xgcc)
-        set(_boost_bootstrap_toolchain "darwin")
         set(_boost_toolchain "darwin") 
       else()
-        set(_boost_bootstrap_toolchain "gcc")
         set(_boost_toolchain "gcc")
       endif()
     endif()
 
-    ## In case we specified a non-existent toolchain. Just use whatever CMake detected/knows.
-    ##file(APPEND ${BOOST_DIR}/tools/build/src/user-config.jam
-    ##  "using ${_boost_toolchain} : ${CXX_COMPILER_VERSION_MAJOR}.${CXX_COMPILER_VERSION_MINOR} : ${CMAKE_CXX_COMPILER};\n")
-
+    ## In case CMake picked up / or you specified a different compiler than the default in the path
+    ## (which the boost toolset "gcc" will use) we need to add the specific version to the user config.
+    ## Do not use on macOS as we did not figure out how to inherit all the compiler flags from the darwin
+    ## or clang-darwin toolset
+    if (NOT APPLE)
+      file(REMOVE ${BOOST_DIR}/tools/build/src/user-config.jam)
+      file(APPEND ${BOOST_DIR}/tools/build/src/user-config.jam
+        "using ${_boost_toolchain} : ${CXX_COMPILER_VERSION_MAJOR}.${CXX_COMPILER_VERSION_MINOR} : \"${CMAKE_CXX_COMPILER}\" ;\n")
+    endif()
+    
     if(APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET)
-      ## Boost looks for installed SDKs, but sometimes you dont have them. Add them still to not fail. Clang will handle it.
-      file(APPEND ${BOOST_DIR}/tools/build/src/tools/darwin.jam
-        "feature.extend macosx-version-min : ${CMAKE_OSX_DEPLOYMENT_TARGET} ;\n")
+      ## Note: We do not use the official boost darwin feature "macosx-version-min" anymore, since it does not work.
+      ## We pass it as usual flags now.
+        ## Boost looks for installed SDKs, but sometimes you dont have them. Add them still to not fail. Clang will handle it.
+        #file(APPEND ${BOOST_DIR}/tools/build/src/tools/darwin.jam
+        #  "feature.extend macosx-version-min : ${CMAKE_OSX_DEPLOYMENT_TARGET} ;\n")
 
-      ## Add corresponding linker flags. Empty is not possible, therefore the if.
+      ## Add corresponding linker flags (e.g. a different stdlib for macOS <10.9. Empty is not possible, therefore the if.
       if(OSX_LIB_FLAG)
         set(BOOST_LINKER_FLAGS linkflags=${OSX_LIB_FLAG})
       endif()
     endif()
-    
 
     # bootstrap boost
     message(STATUS "Bootstrapping Boost libraries (./bootstrap.sh --prefix=${PROJECT_BINARY_DIR} --with-toolset=${_boost_bootstrap_toolchain} --with-libraries=date_time,iostreams,math,regex,system,thread) ...")
-    execute_process(COMMAND ./bootstrap.sh --prefix=${PROJECT_BINARY_DIR} --with-toolset=${_boost_bootstrap_toolchain} --with-libraries=iostreams,math,date_time,regex,system,thread
+    execute_process(COMMAND ./bootstrap.sh --prefix=${PROJECT_BINARY_DIR} --with-libraries=iostreams,math,date_time,regex,system,thread
                     WORKING_DIRECTORY ${BOOST_DIR}
                     OUTPUT_VARIABLE BOOST_BOOTSTRAP_OUT
                     ERROR_VARIABLE BOOST_BOOTSTRAP_OUT
@@ -149,12 +161,17 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
       message(STATUS "Bootstrapping Boost libraries (./bootstrap.sh --prefix=${PROJECT_BINARY_DIR} --with-libraries=iostreams,math,date_time,regex,system,thread) ... done")
     endif()
 
-    # boost cmd
-    set (BOOST_CMD "./bjam toolset=${_boost_toolchain} -j ${NUMBER_OF_JOBS} --disable-icu -sZLIB_SOURCE=${ZLIB_DIR} -sBZIP2_SOURCE=${BZIP2_DIR} ${OSX_DEPLOYMENT_TARGET_STRING} link=${BOOST_BUILD_TYPE} cxxflags='-fPIC ${OSX_LIB_FLAGS}' ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi")
+
+    set (BOOST_DEBUG_FLAGS "")
+    if (BOOST_DEBUG)
+      set(BOOST_DEBUG_FLAGS "--debug-configuration -d+2")
+    endif()
+    # boost cmd (use b2 since sometimes the copying/symlinking from b2 to bjam fails)
+    set (BOOST_CMD "./b2 ${BOOST_DEBUG_FLAGS} architecture=x86 toolset=${_boost_toolchain} -j ${NUMBER_OF_JOBS} --disable-icu -sZLIB_SOURCE=${ZLIB_DIR} -sBZIP2_SOURCE=${BZIP2_DIR} link=${BOOST_BUILD_TYPE} cxxflags=-fPIC ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi")
     
     # boost install
     message(STATUS "Installing Boost libraries (${BOOST_CMD}) ...")
-    execute_process(COMMAND ./bjam toolset=${_boost_toolchain} -j ${NUMBER_OF_JOBS} --disable-icu -sZLIB_SOURCE="${ZLIB_DIR}" -sBZIP2_SOURCE="${BZIP2_DIR}" ${OSX_DEPLOYMENT_TARGET_STRING} link=${BOOST_BUILD_TYPE} cxxflags=-fPIC ${OSX_CXX_FLAG} ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi
+    execute_process(COMMAND ./b2 ${BOOST_DEBUG_FLAGS} architecture=x86 toolset=${_boost_toolchain} -j ${NUMBER_OF_JOBS} --disable-icu -sZLIB_SOURCE="${ZLIB_DIR}" -sBZIP2_SOURCE="${BZIP2_DIR}" link=${BOOST_BUILD_TYPE} "cxxflags=-fPIC ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG}" ${BOOST_LINKER_FLAGS}  install --build-type=complete --layout=tagged --threading=single,multi
                     WORKING_DIRECTORY ${BOOST_DIR}
                     OUTPUT_VARIABLE BOOST_INSTALL_OUT
                     ERROR_VARIABLE BOOST_INSTALL_OUT

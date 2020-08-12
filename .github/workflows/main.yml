@@ -1,0 +1,76 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include: 
+        - os: ubuntu-latest
+          CMAKE_ARGS: ""
+
+        - os:  macos-latest
+          CMAKE_ARGS: -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9   
+
+        - os: windows-latest
+          CMAKE_ARGS: -G"Visual Studio 16 2019" -A"x64"
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        path: contrib
+      
+    - name: Install prerequisites
+      shell: bash
+      run: |
+         if [ "$RUNNER_OS" == "Linux" ]; then
+              sudo apt-get -y install make autoconf automake tar patch libtool gcc
+         elif [ "$RUNNER_OS" == "Windows" ]; then
+              #choco install important_windows_software
+              echo "Nothing to install"
+         elif [ "$RUNNER_OS" == "macOS" ]; then
+              brew install autoconf automake libtool
+         else
+              echo "$RUNNER_OS not supported"
+              exit 1
+         fi
+         
+    # TODO cmake should be new enough now
+    #- name: Installing cmake (only linux support)
+    #  run: |
+    #      # Install a more recent version of CMake to test some 3.1+ features for e.g. coverage tests
+    #      # 3.7+ also fixes CPack issues of corrupted deb files...
+    #      curl -sSL -O https://cmake.org/files/v3.15/cmake-3.15.3-Linux-x86_64.tar.gz
+    #      sudo tar zxf cmake-3.15.3-Linux-x86_64.tar.gz -C $GITHUB_WORKSPACE/cmake
+    #      echo ::set-env PATH=$GITHUB_WORKSPACE/cmake/bin:$PATH
+    - name: Configure x64 environment
+      if: runner.os == 'Windows'
+      run: contrib\.github\workflows\vsenv.bat -arch=x64 -host_arch=x64
+      
+    # TODO use appropriate number of cores
+    - name: Build contrib
+      run: |
+           mkdir contrib-build
+           cd contrib-build
+           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=4 ../contrib
+           
+    # TODO hope that they finally release a decent uploading action.
+    - name: Clean build
+      shell: bash
+      run: |
+           cd contrib-build
+           rm -rf archives
+           rm -rf src
+           rm -rf CMakeFiles
+           find . -maxdepth 1 -type f -not -name 'contrib_build.log' -delete
+           
+    #TODO switch to V2 once it is released (this is to only upload relevant folders)
+    - uses: actions/upload-artifact@v1
+      with:
+        name: contrib-build-${{runner.os}}
+        path: contrib-build
+       
