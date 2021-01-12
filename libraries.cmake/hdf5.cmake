@@ -44,6 +44,7 @@ MACRO( OPENMS_CONTRIB_BUILD_HDF5 )
                         -D BUILD_TESTING=Off
                         -D HDF5_BUILD_EXAMPLES=Off
                         -D HDF5_BUILD_TOOLS=Off
+                        -D CMAKE_C_FLAGS="-Wno-error=implicit-function-declaration"
                         ${_HDF5_CMAKE_ARGS}
                         ${HDF5_DIR}
                         WORKING_DIRECTORY ${_HDF5_NATIVE_BUILD_DIR}
