@@ -36,6 +36,7 @@ MACRO( OPENMS_CONTRIB_BUILD_HDF5 )
   message(STATUS "Generating HDF5 build system .. in ${_HDF5_NATIVE_BUILD_DIR}")
   message(STATUS "Build shared libs .. in ${BUILD_SHARED_LIBRARIES}")
   message(STATUS "Generating HDF5 build system .. ")
+  ## Make implicit-function-declaration to warnings until it is fixed upstream (AppleClang defaults to an error)
   execute_process(COMMAND ${CMAKE_COMMAND}
                         -G "${CMAKE_GENERATOR}"
                         ${ARCHITECTURE_OPTION_CMAKE}
@@ -44,6 +45,7 @@ MACRO( OPENMS_CONTRIB_BUILD_HDF5 )
                         -D BUILD_TESTING=Off
                         -D HDF5_BUILD_EXAMPLES=Off
                         -D HDF5_BUILD_TOOLS=Off
+                        -D CMAKE_C_FLAGS="-Wno-error=implicit-function-declaration"
                         ${_HDF5_CMAKE_ARGS}
                         ${HDF5_DIR}
                         WORKING_DIRECTORY ${_HDF5_NATIVE_BUILD_DIR}
