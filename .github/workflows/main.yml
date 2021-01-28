@@ -47,9 +47,12 @@ jobs:
     #      curl -sSL -O https://cmake.org/files/v3.15/cmake-3.15.3-Linux-x86_64.tar.gz
     #      sudo tar zxf cmake-3.15.3-Linux-x86_64.tar.gz -C $GITHUB_WORKSPACE/cmake
     #      echo ::set-env PATH=$GITHUB_WORKSPACE/cmake/bin:$PATH
-    - name: Configure x64 environment
-      if: runner.os == 'Windows'
-      run: contrib\.github\workflows\vsenv.bat -arch=x64 -host_arch=x64
+      
+    # https://github.com/marketplace/actions/visual-studio-shell
+    - name: Set up Visual Studio shell
+      uses: egor-tensin/vs-shell@v2
+      with:
+        arch: x64
       
     # TODO use appropriate number of cores
     - name: Build contrib
