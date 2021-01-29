@@ -26,6 +26,7 @@ MACRO( OPENMS_CONTRIB_BUILD_HDF5 )
         "-DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}"
         "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
         "-DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}"
+        "-DCMAKE_C_FLAGS=-Wno-error=implicit-function-declaration"
     )
   else()
     set( _HDF5_CMAKE_ARGS "")
@@ -45,7 +46,6 @@ MACRO( OPENMS_CONTRIB_BUILD_HDF5 )
                         -D BUILD_TESTING=Off
                         -D HDF5_BUILD_EXAMPLES=Off
                         -D HDF5_BUILD_TOOLS=Off
-                        -D CMAKE_C_FLAGS="-Wno-error=implicit-function-declaration"
                         ${_HDF5_CMAKE_ARGS}
                         ${HDF5_DIR}
                         WORKING_DIRECTORY ${_HDF5_NATIVE_BUILD_DIR}
