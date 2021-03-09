@@ -33,10 +33,6 @@ libSVM
 	- URL: http://www.csie.ntu.edu.tw/~cjlin/libsvm/
 	- License.libSVM.txt
 
-SEQAN
-	- URL: https://www.seqan.de/
-	- License.bsd.seqan.txt
-
 SQLite
 	- URL: https://sqlite.org/copyright.html
 	- "All of the code and documentation in SQLite has been dedicated to the public domain by the authors."
