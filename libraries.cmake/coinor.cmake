@@ -14,6 +14,10 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_COINOR "COINOR" "AUTHORS")
 
+  set(PATCH_FILE "${PROJECT_SOURCE_DIR}/patches/coinor/Idiot.cpp.diff")
+  set(PATCHED_FILE "${COINOR_DIR}/Clp/src/Idiot.cpp")
+  OPENMS_PATCH( PATCH_FILE COINOR_DIR PATCHED_FILE)
+  
   if (MSVC)
 		## changes made to COIN-MP solution files (for all 6 libs):
 		## - in Properties -> Librarian -> OutputFile: output lib in debug mode X64 (!!!) from $(OutDir)\$(ProjectName).lib to $(OutDir)\$(ProjectName)d.lib

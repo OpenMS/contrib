@@ -71,7 +71,6 @@
 ##
 ## Where do I get Windows-packages with at least partially complete solution files?
 ## Boost:  NA, Boost uses its in-house Boost-Jam which supports everything we need
-## SEQAN:  headers only library, no compilation necessary for OpenMS
 ## LibSVM: comes with a Makefile.win, but libsvm needed some serious tweaking to support debug mode and to build a lib (instead of object files only)
 ## XERCES-C: they offer a VS version on their website (http://xerces.apache.org/xerces-c/), usually not for bleeding edge release though - bad luck for us.
 ## GSL:    get the src package from http://gnuwin32.sourceforge.net/packages/gsl.htm,
@@ -94,8 +93,8 @@
 ##       - however: exec_process seems to handle our arguments incorrectly (at least on Windows). Check functionality before you commit!
 
 # Determine what to build (all or single library)
-set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,SEQAN,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK,KISSFFT")
-set( VALID_BUILD_TYPES "ALL" "SEQAN" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC" "SQLITE" "KISSFFT" "HDF5")
+set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK,KISSFFT")
+set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC" "SQLITE" "KISSFFT" "HDF5")
 
 # check build type
 if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
@@ -192,7 +191,6 @@ set(ZLIB_DIR ${CONTRIB_BIN_SOURCE_DIR}/zlib-1.2.11)
 set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost_1_71_0)
 set(XERCES_DIR ${CONTRIB_BIN_SOURCE_DIR}/Xerces-C_3_2_0)
 set(LIBSVM_DIR ${CONTRIB_BIN_SOURCE_DIR}/libsvm-3.12)
-set(SEQAN_DIR ${CONTRIB_BIN_SOURCE_DIR}/seqan-1.4.1)
 set(GLPK_DIR ${CONTRIB_BIN_SOURCE_DIR}/glpk-4.46)
 set(COINOR_DIR ${CONTRIB_BIN_SOURCE_DIR}/CoinMP-1.8.3)
 set(EIGEN_DIR ${CONTRIB_BIN_SOURCE_DIR}/eigen-eigen-5a0156e40feb)
@@ -252,10 +250,6 @@ set(ARCHIVE_LIBSVM libsvm-3.12.tar.gz)
 set(ARCHIVE_LIBSVM_TAR  libsvm-3.12.tar)
 set(ARCHIVE_LIBSVM_SHA1 "6ee77eb3d89af07fe48058dba0dcc24c85020b85")
 
-set(ARCHIVE_SEQAN seqan-mini-1.4.1.tar.gz)
-set(ARCHIVE_SEQAN_TAR  seqan-mini-1.4.1.tar)
-set(ARCHIVE_SEQAN_SHA1 "1aecb390311a12330c5a1c8d91cb9ac4cd8e1718")
-
 set(ARCHIVE_GLPK glpk-4.46.tar.gz)
 set(ARCHIVE_GLPK_TAR  glpk-4.46.tar)
 set(ARCHIVE_GLPK_SHA1 "73d589452dc1d8d6a784b3f86f4268cae37420d7")
@@ -287,7 +281,6 @@ set(ARCHIVE_HDF5_SHA1 "541bdf33b1a9676a8340db958a277993a4193189")
 ## necessary for clean up .. change if install process of library changes
 set(INCLUDE_DIR_BOOST ${CONTRIB_BIN_INCLUDE_DIR}/boost)
 set(INCLUDE_DIR_XERCES ${CONTRIB_BIN_INCLUDE_DIR}/xercesc)
-set(INCLUDE_DIR_SEQAN ${CONTRIB_BIN_INCLUDE_DIR}/seqan)
 set(INCLUDE_DIR_GLPK ${CONTRIB_BIN_INCLUDE_DIR}/GLPK)
 set(INCLUDE_DIR_COINOR ${CONTRIB_BIN_INCLUDE_DIR}/coin)
 set(INCLUDE_DIR_EIGEN ${CONTRIB_BIN_INCLUDE_DIR}/eigen3)
@@ -488,7 +481,6 @@ endif()
 
 ## include extract/patch/build macros
 include ("${CMAKE_SOURCE_DIR}/macros.cmake")
-include ("${CMAKE_SOURCE_DIR}/libraries.cmake/seqan.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/libsvm.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/xercesc.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/boost.cmake")
@@ -528,15 +520,6 @@ message(STATUS "NUMBER_OF_JOBS: ${NUMBER_OF_JOBS} (maximal number of concurrent 
 
 ## define building of shared or unshared versions of the contrib libraries
 set( BUILD_SHARED_LIBRARIES Off CACHE BOOL "Builds all contrib libraries as shared libraries.")
-
-##################################################
-###       SEQAN                                ###
-##################################################
-
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "SEQAN")
-  OPENMS_CLEAN_LIB("SEQAN")
-  OPENMS_CONTRIB_BUILD_SEQAN()
-endif()
 
 ##################################################
 ###       LIBSVM                               ###

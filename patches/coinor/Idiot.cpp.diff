@@ -1,0 +1,18 @@
+--- Clp/src/Idiot.cpp
++++ Clp/src/Idiot.cpp
+@@ -2016,7 +2016,6 @@ Idiot::crossOver(int mode)
+ 		     }
+ 		   }
+ 		 }
+-		 delete [] which;
+ 		 for (int i = 0; i < nrows; i++) {
+ 		   if (rowIsBasic[i]>=0) {
+ 		     model_->setRowStatus(i, ClpSimplex::basic);
+@@ -2038,6 +2037,7 @@ Idiot::crossOver(int mode)
+ 		     model_->setColumnStatus(i,ClpSimplex::superBasic);
+ 		   }
+ 		 }
++		 delete[] which;
+ 	       }
+           }
+           if (model_) {
