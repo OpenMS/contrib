@@ -83,6 +83,9 @@ MACRO( OPENMS_CONTRIB_BUILD_ZLIB )
                             -D CMAKE_BUILD_TYPE=Release
                             -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                             -D CMAKE_C_FLAGS=${ZLIB_CFLAGS}
+                            if(APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET)
+                              -D CMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+                            endif()
                             .
                     WORKING_DIRECTORY ${ZLIB_DIR}
                     OUTPUT_VARIABLE ZLIB_CMAKE_OUT
