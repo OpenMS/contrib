@@ -74,35 +74,31 @@ if (MSVC)
 
 else() ## Linux/MacOS
 
+  if(APPLE)
+    set( _ZLIB_CMAKE_ARGS
+      "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+      "-DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}"
+      )
+  else()
+    set( _ZLIB_CMAKE_ARGS "")
+  endif()
+
   # CFLAGS for libsvm compiler (see libsvm Makefile)
   set(ZLIB_CFLAGS "-Wall" "-O3" "-fPIC")
 
   message(STATUS "Generating zlib build system .. ")
 
-  if(APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET)
-      execute_process(COMMAND ${CMAKE_COMMAND}
-                              -G "${CMAKE_GENERATOR}"
-                              -D CMAKE_BUILD_TYPE=Release
-                              -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
-                              -D CMAKE_C_FLAGS=${ZLIB_CFLAGS}
-                              -D CMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
-                              .
-                      WORKING_DIRECTORY ${ZLIB_DIR}
-                      OUTPUT_VARIABLE ZLIB_CMAKE_OUT
-                      ERROR_VARIABLE ZLIB_CMAKE_ERR
-                      RESULT_VARIABLE ZLIB_CMAKE_SUCCESS)
-  else()
-      execute_process(COMMAND ${CMAKE_COMMAND}
-                              -G "${CMAKE_GENERATOR}"
-                              -D CMAKE_BUILD_TYPE=Release
-                              -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
-                              -D CMAKE_C_FLAGS=${ZLIB_CFLAGS}
-                              .
-                      WORKING_DIRECTORY ${ZLIB_DIR}
-                      OUTPUT_VARIABLE ZLIB_CMAKE_OUT
-                      ERROR_VARIABLE ZLIB_CMAKE_ERR
-                      RESULT_VARIABLE ZLIB_CMAKE_SUCCESS)
-  endif()
+  execute_process(COMMAND ${CMAKE_COMMAND}
+                          ${_ZLIB_CMAKE_ARGS}
+                          -G "${CMAKE_GENERATOR}"
+                          -D CMAKE_BUILD_TYPE=Release
+                          -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
+                          -D CMAKE_C_FLAGS=${ZLIB_CFLAGS}
+                          .
+                  WORKING_DIRECTORY ${ZLIB_DIR}
+                  OUTPUT_VARIABLE ZLIB_CMAKE_OUT
+                  ERROR_VARIABLE ZLIB_CMAKE_ERR
+                  RESULT_VARIABLE ZLIB_CMAKE_SUCCESS)
 
   # rebuild as release
   message(STATUS "Building zlib lib (Release) .. ")
