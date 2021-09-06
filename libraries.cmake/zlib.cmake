@@ -32,7 +32,7 @@ if (MSVC)
   file(APPEND ${LOGFILE} ${ZLIB_CMAKE_OUT})
   file(APPEND ${LOGFILE} ${ZLIB_CMAKE_ERR})
 
-  if (NOT ZLIB_CMAKE_SUCCESS EQUAL 0)
+  if(NOT ZLIB_CMAKE_SUCCESS EQUAL 0)
     message(FATAL_ERROR "Generating zlib build system .. failed")
   else()
     message(STATUS "Generating zlib build system .. done")
@@ -49,7 +49,7 @@ if (MSVC)
   file(APPEND ${LOGFILE} ${ZLIB_BUILD_OUT})
   file(APPEND ${LOGFILE} ${ZLIB_BUILD_ERR})
 
-  if (NOT ZLIB_BUILD_SUCCESS EQUAL 0)
+  if(NOT ZLIB_BUILD_SUCCESS EQUAL 0)
     message(FATAL_ERROR "Building zlib lib (Debug) .. failed")
   else()
     message(STATUS "Building zlib lib (Debug) .. done")
@@ -66,7 +66,7 @@ if (MSVC)
   file(APPEND ${LOGFILE} ${ZLIB_BUILD_OUT})
   file(APPEND ${LOGFILE} ${ZLIB_BUILD_ERR})
 
-  if (NOT ZLIB_BUILD_SUCCESS EQUAL 0)
+  if(NOT ZLIB_BUILD_SUCCESS EQUAL 0)
     message(FATAL_ERROR "Building zlib lib (Release) .. failed")
   else()
     message(STATUS "Building zlib lib (Release) .. done")
@@ -79,7 +79,7 @@ else() ## Linux/MacOS
 
   message(STATUS "Generating zlib build system .. ")
 
-  if (APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET)
+  if(APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET)
       execute_process(COMMAND ${CMAKE_COMMAND}
                               -G "${CMAKE_GENERATOR}"
                               -D CMAKE_BUILD_TYPE=Release
