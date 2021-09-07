@@ -75,19 +75,19 @@ if (MSVC)
 else() ## Linux/MacOS
 
   if(APPLE)
-    set( _ZLIB_CMAKE_ARGS
-      "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
-      "-DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}"
+    set(_ZLIB_CMAKE_ARGS
+        "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+        "-DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}"
+        "-DCMAKE_MACOSX_RPATH=TRUE"
       )
   else()
-    set( _ZLIB_CMAKE_ARGS "")
+    set(_ZLIB_CMAKE_ARGS "")
   endif()
 
   # CFLAGS for libsvm compiler (see libsvm Makefile)
-  set(ZLIB_CFLAGS "-Wall" "-O3" "-fPIC")
+  set(ZLIB_CFLAGS "-Wall")
 
   message(STATUS "Generating zlib build system .. ")
-
   execute_process(COMMAND ${CMAKE_COMMAND}
                           ${_ZLIB_CMAKE_ARGS}
                           -G "${CMAKE_GENERATOR}"
@@ -100,22 +100,28 @@ else() ## Linux/MacOS
                   ERROR_VARIABLE ZLIB_CMAKE_ERR
                   RESULT_VARIABLE ZLIB_CMAKE_SUCCESS)
 
+  message(STATUS "cmake out: ${ZLIB_CMAKE_OUT}")
+  message(STATUS "cmake error: ${ZLIB_CMAKE_ERR}")
+
   # rebuild as release
   message(STATUS "Building zlib lib (Release) .. ")
-  execute_process(COMMAND ${CMAKE_COMMAND} --build ${ZLIB_DIR} --target install
+  execute_process(COMMAND ${CMAKE_COMMAND}
+                  --build ${ZLIB_DIR}
+                  --target install
                   WORKING_DIRECTORY ${ZLIB_DIR}
                   OUTPUT_VARIABLE ZLIB_BUILD_OUT
                   ERROR_VARIABLE ZLIB_BUILD_ERR
                   RESULT_VARIABLE ZLIB_BUILD_SUCCESS)
+
   # output to logfile
   file(APPEND ${LOGFILE} ${ZLIB_BUILD_OUT})
   file(APPEND ${LOGFILE} ${ZLIB_BUILD_ERR})
 
   if(APPLE) ## Somehow libz does not add the path to the install_name. -> Problems while resolving dependecies during shipping
-  execute_process(COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id ${PROJECT_BINARY_DIR}/lib/libz.1.dylib ${PROJECT_BINARY_DIR}/lib/libz.1.dylib)
+    execute_process(COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id ${PROJECT_BINARY_DIR}/lib/libz.1.dylib ${PROJECT_BINARY_DIR}/lib/libz.1.dylib)
   endif()
 
-  if (NOT ZLIB_BUILD_SUCCESS EQUAL 0)
+  if(NOT ZLIB_BUILD_SUCCESS EQUAL 0)
     message(FATAL_ERROR "Building zlib lib (Release) .. failed")
   else()
     message(STATUS "Building zlib lib (Release) .. done")
