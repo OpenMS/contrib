@@ -85,7 +85,7 @@ else() ## Linux/MacOS
   endif()
 
   # CFLAGS for libsvm compiler (see libsvm Makefile)
-  set(ZLIB_CFLAGS "-Wall")
+  set(ZLIB_CFLAGS "-Wall -O3 -fPIC")
 
   message(STATUS "Generating zlib build system .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
