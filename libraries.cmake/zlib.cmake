@@ -100,9 +100,6 @@ else() ## Linux/MacOS
                   ERROR_VARIABLE ZLIB_CMAKE_ERR
                   RESULT_VARIABLE ZLIB_CMAKE_SUCCESS)
 
-  message(STATUS "cmake out: ${ZLIB_CMAKE_OUT}")
-  message(STATUS "cmake error: ${ZLIB_CMAKE_ERR}")
-
   # rebuild as release
   message(STATUS "Building zlib lib (Release) .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}

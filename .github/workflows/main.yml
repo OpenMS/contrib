@@ -73,8 +73,6 @@ jobs:
            
     #TODO switch to V2 once it is released (this is to only upload relevant folders)
     - uses: actions/upload-artifact@v1
-      if: always()
       with:
         name: contrib-build-${{runner.os}}
         path: contrib-build
-       
