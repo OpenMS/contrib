@@ -12,97 +12,58 @@ else()
 endif()
 OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_OPENMP "OPENMP" "README")
 
-# see https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/libomp.rb
-# Disable LIBOMP_INSTALL_ALIASES, otherwise the library is installed as
-# libgomp alias which can conflict with GCC's libgomp.
-set(_GENERAL_OPENMP_CMAKE_ARGS
-    "-DLIBOMP_INSTALL_ALIASES=OFF"
-    "-DLIBOMP_ENABLE_SHARED=OFF"
-    )
+if (APPLE)
+  # see https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/libomp.rb
+  # Disable LIBOMP_INSTALL_ALIASES, otherwise the library is installed as
+  # libgomp alias which can conflict with GCC's libgomp.
 
-if (MSVC)
-  message(STATUS "Generating openmp build system .. ")
-  execute_process(COMMAND ${CMAKE_COMMAND}
-                          ${_GENERAL_OPENMP_CMAKE_ARGS}
-                          -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
-                          -D INSTALL_BIN_DIR=${PROJECT_BINARY_DIR}/lib
-                          -G "${CMAKE_GENERATOR}"
-                          ${ARCHITECTURE_OPTION_CMAKE}
-                          -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
-                          ${OPENMP_EXTRA_CMAKE_FLAG}
-                          .
-                  WORKING_DIRECTORY ${OPENMP_DIR}
-                  OUTPUT_VARIABLE OPENMP_CMAKE_OUT
-                  ERROR_VARIABLE OPENMP_CMAKE_ERR
-                  RESULT_VARIABLE OPENMP_CMAKE_SUCCESS)
+  set(_OPENMP_CMAKE_ARGS
+      "-DLIBOMP_INSTALL_ALIASES=OFF"
+      "-DLIBOMP_ENABLE_SHARED=OFF"
+      "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+      "-DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}"
+      "-DCMAKE_MACOSX_RPATH=TRUE"
+      )
 
-  # build libomp
-  message(STATUS "Building libomp (Release) .. ")
-  execute_process(COMMAND ${CMAKE_COMMAND}
-                  --build ${OPENMP_DIR}
-                  --target INSTALL
-                  WORKING_DIRECTORY ${OPENMP_DIR}
-                  OUTPUT_VARIABLE OPENMP_BUILD_OUT
-                  ERROR_VARIABLE OPENMP_BUILD_ERR
-                  RESULT_VARIABLE OPENMP_BUILD_SUCCESS)
+# CFLAGS for openmp compiler
+set(OPENMP_CFLAGS "-Wall -O3 -fPIC")
 
-  # output to logfile
-  file(APPEND ${LOGFILE} ${OPENMP_BUILD_OUT})
-  file(APPEND ${LOGFILE} ${OPENMP_BUILD_ERR})
+message(STATUS "Generating libomp build system .. ")
+execute_process(COMMAND ${CMAKE_COMMAND}
+                        ${_GENERAL_OPENMP_CMAKE_ARGS}
+                        ${_OPENMP_CMAKE_ARGS}
+                        -G "${CMAKE_GENERATOR}"
+                        -D CMAKE_BUILD_TYPE=Release
+                        -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
+                        -D CMAKE_C_FLAGS=${OPENMP_CFLAGS}
+                        .
+                WORKING_DIRECTORY ${OPENMP_DIR}
+                OUTPUT_VARIABLE OPENMP_CMAKE_OUT
+                ERROR_VARIABLE OPENMP_CMAKE_ERR
+                RESULT_VARIABLE OPENMP_CMAKE_SUCCESS)
 
-  if(NOT OPENMP_BUILD_SUCCESS EQUAL 0)
-    message(FATAL_ERROR "Building libomp lib (Release) .. failed")
-  else()
-    message(STATUS "Building libomp lib (Release) .. done")
-  endif()
+# rebuild as release
+message(STATUS "Building libomp (Release) .. ")
+execute_process(COMMAND ${CMAKE_COMMAND}
+                --build ${OPENMP_DIR}
+                --target install
+                WORKING_DIRECTORY ${OPENMP_DIR}
+                OUTPUT_VARIABLE OPENMP_BUILD_OUT
+                ERROR_VARIABLE OPENMP_BUILD_ERR
+                RESULT_VARIABLE OPENMP_BUILD_SUCCESS)
+
+# output to logfile
+file(APPEND ${LOGFILE} ${OPENMP_BUILD_OUT})
+file(APPEND ${LOGFILE} ${OPENMP_BUILD_ERR})
+
+if(NOT OPENMP_BUILD_SUCCESS EQUAL 0)
+  message(FATAL_ERROR "Building libomp .. failed")
+else()
+  message(STATUS "Building libomp .. done")
+endif()
 
 else()
-  if (APPLE)
-    set(_OPENMP_CMAKE_ARGS
-        "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
-        "-DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}"
-        "-DCMAKE_MACOSX_RPATH=TRUE"
-       )
-  else()
-    set(_OPENMP_CMAKE_ARGS "")
-  endif()
-
-  # CFLAGS for openmp compiler
-  set(OPENMP_CFLAGS "-Wall -O3 -fPIC")
-
-  message(STATUS "Generating libomp build system .. ")
-  execute_process(COMMAND ${CMAKE_COMMAND}
-                          ${_GENERAL_OPENMP_CMAKE_ARGS}
-                          ${_OPENMP_CMAKE_ARGS}
-                          -G "${CMAKE_GENERATOR}"
-                          -D CMAKE_BUILD_TYPE=Release
-                          -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
-                          -D CMAKE_C_FLAGS=${OPENMP_CFLAGS}
-                          .
-                  WORKING_DIRECTORY ${OPENMP_DIR}
-                  OUTPUT_VARIABLE OPENMP_CMAKE_OUT
-                  ERROR_VARIABLE OPENMP_CMAKE_ERR
-                  RESULT_VARIABLE OPENMP_CMAKE_SUCCESS)
-
-  # rebuild as release
-  message(STATUS "Building libomp (Release) .. ")
-  execute_process(COMMAND ${CMAKE_COMMAND}
-                  --build ${OPENMP_DIR}
-                  --target install
-                  WORKING_DIRECTORY ${OPENMP_DIR}
-                  OUTPUT_VARIABLE OPENMP_BUILD_OUT
-                  ERROR_VARIABLE OPENMP_BUILD_ERR
-                  RESULT_VARIABLE OPENMP_BUILD_SUCCESS)
-
-  # output to logfile
-  file(APPEND ${LOGFILE} ${OPENMP_BUILD_OUT})
-  file(APPEND ${LOGFILE} ${OPENMP_BUILD_ERR})
-
-  if(NOT OPENMP_BUILD_SUCCESS EQUAL 0)
-    message(FATAL_ERROR "Building libomp (Release) .. failed")
-  else()
-    message(STATUS "Building libomp (Release) .. done")
-  endif()
+  message(STATUS "libomp will only be compiled on macOS")
 
 endif()
 
