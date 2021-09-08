@@ -93,8 +93,8 @@
 ##       - however: exec_process seems to handle our arguments incorrectly (at least on Windows). Check functionality before you commit!
 
 # Determine what to build (all or single library)
-set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK,KISSFFT")
-set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC" "SQLITE" "KISSFFT" "HDF5")
+set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP")
+set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC" "SQLITE" "KISSFFT" "HDF5" "OPENMP")
 
 # check build type
 if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
@@ -198,11 +198,11 @@ set(WILDMAGIC_DIR ${CONTRIB_BIN_SOURCE_DIR}/WildMagic5)
 set(KISSFFT_DIR ${CONTRIB_BIN_SOURCE_DIR}/kissfft)
 set(SQLITE_DIR ${CONTRIB_BIN_SOURCE_DIR}/sqlite-autoconf-3150000)
 set(HDF5_DIR ${CONTRIB_BIN_SOURCE_DIR}/hdf5-1.10.5)
-
+set(OPENMP_DIR ${CONTRIB_BIN_SOURCE_DIR}/openmp-12.0.1.src)
 
 ## source(archive) paths
 ## PLEASE upload all source archives to
-##     http://ftp.mi.fu-berlin.de/pub/OpenMS/contrib-sources/
+##     https://abibuilder.informatik.uni-tuebingen.de/archive/openms/contrib/source_packages/
 ## and provide the necessary information below
 ##  ARCHIVE_<LIBNAME> the name of the archive as it was uploaded
 ##  ARCHIVE_<LIBNAME>_TAR the name of the tar in the tar.gz
@@ -278,6 +278,10 @@ set(ARCHIVE_HDF5 hdf5-1.10.5.tar.gz)
 set(ARCHIVE_HDF5_TAR hdf5-1.10.5.tar)
 set(ARCHIVE_HDF5_SHA1 "541bdf33b1a9676a8340db958a277993a4193189")
 
+set(ARCHIVE_OPENMP openmp-12.0.1.src.tar.xz)
+set(ARCHIVE_OPENMP_tar openmp-12.0.1.src.tar)
+set(ARCHIVE_OPENMP_SHA1 "7c051f6050ff23763b253a757927774b5eeaf644")
+
 ## necessary for clean up .. change if install process of library changes
 set(INCLUDE_DIR_BOOST ${CONTRIB_BIN_INCLUDE_DIR}/boost)
 set(INCLUDE_DIR_XERCES ${CONTRIB_BIN_INCLUDE_DIR}/xercesc)
@@ -286,6 +290,7 @@ set(INCLUDE_DIR_COINOR ${CONTRIB_BIN_INCLUDE_DIR}/coin)
 set(INCLUDE_DIR_EIGEN ${CONTRIB_BIN_INCLUDE_DIR}/eigen3)
 set(INCLUDE_DIR_WILDMAGIC ${CONTRIB_BIN_INCLUDE_DIR}/WildMagic5)
 set(INCLUDE_DIR_KISSFFT ${CONTRIB_BIN_INCLUDE_DIR}/kissfft)
+set(INCLUDE_DIR_OPENMP ${CONTRIB_BIN_INCLUDE_DIR}/openmp.src)
 
 ## hack for simple libs that do not have include directories
 set(INCLUDE_FILES_LIBSVM ${CONTRIB_BIN_INCLUDE_DIR}/svm.h)
@@ -493,6 +498,7 @@ include ("${CMAKE_SOURCE_DIR}/libraries.cmake/wildmagic.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/kissfft.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/sqlite.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/hdf5.cmake")
+include ("${CMAKE_SOURCE_DIR}/libraries.cmake/openmp.cmake")
 
 ## build mac os x specific C/C++ flags
 set( OPENMS_CONTRIB_MACOSX_MIXED_MODE 0 CACHE INTERNAL "building multiple architectures on MacOSX" FORCE)
@@ -627,10 +633,23 @@ if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "SQLITE")
   OPENMS_COPY_LIBS("SQLITE")
 endif()
 
+##################################################
+###       HDF5                                 ###
+##################################################
+
 if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "HDF5")
   OPENMS_CLEAN_LIB("HDF5")
   OPENMS_CONTRIB_BUILD_HDF5()
   OPENMS_COPY_LIBS("HDF5")
+endif()
+
+##################################################
+###       OPENMP                               ###
+##################################################
+if (BUILD_TYPE STREQUAL "OPENMP")
+  OPENMS_CLEAN_LIB("OPENMP")
+  OPENMS_CONTRIB_BUILD_OPENMP()
+  OPENMS_COPY_LIBS("OPENMP")
 endif()
 
 ## finally copy README.txt to project-binary directory to mark process complete
