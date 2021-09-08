@@ -12,9 +12,18 @@ else()
 endif()
 OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_OPENMP "OPENMP" "README")
 
+# see https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/libomp.rb
+# Disable LIBOMP_INSTALL_ALIASES, otherwise the library is installed as
+# libgomp alias which can conflict with GCC's libgomp.
+set(_GENERAL_OPENMP_CMAKE_ARGS
+    "-DLIBOMP_INSTALL_ALIASES=OFF"
+    "-DLIBOMP_ENABLE_SHARED=OFF"
+    )
+
 if (MSVC)
   message(STATUS "Generating openmp build system .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
+                          ${_GENERAL_OPENMP_CMAKE_ARGS}
                           -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
                           -D INSTALL_BIN_DIR=${PROJECT_BINARY_DIR}/lib
                           -G "${CMAKE_GENERATOR}"
@@ -27,40 +36,16 @@ if (MSVC)
                   ERROR_VARIABLE OPENMP_CMAKE_ERR
                   RESULT_VARIABLE OPENMP_CMAKE_SUCCESS)
 
-  # output to logfile
-  file(APPEND ${LOGFILE} ${OPENMP_CMAKE_OUT})
-  file(APPEND ${LOGFILE} ${OPENMP_CMAKE_ERR})
-
-  if(NOT OPENMP_CMAKE_SUCCESS EQUAL 0)
-    message(FATAL_ERROR "Generating libomp build system .. failed")
-  else()
-    message(STATUS "Generating libomp build system .. done")
-  endif()
-
-  message(STATUS "Building libomp (Debug) .. ")
-  execute_process(COMMAND ${CMAKE_COMMAND} --build ${OPENMP_DIR} --target INSTALL --config Debug
-                  WORKING_DIRECTORY ${OPENMP_DIR}
-                  OUTPUT_VARIABLE OPENMP_BUILD_OUT
-                  ERROR_VARIABLE OPENMP_BUILD_ERR
-                  RESULT_VARIABLE OPENMP_BUILD_SUCCESS)
-
-  # output to logfile
-  file(APPEND ${LOGFILE} ${OPENMP_BUILD_OUT})
-  file(APPEND ${LOGFILE} ${OPENMP_BUILD_ERR})
-
-  if(NOT OPENMP_BUILD_SUCCESS EQUAL 0)
-    message(FATAL_ERROR "Building libomp (Debug) .. failed")
-  else()
-    message(STATUS "Building libomp (Debug) .. done")
-  endif()
-
-  # rebuild as release
+  # build libomp
   message(STATUS "Building libomp (Release) .. ")
-  execute_process(COMMAND ${CMAKE_COMMAND} --build ${OPENMP_DIR} --target INSTALL --config Release
+  execute_process(COMMAND ${CMAKE_COMMAND}
+                  --build ${OPENMP_DIR}
+                  --target INSTALL
                   WORKING_DIRECTORY ${OPENMP_DIR}
                   OUTPUT_VARIABLE OPENMP_BUILD_OUT
                   ERROR_VARIABLE OPENMP_BUILD_ERR
                   RESULT_VARIABLE OPENMP_BUILD_SUCCESS)
+
   # output to logfile
   file(APPEND ${LOGFILE} ${OPENMP_BUILD_OUT})
   file(APPEND ${LOGFILE} ${OPENMP_BUILD_ERR})
@@ -87,6 +72,7 @@ else()
 
   message(STATUS "Generating libomp build system .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
+                          ${_GENERAL_OPENMP_CMAKE_ARGS}
                           ${_OPENMP_CMAKE_ARGS}
                           -G "${CMAKE_GENERATOR}"
                           -D CMAKE_BUILD_TYPE=Release
