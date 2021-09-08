@@ -8,7 +8,7 @@ OPENMS_LOGHEADER_LIBRARY("libomp")
 if(MSVC)
   set(ZIP_ARGS "x -y -osrc")
 else()
-  set(ZIP_ARGS "xzf")
+  set(ZIP_ARGS "xJf")
 endif()
 OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_OPENMP "OPENMP" "README")
 
