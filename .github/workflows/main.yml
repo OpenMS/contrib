@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         path: contrib
-      
+
     - name: Install prerequisites
       shell: bash
       run: |
@@ -38,7 +38,7 @@ jobs:
               echo "$RUNNER_OS not supported"
               exit 1
          fi
-         
+
     # TODO cmake should be new enough now
     #- name: Installing cmake (only linux support)
     #  run: |
@@ -47,20 +47,21 @@ jobs:
     #      curl -sSL -O https://cmake.org/files/v3.15/cmake-3.15.3-Linux-x86_64.tar.gz
     #      sudo tar zxf cmake-3.15.3-Linux-x86_64.tar.gz -C $GITHUB_WORKSPACE/cmake
     #      echo ::set-env PATH=$GITHUB_WORKSPACE/cmake/bin:$PATH
-      
+
     # https://github.com/marketplace/actions/visual-studio-shell
     - name: Set up Visual Studio shell
       uses: egor-tensin/vs-shell@v2
       with:
         arch: x64
-      
+
     # TODO use appropriate number of cores
     - name: Build contrib
       run: |
            mkdir contrib-build
            cd contrib-build
            cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=4 ../contrib
-           
+           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=4 ../contrib
+
     # TODO hope that they finally release a decent uploading action.
     - name: Clean build
       shell: bash
@@ -70,7 +71,7 @@ jobs:
            rm -rf src
            rm -rf CMakeFiles
            find . -maxdepth 1 -type f -not -name 'contrib_build.log' -delete
-           
+
     #TODO switch to V2 once it is released (this is to only upload relevant folders)
     - uses: actions/upload-artifact@v1
       with:
