@@ -31,6 +31,7 @@ message(STATUS "Generating libomp build system .. ")
 execute_process(COMMAND ${CMAKE_COMMAND}
                         ${_OPENMP_CMAKE_ARGS}
                         -G "${CMAKE_GENERATOR}"
+                        -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
                         -D CMAKE_BUILD_TYPE=Release
                         -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                         -D CMAKE_C_FLAGS=${OPENMP_CFLAGS}
