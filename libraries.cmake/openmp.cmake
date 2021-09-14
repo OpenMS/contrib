@@ -19,7 +19,6 @@ if (APPLE)
 
   set(_OPENMP_CMAKE_ARGS
       "-DLIBOMP_INSTALL_ALIASES=OFF"
-      "-DLIBOMP_ENABLE_SHARED=OFF"
       "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
       "-DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}"
       "-DCMAKE_MACOSX_RPATH=TRUE"
@@ -30,9 +29,9 @@ set(OPENMP_CFLAGS "-Wall -O3 -fPIC")
 
 message(STATUS "Generating libomp build system .. ")
 execute_process(COMMAND ${CMAKE_COMMAND}
-                        ${_GENERAL_OPENMP_CMAKE_ARGS}
                         ${_OPENMP_CMAKE_ARGS}
                         -G "${CMAKE_GENERATOR}"
+                        -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
                         -D CMAKE_BUILD_TYPE=Release
                         -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                         -D CMAKE_C_FLAGS=${OPENMP_CFLAGS}
