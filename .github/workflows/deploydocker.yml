@@ -25,6 +25,9 @@ jobs:
             ## Remove release/ from release branch name
             echo "##[set-output name=tag;]$(echo ${BRANCH#release/})"
         id: tag_name
+      - name: Downcase REPO
+        run: echo "##[set-output name=repo;]$(echo ${GITHUB_REPOSITORY,,})"
+        id: downcase_repo
       - name: Checkout Dockerfiles
         shell: bash # uses git bash on windows
         run: |
@@ -44,4 +47,4 @@ jobs:
           push: true # Will only build if this is not here
           file: dockerfiles/contrib/Dockerfile
           tags: |
-            ghcr.io/${{ github.repository }}:${{ steps.tag_name.outputs.tag }}
+            ghcr.io/${{ steps.downcase_repo.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
