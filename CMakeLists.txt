@@ -343,11 +343,14 @@ if (MSVC)
   elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 16.*") ## VS2019
     set(TMP_VS_VERSION "16")
     set(TMP_MSVC_TOOLSET_VERSION "14.2")
+  elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 17.*") ## VS2019
+    set(TMP_VS_VERSION "17")
+    set(TMP_MSVC_TOOLSET_VERSION "14.3")
   else()
     if (OVERRIDE_GENERATOR)
       message(FATAL_ERROR "Chosen to override the Generator check, proceed with caution.")
     else()
-      message(FATAL_ERROR "Please use 'Visual Studio ??' (??={14, 15, 16}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
+      message(FATAL_ERROR "Please use 'Visual Studio ??' (??={14, 15, 16, 17}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
     endif()
   endif()
   ## For coinor to find the correct names of the VS solutions
