@@ -1,5 +1,5 @@
---- zlib-1.2.11/CMakeLists.txt	2017-01-15 18:29:40.000000000 +0100
-+++ ../src/zlib-1.2.11/CMakeLists.txt	2022-03-11 09:51:54.964118856 +0100
+--- CMakeLists.txt	2017-01-15 18:29:40.000000000 +0100
++++ CMakeLists.txt	2022-03-11 09:51:54.964118856 +0100
 @@ -183,12 +183,15 @@
      set(ZLIB_DLL_SRCS ${CMAKE_CURRENT_BINARY_DIR}/zlib1rc.obj)
  endif(MINGW)
