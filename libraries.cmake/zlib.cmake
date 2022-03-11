@@ -12,6 +12,10 @@ else()
 endif()
 OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_ZLIB "ZLIB" "README")
 
+set(_PATCH_FILE "${PATCH_DIR}/zlib/zlib_mind_libtype.patch")
+set(_PATCHED_FILE "${ZLIB_DIR}/CMakeLists.txt")
+OPENMS_PATCH( _PATCH_FILE ZLIB_DIR _PATCHED_FILE)
+
 ## build the obj/lib
 if (MSVC)
   message(STATUS "Generating zlib build system .. ")
