@@ -343,6 +343,9 @@ if (MSVC)
   elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 16.*") ## VS2019
     set(TMP_VS_VERSION "16")
     set(TMP_MSVC_TOOLSET_VERSION "14.2")
+  elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 17.*") ## VS2022
+    set(TMP_VS_VERSION "17")
+    set(TMP_MSVC_TOOLSET_VERSION "14.3")
   else()
     if (OVERRIDE_GENERATOR)
       message(FATAL_ERROR "Chosen to override the Generator check, proceed with caution.")
