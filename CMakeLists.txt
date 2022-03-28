@@ -232,6 +232,10 @@ set(ARCHIVE_ZLIB_SHA1 "56559d4c03beaedb0be1c7481d6a371e2458a496")
 
 set(ARCHIVE_BOOST boost_1_78_0.tar.gz)
 set(ARCHIVE_BOOST_TAR  boost_1_78_0.tar)
+#set(ARCHIVE_BOOST_SHA1 "")
+
+#set(ARCHIVE_BOOST boost_1_71_0.tar.gz)
+#set(ARCHIVE_BOOST_TAR  boost_1_71_0.tar)
 #set(ARCHIVE_BOOST_SHA1 "4f3846b0cd92ecdd56961484d757388fb07a2ada")
 
 #set(ARCHIVE_BOOST boost_1_67_0.tar.gz)
