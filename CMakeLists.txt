@@ -232,7 +232,7 @@ set(ARCHIVE_ZLIB_SHA1 "56559d4c03beaedb0be1c7481d6a371e2458a496")
 
 set(ARCHIVE_BOOST boost_1_78_0.tar.gz)
 set(ARCHIVE_BOOST_TAR  boost_1_78_0.tar)
-#set(ARCHIVE_BOOST_SHA1 "")
+set(ARCHIVE_BOOST_SHA1 "ff717ea23af2900e0ad3cae616b3e4ae43e68ad7")
 
 #set(ARCHIVE_BOOST boost_1_71_0.tar.gz)
 #set(ARCHIVE_BOOST_TAR  boost_1_71_0.tar)
@@ -258,9 +258,9 @@ set(ARCHIVE_GLPK glpk-4.46.tar.gz)
 set(ARCHIVE_GLPK_TAR  glpk-4.46.tar)
 set(ARCHIVE_GLPK_SHA1 "73d589452dc1d8d6a784b3f86f4268cae37420d7")
 
-set(ARCHIVE_COINOR CoinMP-1.8.3-vs19.tar.gz)
-set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3-vs19.tar)
-set(ARCHIVE_COINOR_SHA1 "d5df5605b2f3cd4c414dc91ce538daa5bbbef9cb")
+set(ARCHIVE_COINOR CoinMP-1.8.3-vs22.tar.gz)
+set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3-vs22.tar)
+set(ARCHIVE_COINOR_SHA1 "fa7db3c655755714818ea91a27e57afa61409903")
 
 set(ARCHIVE_EIGEN eigen-3.3.4.tar.gz)
 set(ARCHIVE_EIGEN_TAR  eigen-3.3.4.tar)
