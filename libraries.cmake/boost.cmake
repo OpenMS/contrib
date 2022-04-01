@@ -17,12 +17,6 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
     set(ZIP_ARGS "xzf")
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_BOOST "BOOST" "index.htm")
-
-  ## https://github.com/boostorg/build/pull/560
-  ## can be removed with boost 1.73
-  set(_PATCH_FILE "${PATCH_DIR}boost/boost_xcode11.patch")		
-  set(_PATCHED_FILE "${BOOST_DIR}/tools/build/src/tools/darwin.jam")		
-  OPENMS_PATCH( _PATCH_FILE BOOST_DIR _PATCHED_FILE)	
   
   if(MSVC) ## build boost library for windows
     
