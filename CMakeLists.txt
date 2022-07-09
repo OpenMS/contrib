@@ -93,8 +93,8 @@
 ##       - however: exec_process seems to handle our arguments incorrectly (at least on Windows). Check functionality before you commit!
 
 # Determine what to build (all or single library)
-set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK,KISSFFT")
-set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC" "SQLITE" "KISSFFT" "HDF5")
+set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP")
+set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC" "SQLITE" "KISSFFT" "HDF5" "OPENMP")
 
 # check build type
 if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
@@ -188,7 +188,7 @@ set (PATCH_DIR "${PROJECT_SOURCE_DIR}/patches/" CACHE STRING "Directory containi
 ## Warning: ensure these are all upper-case names!
 set(BZIP2_DIR ${CONTRIB_BIN_SOURCE_DIR}/bzip2-1.0.5)
 set(ZLIB_DIR ${CONTRIB_BIN_SOURCE_DIR}/zlib-1.2.11)
-set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost_1_71_0)
+set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost_1_78_0)
 set(XERCES_DIR ${CONTRIB_BIN_SOURCE_DIR}/Xerces-C_3_2_0)
 set(LIBSVM_DIR ${CONTRIB_BIN_SOURCE_DIR}/libsvm-3.12)
 set(GLPK_DIR ${CONTRIB_BIN_SOURCE_DIR}/glpk-4.46)
@@ -198,11 +198,11 @@ set(WILDMAGIC_DIR ${CONTRIB_BIN_SOURCE_DIR}/WildMagic5)
 set(KISSFFT_DIR ${CONTRIB_BIN_SOURCE_DIR}/kissfft)
 set(SQLITE_DIR ${CONTRIB_BIN_SOURCE_DIR}/sqlite-autoconf-3150000)
 set(HDF5_DIR ${CONTRIB_BIN_SOURCE_DIR}/hdf5-1.10.5)
-
+set(OPENMP_DIR ${CONTRIB_BIN_SOURCE_DIR}/openmp-12.0.1.src)
 
 ## source(archive) paths
 ## PLEASE upload all source archives to
-##     http://ftp.mi.fu-berlin.de/pub/OpenMS/contrib-sources/
+##     https://abibuilder.informatik.uni-tuebingen.de/archive/openms/contrib/source_packages/
 ## and provide the necessary information below
 ##  ARCHIVE_<LIBNAME> the name of the archive as it was uploaded
 ##  ARCHIVE_<LIBNAME>_TAR the name of the tar in the tar.gz
@@ -230,9 +230,13 @@ set(ARCHIVE_ZLIB zlib-1.2.11.tar.gz)
 set(ARCHIVE_ZLIB_TAR  zlib-1.2.11.tar)
 set(ARCHIVE_ZLIB_SHA1 "56559d4c03beaedb0be1c7481d6a371e2458a496")
 
-set(ARCHIVE_BOOST boost_1_71_0.tar.gz)
-set(ARCHIVE_BOOST_TAR  boost_1_71_0.tar)
-set(ARCHIVE_BOOST_SHA1 "4f3846b0cd92ecdd56961484d757388fb07a2ada")
+set(ARCHIVE_BOOST boost_1_78_0.tar.gz)
+set(ARCHIVE_BOOST_TAR  boost_1_78_0.tar)
+set(ARCHIVE_BOOST_SHA1 "ff717ea23af2900e0ad3cae616b3e4ae43e68ad7")
+
+#set(ARCHIVE_BOOST boost_1_71_0.tar.gz)
+#set(ARCHIVE_BOOST_TAR  boost_1_71_0.tar)
+#set(ARCHIVE_BOOST_SHA1 "4f3846b0cd92ecdd56961484d757388fb07a2ada")
 
 #set(ARCHIVE_BOOST boost_1_67_0.tar.gz)
 #set(ARCHIVE_BOOST_TAR  boost_1_67_0.tar)
@@ -254,9 +258,9 @@ set(ARCHIVE_GLPK glpk-4.46.tar.gz)
 set(ARCHIVE_GLPK_TAR  glpk-4.46.tar)
 set(ARCHIVE_GLPK_SHA1 "73d589452dc1d8d6a784b3f86f4268cae37420d7")
 
-set(ARCHIVE_COINOR CoinMP-1.8.3-vs19.tar.gz)
-set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3-vs19.tar)
-set(ARCHIVE_COINOR_SHA1 "d5df5605b2f3cd4c414dc91ce538daa5bbbef9cb")
+set(ARCHIVE_COINOR CoinMP-1.8.3-vs22.tar.gz)
+set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3-vs22.tar)
+set(ARCHIVE_COINOR_SHA1 "d12d7c707681c124785f81ea311d74cb157d5d20")
 
 set(ARCHIVE_EIGEN eigen-3.3.4.tar.gz)
 set(ARCHIVE_EIGEN_TAR  eigen-3.3.4.tar)
@@ -278,6 +282,10 @@ set(ARCHIVE_HDF5 hdf5-1.10.5.tar.gz)
 set(ARCHIVE_HDF5_TAR hdf5-1.10.5.tar)
 set(ARCHIVE_HDF5_SHA1 "541bdf33b1a9676a8340db958a277993a4193189")
 
+set(ARCHIVE_OPENMP openmp-12.0.1.src.tar.xz)
+set(ARCHIVE_OPENMP_tar openmp-12.0.1.src.tar)
+set(ARCHIVE_OPENMP_SHA1 "7c051f6050ff23763b253a757927774b5eeaf644")
+
 ## necessary for clean up .. change if install process of library changes
 set(INCLUDE_DIR_BOOST ${CONTRIB_BIN_INCLUDE_DIR}/boost)
 set(INCLUDE_DIR_XERCES ${CONTRIB_BIN_INCLUDE_DIR}/xercesc)
@@ -286,6 +294,7 @@ set(INCLUDE_DIR_COINOR ${CONTRIB_BIN_INCLUDE_DIR}/coin)
 set(INCLUDE_DIR_EIGEN ${CONTRIB_BIN_INCLUDE_DIR}/eigen3)
 set(INCLUDE_DIR_WILDMAGIC ${CONTRIB_BIN_INCLUDE_DIR}/WildMagic5)
 set(INCLUDE_DIR_KISSFFT ${CONTRIB_BIN_INCLUDE_DIR}/kissfft)
+set(INCLUDE_DIR_OPENMP ${CONTRIB_BIN_INCLUDE_DIR}/openmp.src)
 
 ## hack for simple libs that do not have include directories
 set(INCLUDE_FILES_LIBSVM ${CONTRIB_BIN_INCLUDE_DIR}/svm.h)
@@ -338,11 +347,14 @@ if (MSVC)
   elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 16.*") ## VS2019
     set(TMP_VS_VERSION "16")
     set(TMP_MSVC_TOOLSET_VERSION "14.2")
+  elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 17.*") ## VS2022
+    set(TMP_VS_VERSION "17")
+    set(TMP_MSVC_TOOLSET_VERSION "14.3")
   else()
     if (OVERRIDE_GENERATOR)
       message(FATAL_ERROR "Chosen to override the Generator check, proceed with caution.")
     else()
-      message(FATAL_ERROR "Please use 'Visual Studio ??' (??={14, 15, 16}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
+      message(FATAL_ERROR "Please use 'Visual Studio ??' (??={14, 15, 16, 17}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
     endif()
   endif()
   ## For coinor to find the correct names of the VS solutions
@@ -493,6 +505,7 @@ include ("${CMAKE_SOURCE_DIR}/libraries.cmake/wildmagic.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/kissfft.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/sqlite.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/hdf5.cmake")
+include ("${CMAKE_SOURCE_DIR}/libraries.cmake/openmp.cmake")
 
 ## build mac os x specific C/C++ flags
 set( OPENMS_CONTRIB_MACOSX_MIXED_MODE 0 CACHE INTERNAL "building multiple architectures on MacOSX" FORCE)
@@ -627,10 +640,23 @@ if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "SQLITE")
   OPENMS_COPY_LIBS("SQLITE")
 endif()
 
+##################################################
+###       HDF5                                 ###
+##################################################
+
 if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "HDF5")
   OPENMS_CLEAN_LIB("HDF5")
   OPENMS_CONTRIB_BUILD_HDF5()
   OPENMS_COPY_LIBS("HDF5")
+endif()
+
+##################################################
+###       OPENMP                               ###
+##################################################
+if (BUILD_TYPE STREQUAL "OPENMP")
+  OPENMS_CLEAN_LIB("OPENMP")
+  OPENMS_CONTRIB_BUILD_OPENMP()
+  OPENMS_COPY_LIBS("OPENMP")
 endif()
 
 ## finally copy README.txt to project-binary directory to mark process complete

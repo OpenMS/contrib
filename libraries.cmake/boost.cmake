@@ -17,12 +17,6 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
     set(ZIP_ARGS "xzf")
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_BOOST "BOOST" "index.htm")
-
-  ## https://github.com/boostorg/build/pull/560
-  ## can be removed with boost 1.73
-  set(_PATCH_FILE "${PATCH_DIR}boost/boost_xcode11.patch")		
-  set(_PATCHED_FILE "${BOOST_DIR}/tools/build/src/tools/darwin.jam")		
-  OPENMS_PATCH( _PATCH_FILE BOOST_DIR _PATCHED_FILE)	
   
   if(MSVC) ## build boost library for windows
     
@@ -68,8 +62,6 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
                          "--with-thread"
                          "--build-type=complete"
                          "--disable-icu"
-                         "-sZLIB_SOURCE=${ZLIB_DIR}"
-                         "-sBZIP2_SOURCE=${BZIP2_DIR}" 
                          "runtime-link=shared"
                          "link=${BOOST_BUILD_TYPE}" 
                          "${TOOLSET}")
@@ -167,11 +159,17 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
       set(BOOST_DEBUG_FLAGS "--debug-configuration -d+2")
     endif()
     # boost cmd (use b2 since sometimes the copying/symlinking from b2 to bjam fails)
-    set (BOOST_CMD "./b2 ${BOOST_DEBUG_FLAGS} architecture=x86 toolset=${_boost_toolchain} -j ${NUMBER_OF_JOBS} --disable-icu -sZLIB_SOURCE=${ZLIB_DIR} -sBZIP2_SOURCE=${BZIP2_DIR} link=${BOOST_BUILD_TYPE} cxxflags=-fPIC ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi")
+    set (BOOST_CMD "./b2 ${BOOST_DEBUG_FLAGS} architecture=x86 toolset=${_boost_toolchain} -j ${NUMBER_OF_JOBS} --disable-icu link=${BOOST_BUILD_TYPE} cxxflags=-fPIC ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi")
     
     # boost install
     message(STATUS "Installing Boost libraries (${BOOST_CMD}) ...")
-    execute_process(COMMAND ./b2 ${BOOST_DEBUG_FLAGS} architecture=x86 toolset=${_boost_toolchain} -j ${NUMBER_OF_JOBS} --disable-icu -sZLIB_SOURCE="${ZLIB_DIR}" -sBZIP2_SOURCE="${BZIP2_DIR}" link=${BOOST_BUILD_TYPE} "cxxflags=-fPIC ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG}" ${BOOST_LINKER_FLAGS}  install --build-type=complete --layout=tagged --threading=single,multi
+    execute_process(COMMAND ./b2 ${BOOST_DEBUG_FLAGS} architecture=x86 toolset=${_boost_toolchain} 
+                    -j ${NUMBER_OF_JOBS} 
+                    --disable-icu 
+                    link=${BOOST_BUILD_TYPE} "cxxflags=-fPIC ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG}" ${BOOST_LINKER_FLAGS}  install 
+                    --build-type=complete 
+                    --layout=tagged 
+                    --threading=single,multi
                     WORKING_DIRECTORY ${BOOST_DIR}
                     OUTPUT_VARIABLE BOOST_INSTALL_OUT
                     ERROR_VARIABLE BOOST_INSTALL_OUT

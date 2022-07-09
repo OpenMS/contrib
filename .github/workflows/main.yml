@@ -17,13 +17,16 @@ jobs:
           CMAKE_ARGS: -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9   
 
         - os: windows-latest
-          CMAKE_ARGS: -G"Visual Studio 16 2019" -A"x64"
+          CMAKE_ARGS: -G"Visual Studio 17 2022" -A"x64"
 
     steps:
     - uses: actions/checkout@v2
       with:
         path: contrib
-      
+    - name: Setup cmake
+      uses: jwlawson/actions-setup-cmake@v1.12
+      with:
+        cmake-version: '3.23.x'
     - name: Install prerequisites
       shell: bash
       run: |
@@ -38,29 +41,21 @@ jobs:
               echo "$RUNNER_OS not supported"
               exit 1
          fi
-         
-    # TODO cmake should be new enough now
-    #- name: Installing cmake (only linux support)
-    #  run: |
-    #      # Install a more recent version of CMake to test some 3.1+ features for e.g. coverage tests
-    #      # 3.7+ also fixes CPack issues of corrupted deb files...
-    #      curl -sSL -O https://cmake.org/files/v3.15/cmake-3.15.3-Linux-x86_64.tar.gz
-    #      sudo tar zxf cmake-3.15.3-Linux-x86_64.tar.gz -C $GITHUB_WORKSPACE/cmake
-    #      echo ::set-env PATH=$GITHUB_WORKSPACE/cmake/bin:$PATH
-      
+
     # https://github.com/marketplace/actions/visual-studio-shell
     - name: Set up Visual Studio shell
       uses: egor-tensin/vs-shell@v2
       with:
         arch: x64
-      
+
     # TODO use appropriate number of cores
     - name: Build contrib
       run: |
            mkdir contrib-build
            cd contrib-build
            cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=4 ../contrib
-           
+           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=4 ../contrib
+
     # TODO hope that they finally release a decent uploading action.
     - name: Clean build
       shell: bash
@@ -70,10 +65,9 @@ jobs:
            rm -rf src
            rm -rf CMakeFiles
            find . -maxdepth 1 -type f -not -name 'contrib_build.log' -delete
-           
+
     #TODO switch to V2 once it is released (this is to only upload relevant folders)
     - uses: actions/upload-artifact@v1
       with:
         name: contrib-build-${{runner.os}}
         path: contrib-build
-       
