@@ -1,3 +1,4 @@
+name: Deploy docker image (ubuntu) to ghcr.io
 on:
   workflow_dispatch:
   push:
