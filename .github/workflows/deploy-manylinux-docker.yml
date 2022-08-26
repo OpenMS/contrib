@@ -1,4 +1,4 @@
- name: Deploy manylinux docker image to ghrc.io
+name: Deploy manylinux docker image to ghrc.io
 
 on:
   workflow_dispatch:
