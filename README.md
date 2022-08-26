@@ -17,7 +17,7 @@ build the contrib since the actual source packages are
 only downloaded when built.
 
 You can find prebuilt versions and the used sources
-(e.g. for manual download) on our [archive](https://abibuilder.informatik.uni-tuebingen.de/archive/openms/contrib).
+(e.g. for manual download) on our [archive](https://abibuilder.cs.uni-tuebingen.de/archive/openms/contrib).
 
 Build
 ============

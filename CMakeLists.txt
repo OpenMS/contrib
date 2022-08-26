@@ -202,7 +202,7 @@ set(OPENMP_DIR ${CONTRIB_BIN_SOURCE_DIR}/openmp-12.0.1.src)
 
 ## source(archive) paths
 ## PLEASE upload all source archives to
-##     https://abibuilder.informatik.uni-tuebingen.de/archive/openms/contrib/source_packages/
+##     https://abibuilder.cs.uni-tuebingen.de/archive/openms/contrib/source_packages/
 ## and provide the necessary information below
 ##  ARCHIVE_<LIBNAME> the name of the archive as it was uploaded
 ##  ARCHIVE_<LIBNAME>_TAR the name of the tar in the tar.gz
