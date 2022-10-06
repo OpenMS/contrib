@@ -583,8 +583,8 @@ endif()
 ##################################################
 ###       GLPK                                 ###
 ##################################################
-
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "GLPK")
+# COIN-OR is the default
+if (BUILD_TYPE STREQUAL "GLPK")
   OPENMS_CLEAN_LIB("GLPK")
   OPENMS_CONTRIB_BUILD_GLPK()
   OPENMS_COPY_LIBS("GLPK")

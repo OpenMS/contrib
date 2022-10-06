@@ -30,6 +30,18 @@ libSVM
 	- URL: http://www.csie.ntu.edu.tw/~cjlin/libsvm/
 	- License.libSVM.txt
 
+OpenMP
+	- URL: https://github.com/llvm/llvm-project/tree/main/openmp
+	- License available at https://github.com/llvm/llvm-project/blob/main/openmp/LICENSE.TXT
+	
+QT5Base
+	- URL: https://github.com/qt/qtbase
+	- License available at https://www.gnu.org/licenses/lgpl-3.0
+	
+QT5SVG
+	- URL: https://github.com/qt/qtsvg/
+	- License available at https://www.gnu.org/licenses/lgpl-3.0
+	
 SQLite
 	- URL: https://sqlite.org/copyright.html
 	- "All of the code and documentation in SQLite has been dedicated to the public domain by the authors."
