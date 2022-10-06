@@ -614,7 +614,8 @@ endif()
 ###       WILDMAGIC                            ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "WILDMAGIC")
+# excluded from ALL since it is not necessary anymore
+if (BUILD_TYPE STREQUAL "WILDMAGIC")
   OPENMS_CLEAN_LIB("WILDMAGIC")
   OPENMS_CONTRIB_BUILD_WILDMAGIC()
   OPENMS_COPY_LIBS("WILDMAGIC")
@@ -624,7 +625,7 @@ endif()
 ###       KISSFFT                              ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "KISSFFT")
+if (BUILD_TYPE STREQUAL "KISSFFT")
   OPENMS_CLEAN_LIB("KISSFFT")
   OPENMS_CONTRIB_BUILD_KISSFFT()
   OPENMS_COPY_LIBS("KISSFFT")
