@@ -101,8 +101,8 @@ if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
   message(STATUS "===========================================================================")
   message(STATUS " OpenMS contrib (dependency packages) installation.")
   message(STATUS " This program will allow you to compile and install all of the OpenMS")
-  message(STATUS " dependencies. Select the package you wish to install using the the command")
-  message(STATUS " -DBUILD_TYPE= or install all of them with -DBUILD_TYPE=ALL.")
+  message(STATUS " dependencies. Select the packages you wish to install using the the command")
+  message(STATUS " -DBUILD_TYPE=$SEMICOLON_SEP_LIST or install all of them with -DBUILD_TYPE=ALL.")
   message(STATUS "===========================================================================")
   message(STATUS "Valid BUILD_TYPEs are:")
   foreach( BT ${VALID_BUILD_TYPES} )
@@ -510,17 +510,22 @@ include ("${CMAKE_SOURCE_DIR}/libraries.cmake/openmp.cmake")
 ## build mac os x specific C/C++ flags
 set( OPENMS_CONTRIB_MACOSX_MIXED_MODE 0 CACHE INTERNAL "building multiple architectures on MacOSX" FORCE)
 
-list(FIND VALID_BUILD_TYPES ${BUILD_TYPE} list_pos)
-if( ${list_pos} EQUAL -1 )
-  message(STATUS "The BUILD_TYPE ${BUILD_TYPE} is invalid")
-  message(STATUS "Valid BUILD_TYPEs are:")
-  foreach( BT ${VALID_BUILD_TYPES} )
-    message(STATUS " * ${BT}")
-  endforeach( BT VALID_BUILD_TYPES )
-  message(FATAL_ERROR "Aborting contrib build!")
-else( ${list_pos} EQUAL -1 )
-  message(STATUS "BUILD_TYPE: ${BUILD_TYPE} (one of: ${VALID_BUILD_TYPES})")
-endif( ${list_pos} EQUAL -1 )
+cmake_policy(SET CMP0057 NEW)
+foreach(BTG IN LISTS BUILD_TYPE)
+  list(FIND VALID_BUILD_TYPES ${BTG} list_pos)
+  if( ${list_pos} EQUAL -1 )
+    message(STATUS "The BUILD_TYPE ${BUILD_TYPE} is invalid")
+    message(STATUS "Valid BUILD_TYPEs are:")
+    foreach( BT ${VALID_BUILD_TYPES} )
+      message(STATUS " * ${BT}")
+    endforeach( BT VALID_BUILD_TYPES )
+    message(FATAL_ERROR "Aborting contrib build!")
+  else( ${list_pos} EQUAL -1 )
+    message(STATUS "BUILD_TYPE: ${BTG} (one of: ${VALID_BUILD_TYPES})")
+  endif( ${list_pos} EQUAL -1 )
+endforeach()
+
+
 
 set( FORCE_REBUILD OFF CACHE BOOL "All installation and build traces of the contrib packages will be removed before building.")
 message(STATUS "FORCE_REBUILD: ${FORCE_REBUILD}")
@@ -538,7 +543,7 @@ set( BUILD_SHARED_LIBRARIES Off CACHE BOOL "Builds all contrib libraries as shar
 ###       LIBSVM                               ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "LIBSVM")
+if (BUILD_TYPE STREQUAL "ALL" OR "LIBSVM" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("LIBSVM")
   OPENMS_CONTRIB_BUILD_LIBSVM()
 endif()
@@ -547,7 +552,7 @@ endif()
 ###       XERCES                               ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "XERCESC")
+if (BUILD_TYPE STREQUAL "ALL" OR "XERCES" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("XERCES")
   OPENMS_CONTRIB_BUILD_XERCESC()
 endif()
@@ -556,7 +561,7 @@ endif()
 ###       BZIP2                                ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "BZIP2")
+if (BUILD_TYPE STREQUAL "ALL" OR "BZIP2" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("BZIP2")
   OPENMS_CONTRIB_BUILD_BZIP2()
 endif()
@@ -565,7 +570,7 @@ endif()
 ###       ZLIB                                 ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "ZLIB")
+if (BUILD_TYPE STREQUAL "ALL" OR "ZLIB" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("ZLIB")
   OPENMS_CONTRIB_BUILD_ZLIB()
 endif()
@@ -574,7 +579,7 @@ endif()
 ###       BOOST                                ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "BOOST")
+if (BUILD_TYPE STREQUAL "ALL" OR "BOOST" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("BOOST")
   OPENMS_CONTRIB_BUILD_BOOST()
 endif()
@@ -584,7 +589,7 @@ endif()
 ###       GLPK                                 ###
 ##################################################
 # COIN-OR is the default
-if (BUILD_TYPE STREQUAL "GLPK")
+if ("GLPK" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("GLPK")
   OPENMS_CONTRIB_BUILD_GLPK()
   OPENMS_COPY_LIBS("GLPK")
@@ -594,7 +599,7 @@ endif()
 ###       COIN-OR                              ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "COINOR")
+if (BUILD_TYPE STREQUAL "ALL" OR "COINOR" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("COINOR")
   OPENMS_CONTRIB_BUILD_COINOR()
   OPENMS_COPY_LIBS("COINOR")
@@ -604,7 +609,7 @@ endif()
 ###       EIGEN3                               ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "EIGEN")
+if (BUILD_TYPE STREQUAL "ALL" OR "EIGEN" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("EIGEN")
   OPENMS_CONTRIB_BUILD_EIGEN()
   OPENMS_COPY_LIBS("EIGEN")
@@ -615,7 +620,7 @@ endif()
 ##################################################
 
 # excluded from ALL since it is not necessary anymore
-if (BUILD_TYPE STREQUAL "WILDMAGIC")
+if ("WILDMAGIC" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("WILDMAGIC")
   OPENMS_CONTRIB_BUILD_WILDMAGIC()
   OPENMS_COPY_LIBS("WILDMAGIC")
@@ -625,7 +630,7 @@ endif()
 ###       KISSFFT                              ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "KISSFFT")
+if ("KISSFFT" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("KISSFFT")
   OPENMS_CONTRIB_BUILD_KISSFFT()
   OPENMS_COPY_LIBS("KISSFFT")
@@ -635,7 +640,7 @@ endif()
 ###       SQLITE                               ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "SQLITE")
+if (BUILD_TYPE STREQUAL "ALL" OR "SQLITE" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("SQLITE")
   OPENMS_CONTRIB_BUILD_SQLITE()
   OPENMS_COPY_LIBS("SQLITE")
@@ -645,7 +650,7 @@ endif()
 ###       HDF5                                 ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "HDF5")
+if (BUILD_TYPE STREQUAL "ALL" OR "HDF5" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("HDF5")
   OPENMS_CONTRIB_BUILD_HDF5()
   OPENMS_COPY_LIBS("HDF5")
@@ -654,7 +659,7 @@ endif()
 ##################################################
 ###       OPENMP                               ###
 ##################################################
-if (BUILD_TYPE STREQUAL "OPENMP")
+if ("OPENMP" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("OPENMP")
   OPENMS_CONTRIB_BUILD_OPENMP()
   OPENMS_COPY_LIBS("OPENMP")
