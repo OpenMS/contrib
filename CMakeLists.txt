@@ -552,7 +552,7 @@ endif()
 ###       XERCES                               ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR "XERCES" IN_LIST BUILD_TYPE)
+if (BUILD_TYPE STREQUAL "ALL" OR "XERCESC" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("XERCES")
   OPENMS_CONTRIB_BUILD_XERCESC()
 endif()
