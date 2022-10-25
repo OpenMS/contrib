@@ -24,7 +24,7 @@ jobs:
       with:
         path: contrib
     - name: Setup cmake
-      uses: jwlawson/actions-setup-cmake@v1.12
+      uses: jwlawson/actions-setup-cmake@v1.13
       with:
         cmake-version: '3.23.x'
     - name: Install prerequisites
@@ -67,7 +67,7 @@ jobs:
            find . -maxdepth 1 -type f -not -name 'contrib_build.log' -delete
 
     #TODO switch to V2 once it is released (this is to only upload relevant folders)
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v3
       with:
         name: contrib-build-${{runner.os}}
         path: contrib-build
