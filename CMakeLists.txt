@@ -94,7 +94,7 @@
 
 # Determine what to build (all or single library)
 set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP")
-set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC" "SQLITE" "KISSFFT" "HDF5" "OPENMP")
+set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "SQLITE" "KISSFFT" "HDF5" "OPENMP")
 
 # check build type
 if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
@@ -194,7 +194,6 @@ set(LIBSVM_DIR ${CONTRIB_BIN_SOURCE_DIR}/libsvm-3.12)
 set(GLPK_DIR ${CONTRIB_BIN_SOURCE_DIR}/glpk-4.46)
 set(COINOR_DIR ${CONTRIB_BIN_SOURCE_DIR}/CoinMP-1.8.3)
 set(EIGEN_DIR ${CONTRIB_BIN_SOURCE_DIR}/eigen-eigen-5a0156e40feb)
-set(WILDMAGIC_DIR ${CONTRIB_BIN_SOURCE_DIR}/WildMagic5)
 set(KISSFFT_DIR ${CONTRIB_BIN_SOURCE_DIR}/kissfft)
 set(SQLITE_DIR ${CONTRIB_BIN_SOURCE_DIR}/sqlite-autoconf-3150000)
 set(HDF5_DIR ${CONTRIB_BIN_SOURCE_DIR}/hdf5-1.10.5)
@@ -270,10 +269,6 @@ set(ARCHIVE_KISSFFT kissfft-130.tar.gz)
 set(ARCHIVE_KISSFFT_TAR kissfft-130.tar)
 set(ARCHIVE_KISSFFT_SHA1 "14ee3bd4a6480dc7fbec9a6d3a16d5d9fbbfc0fb")
 
-set(ARCHIVE_WILDMAGIC WildMagic5.tar.gz)
-set(ARCHIVE_WILDMAGIC_TAR  WildMagic5.tar)
-set(ARCHIVE_WILDMAGIC_SHA1 "e30b6f7f955c640dadfea09385a0a0ddec5b2997")
-
 set(ARCHIVE_SQLITE sqlite-autoconf-3150000.tar.gz)
 set(ARCHIVE_SQLITE_TAR  sqlite-autoconf-3150000.tar)
 set(ARCHIVE_SQLITE_SHA1 "b34cb4ee9710368598c62df0222f5c24dfc9c860")
@@ -292,7 +287,6 @@ set(INCLUDE_DIR_XERCES ${CONTRIB_BIN_INCLUDE_DIR}/xercesc)
 set(INCLUDE_DIR_GLPK ${CONTRIB_BIN_INCLUDE_DIR}/GLPK)
 set(INCLUDE_DIR_COINOR ${CONTRIB_BIN_INCLUDE_DIR}/coin)
 set(INCLUDE_DIR_EIGEN ${CONTRIB_BIN_INCLUDE_DIR}/eigen3)
-set(INCLUDE_DIR_WILDMAGIC ${CONTRIB_BIN_INCLUDE_DIR}/WildMagic5)
 set(INCLUDE_DIR_KISSFFT ${CONTRIB_BIN_INCLUDE_DIR}/kissfft)
 set(INCLUDE_DIR_OPENMP ${CONTRIB_BIN_INCLUDE_DIR}/openmp.src)
 
@@ -501,7 +495,6 @@ include ("${CMAKE_SOURCE_DIR}/libraries.cmake/bzip2.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/zlib.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/coinor.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/eigen.cmake")
-include ("${CMAKE_SOURCE_DIR}/libraries.cmake/wildmagic.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/kissfft.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/sqlite.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/hdf5.cmake")
@@ -613,17 +606,6 @@ if (BUILD_TYPE STREQUAL "ALL" OR "EIGEN" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("EIGEN")
   OPENMS_CONTRIB_BUILD_EIGEN()
   OPENMS_COPY_LIBS("EIGEN")
-endif()
-
-##################################################
-###       WILDMAGIC                            ###
-##################################################
-
-# excluded from ALL since it is not necessary anymore
-if ("WILDMAGIC" IN_LIST BUILD_TYPE)
-  OPENMS_CLEAN_LIB("WILDMAGIC")
-  OPENMS_CONTRIB_BUILD_WILDMAGIC()
-  OPENMS_COPY_LIBS("WILDMAGIC")
 endif()
 
 ##################################################
