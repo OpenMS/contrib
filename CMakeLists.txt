@@ -94,7 +94,7 @@
 
 # Determine what to build (all or single library)
 set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP")
-set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "SQLITE" "KISSFFT" "HDF5" "OPENMP")
+set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "KISSFFT" "HDF5" "OPENMP")
 
 # check build type
 if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
@@ -195,7 +195,6 @@ set(GLPK_DIR ${CONTRIB_BIN_SOURCE_DIR}/glpk-4.46)
 set(COINOR_DIR ${CONTRIB_BIN_SOURCE_DIR}/CoinMP-1.8.3)
 set(EIGEN_DIR ${CONTRIB_BIN_SOURCE_DIR}/eigen-eigen-5a0156e40feb)
 set(KISSFFT_DIR ${CONTRIB_BIN_SOURCE_DIR}/kissfft)
-set(SQLITE_DIR ${CONTRIB_BIN_SOURCE_DIR}/sqlite-autoconf-3150000)
 set(HDF5_DIR ${CONTRIB_BIN_SOURCE_DIR}/hdf5-1.10.5)
 set(OPENMP_DIR ${CONTRIB_BIN_SOURCE_DIR}/openmp-12.0.1.src)
 
@@ -269,10 +268,6 @@ set(ARCHIVE_KISSFFT kissfft-130.tar.gz)
 set(ARCHIVE_KISSFFT_TAR kissfft-130.tar)
 set(ARCHIVE_KISSFFT_SHA1 "14ee3bd4a6480dc7fbec9a6d3a16d5d9fbbfc0fb")
 
-set(ARCHIVE_SQLITE sqlite-autoconf-3150000.tar.gz)
-set(ARCHIVE_SQLITE_TAR  sqlite-autoconf-3150000.tar)
-set(ARCHIVE_SQLITE_SHA1 "b34cb4ee9710368598c62df0222f5c24dfc9c860")
-
 set(ARCHIVE_HDF5 hdf5-1.10.5.tar.gz)
 set(ARCHIVE_HDF5_TAR hdf5-1.10.5.tar)
 set(ARCHIVE_HDF5_SHA1 "541bdf33b1a9676a8340db958a277993a4193189")
@@ -294,7 +289,6 @@ set(INCLUDE_DIR_OPENMP ${CONTRIB_BIN_INCLUDE_DIR}/openmp.src)
 set(INCLUDE_FILES_LIBSVM ${CONTRIB_BIN_INCLUDE_DIR}/svm.h)
 set(INCLUDE_FILES_BZIP2 ${CONTRIB_BIN_INCLUDE_DIR}/bzlib.h ${CONTRIB_BIN_INCLUDE_DIR}/bzlib_private.h)
 set(INCLUDE_FILES_ZLIB ${CONTRIB_BIN_INCLUDE_DIR}/zlib.h)
-set(INCLUDE_FILES_SQLITE ${CONTRIB_BIN_INCLUDE_DIR}/sqlite3.h)
 
 ## address model of contrib
 if (CMAKE_SIZEOF_VOID_P MATCHES "8")
@@ -616,16 +610,6 @@ if ("KISSFFT" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("KISSFFT")
   OPENMS_CONTRIB_BUILD_KISSFFT()
   OPENMS_COPY_LIBS("KISSFFT")
-endif()
-
-##################################################
-###       SQLITE                               ###
-##################################################
-
-if (BUILD_TYPE STREQUAL "ALL" OR "SQLITE" IN_LIST BUILD_TYPE)
-  OPENMS_CLEAN_LIB("SQLITE")
-  OPENMS_CONTRIB_BUILD_SQLITE()
-  OPENMS_COPY_LIBS("SQLITE")
 endif()
 
 ##################################################
