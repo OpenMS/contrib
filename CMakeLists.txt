@@ -490,7 +490,6 @@ include ("${CMAKE_SOURCE_DIR}/libraries.cmake/zlib.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/coinor.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/eigen.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/kissfft.cmake")
-include ("${CMAKE_SOURCE_DIR}/libraries.cmake/sqlite.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/hdf5.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/openmp.cmake")
 
