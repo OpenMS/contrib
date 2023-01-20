@@ -24,10 +24,10 @@ jobs:
               BRANCH="latest"
             fi
             ## Remove release/ from release branch name
-            echo "tag=$(echo ${BRANCH#release/})"
+            echo "tag=$(echo ${BRANCH#release/})" >> $GITHUB_OUTPUT
         id: tag_name
       - name: Downcase REPO
-        run: echo "repo=$(echo ${GITHUB_REPOSITORY,,})"
+        run: echo "repo=$(echo ${GITHUB_REPOSITORY,,})" >> $GITHUB_OUTPUT
         id: downcase_repo
       - name: Checkout Dockerfiles
         shell: bash # uses git bash on windows
