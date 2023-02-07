@@ -17,7 +17,7 @@ build the contrib since the actual source packages are
 only downloaded when built.
 
 You can find prebuilt versions and the used sources
-(e.g. for manual download) on our [archive](https://abibuilder.informatik.uni-tuebingen.de/archive/openms/contrib).
+(e.g. for manual download) on our [archive](https://abibuilder.cs.uni-tuebingen.de/archive/openms/contrib).
 
 Build
 ============
@@ -30,6 +30,15 @@ Using the `-DBUILD_TYPE` switch on the command line, you can customize which
 external libraries should be built (depending on your system, you might already
 have some of them installed and may not want to re-install them). 
 CMake will then download the requested libraries and compile them for you.
+
+Requirements
+============
+
+- cmake
+- autoconf
+- automake
+- libtool
+- 7zip on Windows
 
 Notes
 ============

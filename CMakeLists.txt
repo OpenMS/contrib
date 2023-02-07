@@ -94,15 +94,15 @@
 
 # Determine what to build (all or single library)
 set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP")
-set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "WILDMAGIC" "SQLITE" "KISSFFT" "HDF5" "OPENMP")
+set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "KISSFFT" "HDF5" "OPENMP")
 
 # check build type
 if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
   message(STATUS "===========================================================================")
   message(STATUS " OpenMS contrib (dependency packages) installation.")
   message(STATUS " This program will allow you to compile and install all of the OpenMS")
-  message(STATUS " dependencies. Select the package you wish to install using the the command")
-  message(STATUS " -DBUILD_TYPE= or install all of them with -DBUILD_TYPE=ALL.")
+  message(STATUS " dependencies. Select the packages you wish to install using the the command")
+  message(STATUS " -DBUILD_TYPE=$SEMICOLON_SEP_LIST or install all of them with -DBUILD_TYPE=ALL.")
   message(STATUS "===========================================================================")
   message(STATUS "Valid BUILD_TYPEs are:")
   foreach( BT ${VALID_BUILD_TYPES} )
@@ -194,15 +194,13 @@ set(LIBSVM_DIR ${CONTRIB_BIN_SOURCE_DIR}/libsvm-3.12)
 set(GLPK_DIR ${CONTRIB_BIN_SOURCE_DIR}/glpk-4.46)
 set(COINOR_DIR ${CONTRIB_BIN_SOURCE_DIR}/CoinMP-1.8.3)
 set(EIGEN_DIR ${CONTRIB_BIN_SOURCE_DIR}/eigen-eigen-5a0156e40feb)
-set(WILDMAGIC_DIR ${CONTRIB_BIN_SOURCE_DIR}/WildMagic5)
 set(KISSFFT_DIR ${CONTRIB_BIN_SOURCE_DIR}/kissfft)
-set(SQLITE_DIR ${CONTRIB_BIN_SOURCE_DIR}/sqlite-autoconf-3150000)
 set(HDF5_DIR ${CONTRIB_BIN_SOURCE_DIR}/hdf5-1.10.5)
 set(OPENMP_DIR ${CONTRIB_BIN_SOURCE_DIR}/openmp-12.0.1.src)
 
 ## source(archive) paths
 ## PLEASE upload all source archives to
-##     https://abibuilder.informatik.uni-tuebingen.de/archive/openms/contrib/source_packages/
+##     https://abibuilder.cs.uni-tuebingen.de/archive/openms/contrib/source_packages/
 ## and provide the necessary information below
 ##  ARCHIVE_<LIBNAME> the name of the archive as it was uploaded
 ##  ARCHIVE_<LIBNAME>_TAR the name of the tar in the tar.gz
@@ -260,7 +258,7 @@ set(ARCHIVE_GLPK_SHA1 "73d589452dc1d8d6a784b3f86f4268cae37420d7")
 
 set(ARCHIVE_COINOR CoinMP-1.8.3-vs22.tar.gz)
 set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3-vs22.tar)
-set(ARCHIVE_COINOR_SHA1 "d12d7c707681c124785f81ea311d74cb157d5d20")
+set(ARCHIVE_COINOR_SHA1 "252aabfa824a2656e7abbc14278a61e02fe63e48")
 
 set(ARCHIVE_EIGEN eigen-3.3.4.tar.gz)
 set(ARCHIVE_EIGEN_TAR  eigen-3.3.4.tar)
@@ -269,14 +267,6 @@ set(ARCHIVE_EIGEN_SHA1 "c507baf81050b447ed00e972728170938a36d5b0")
 set(ARCHIVE_KISSFFT kissfft-130.tar.gz)
 set(ARCHIVE_KISSFFT_TAR kissfft-130.tar)
 set(ARCHIVE_KISSFFT_SHA1 "14ee3bd4a6480dc7fbec9a6d3a16d5d9fbbfc0fb")
-
-set(ARCHIVE_WILDMAGIC WildMagic5.tar.gz)
-set(ARCHIVE_WILDMAGIC_TAR  WildMagic5.tar)
-set(ARCHIVE_WILDMAGIC_SHA1 "e30b6f7f955c640dadfea09385a0a0ddec5b2997")
-
-set(ARCHIVE_SQLITE sqlite-autoconf-3150000.tar.gz)
-set(ARCHIVE_SQLITE_TAR  sqlite-autoconf-3150000.tar)
-set(ARCHIVE_SQLITE_SHA1 "b34cb4ee9710368598c62df0222f5c24dfc9c860")
 
 set(ARCHIVE_HDF5 hdf5-1.10.5.tar.gz)
 set(ARCHIVE_HDF5_TAR hdf5-1.10.5.tar)
@@ -292,7 +282,6 @@ set(INCLUDE_DIR_XERCES ${CONTRIB_BIN_INCLUDE_DIR}/xercesc)
 set(INCLUDE_DIR_GLPK ${CONTRIB_BIN_INCLUDE_DIR}/GLPK)
 set(INCLUDE_DIR_COINOR ${CONTRIB_BIN_INCLUDE_DIR}/coin)
 set(INCLUDE_DIR_EIGEN ${CONTRIB_BIN_INCLUDE_DIR}/eigen3)
-set(INCLUDE_DIR_WILDMAGIC ${CONTRIB_BIN_INCLUDE_DIR}/WildMagic5)
 set(INCLUDE_DIR_KISSFFT ${CONTRIB_BIN_INCLUDE_DIR}/kissfft)
 set(INCLUDE_DIR_OPENMP ${CONTRIB_BIN_INCLUDE_DIR}/openmp.src)
 
@@ -300,7 +289,6 @@ set(INCLUDE_DIR_OPENMP ${CONTRIB_BIN_INCLUDE_DIR}/openmp.src)
 set(INCLUDE_FILES_LIBSVM ${CONTRIB_BIN_INCLUDE_DIR}/svm.h)
 set(INCLUDE_FILES_BZIP2 ${CONTRIB_BIN_INCLUDE_DIR}/bzlib.h ${CONTRIB_BIN_INCLUDE_DIR}/bzlib_private.h)
 set(INCLUDE_FILES_ZLIB ${CONTRIB_BIN_INCLUDE_DIR}/zlib.h)
-set(INCLUDE_FILES_SQLITE ${CONTRIB_BIN_INCLUDE_DIR}/sqlite3.h)
 
 ## address model of contrib
 if (CMAKE_SIZEOF_VOID_P MATCHES "8")
@@ -501,26 +489,29 @@ include ("${CMAKE_SOURCE_DIR}/libraries.cmake/bzip2.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/zlib.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/coinor.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/eigen.cmake")
-include ("${CMAKE_SOURCE_DIR}/libraries.cmake/wildmagic.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/kissfft.cmake")
-include ("${CMAKE_SOURCE_DIR}/libraries.cmake/sqlite.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/hdf5.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/openmp.cmake")
 
 ## build mac os x specific C/C++ flags
 set( OPENMS_CONTRIB_MACOSX_MIXED_MODE 0 CACHE INTERNAL "building multiple architectures on MacOSX" FORCE)
 
-list(FIND VALID_BUILD_TYPES ${BUILD_TYPE} list_pos)
-if( ${list_pos} EQUAL -1 )
-  message(STATUS "The BUILD_TYPE ${BUILD_TYPE} is invalid")
-  message(STATUS "Valid BUILD_TYPEs are:")
-  foreach( BT ${VALID_BUILD_TYPES} )
-    message(STATUS " * ${BT}")
-  endforeach( BT VALID_BUILD_TYPES )
-  message(FATAL_ERROR "Aborting contrib build!")
-else( ${list_pos} EQUAL -1 )
-  message(STATUS "BUILD_TYPE: ${BUILD_TYPE} (one of: ${VALID_BUILD_TYPES})")
-endif( ${list_pos} EQUAL -1 )
+cmake_policy(SET CMP0057 NEW)
+foreach(BTG IN LISTS BUILD_TYPE)
+  list(FIND VALID_BUILD_TYPES ${BTG} list_pos)
+  if( ${list_pos} EQUAL -1 )
+    message(STATUS "The BUILD_TYPE ${BUILD_TYPE} is invalid")
+    message(STATUS "Valid BUILD_TYPEs are:")
+    foreach( BT ${VALID_BUILD_TYPES} )
+      message(STATUS " * ${BT}")
+    endforeach( BT VALID_BUILD_TYPES )
+    message(FATAL_ERROR "Aborting contrib build!")
+  else( ${list_pos} EQUAL -1 )
+    message(STATUS "BUILD_TYPE: ${BTG} (one of: ${VALID_BUILD_TYPES})")
+  endif( ${list_pos} EQUAL -1 )
+endforeach()
+
+
 
 set( FORCE_REBUILD OFF CACHE BOOL "All installation and build traces of the contrib packages will be removed before building.")
 message(STATUS "FORCE_REBUILD: ${FORCE_REBUILD}")
@@ -538,7 +529,7 @@ set( BUILD_SHARED_LIBRARIES Off CACHE BOOL "Builds all contrib libraries as shar
 ###       LIBSVM                               ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "LIBSVM")
+if (BUILD_TYPE STREQUAL "ALL" OR "LIBSVM" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("LIBSVM")
   OPENMS_CONTRIB_BUILD_LIBSVM()
 endif()
@@ -547,7 +538,7 @@ endif()
 ###       XERCES                               ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "XERCESC")
+if (BUILD_TYPE STREQUAL "ALL" OR "XERCESC" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("XERCES")
   OPENMS_CONTRIB_BUILD_XERCESC()
 endif()
@@ -556,7 +547,7 @@ endif()
 ###       BZIP2                                ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "BZIP2")
+if (BUILD_TYPE STREQUAL "ALL" OR "BZIP2" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("BZIP2")
   OPENMS_CONTRIB_BUILD_BZIP2()
 endif()
@@ -565,7 +556,7 @@ endif()
 ###       ZLIB                                 ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "ZLIB")
+if (BUILD_TYPE STREQUAL "ALL" OR "ZLIB" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("ZLIB")
   OPENMS_CONTRIB_BUILD_ZLIB()
 endif()
@@ -574,7 +565,7 @@ endif()
 ###       BOOST                                ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "BOOST")
+if (BUILD_TYPE STREQUAL "ALL" OR "BOOST" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("BOOST")
   OPENMS_CONTRIB_BUILD_BOOST()
 endif()
@@ -583,8 +574,8 @@ endif()
 ##################################################
 ###       GLPK                                 ###
 ##################################################
-
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "GLPK")
+# COIN-OR is the default
+if ("GLPK" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("GLPK")
   OPENMS_CONTRIB_BUILD_GLPK()
   OPENMS_COPY_LIBS("GLPK")
@@ -594,7 +585,7 @@ endif()
 ###       COIN-OR                              ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "COINOR")
+if (BUILD_TYPE STREQUAL "ALL" OR "COINOR" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("COINOR")
   OPENMS_CONTRIB_BUILD_COINOR()
   OPENMS_COPY_LIBS("COINOR")
@@ -604,47 +595,27 @@ endif()
 ###       EIGEN3                               ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "EIGEN")
+if (BUILD_TYPE STREQUAL "ALL" OR "EIGEN" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("EIGEN")
   OPENMS_CONTRIB_BUILD_EIGEN()
   OPENMS_COPY_LIBS("EIGEN")
 endif()
 
 ##################################################
-###       WILDMAGIC                            ###
-##################################################
-
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "WILDMAGIC")
-  OPENMS_CLEAN_LIB("WILDMAGIC")
-  OPENMS_CONTRIB_BUILD_WILDMAGIC()
-  OPENMS_COPY_LIBS("WILDMAGIC")
-endif()
-
-##################################################
 ###       KISSFFT                              ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "KISSFFT")
+if ("KISSFFT" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("KISSFFT")
   OPENMS_CONTRIB_BUILD_KISSFFT()
   OPENMS_COPY_LIBS("KISSFFT")
 endif()
 
 ##################################################
-###       SQLITE                               ###
-##################################################
-
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "SQLITE")
-  OPENMS_CLEAN_LIB("SQLITE")
-  OPENMS_CONTRIB_BUILD_SQLITE()
-  OPENMS_COPY_LIBS("SQLITE")
-endif()
-
-##################################################
 ###       HDF5                                 ###
 ##################################################
 
-if (BUILD_TYPE STREQUAL "ALL" OR BUILD_TYPE STREQUAL "HDF5")
+if (BUILD_TYPE STREQUAL "ALL" OR "HDF5" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("HDF5")
   OPENMS_CONTRIB_BUILD_HDF5()
   OPENMS_COPY_LIBS("HDF5")
@@ -653,7 +624,7 @@ endif()
 ##################################################
 ###       OPENMP                               ###
 ##################################################
-if (BUILD_TYPE STREQUAL "OPENMP")
+if ("OPENMP" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("OPENMP")
   OPENMS_CONTRIB_BUILD_OPENMP()
   OPENMS_COPY_LIBS("OPENMP")

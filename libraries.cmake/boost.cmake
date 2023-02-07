@@ -62,6 +62,10 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
                          "--with-thread"
                          "--build-type=complete"
                          "--disable-icu"
+                         "-s"
+                         "NO_LZMA=1" 
+                         "-s" 
+                         "NO_ZSTD=1"
                          "runtime-link=shared"
                          "link=${BOOST_BUILD_TYPE}" 
                          "${TOOLSET}")
@@ -165,10 +169,12 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
     message(STATUS "Installing Boost libraries (${BOOST_CMD}) ...")
     execute_process(COMMAND ./b2 ${BOOST_DEBUG_FLAGS} architecture=x86 toolset=${_boost_toolchain} 
                     -j ${NUMBER_OF_JOBS} 
-                    --disable-icu 
+                    --disable-icu
+                    -s NO_LZMA=1
+                    -s NO_ZSTD=1
                     link=${BOOST_BUILD_TYPE} "cxxflags=-fPIC ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG}" ${BOOST_LINKER_FLAGS}  install 
-                    --build-type=complete 
-                    --layout=tagged 
+                    --build-type=complete
+                    --layout=tagged
                     --threading=single,multi
                     WORKING_DIRECTORY ${BOOST_DIR}
                     OUTPUT_VARIABLE BOOST_INSTALL_OUT

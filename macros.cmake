@@ -81,7 +81,7 @@ macro(download_contrib_archive libname)
   # constant
   # Currently this points to the OpenMS build archive
   # Sources are checked out regularly from OpenMS/contrib-sources via a cron job
-  set(_BASE_URL "https://abibuilder.informatik.uni-tuebingen.de/archive/openms/contrib/source_packages/")
+  set(_BASE_URL "https://abibuilder.cs.uni-tuebingen.de/archive/openms/contrib/source_packages/")
 
   # the files/folders where downloads are stored
   set(_archive_folder "${PROJECT_BINARY_DIR}/archives")
