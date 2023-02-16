@@ -29,13 +29,6 @@ jobs:
       - name: Downcase REPO
         run: echo "##[set-output name=repo;]$(echo ${GITHUB_REPOSITORY,,})"
         id: downcase_repo
-      - name: Checkout Dockerfiles
-        shell: bash # uses git bash on windows
-        run: |
-            git clone https://github.com/OpenMS/dockerfiles
-            cd dockerfiles
-            # for release try to checkout a corresponding release branch first
-            git checkout ${{ steps.extract_branch.outputs.branch }} || git checkout master
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
