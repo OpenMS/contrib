@@ -29,6 +29,7 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 								-D CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
 								-D CMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 								-D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
+                -D CMAKE_DISABLE_FIND_PACKAGE_ICU=TRUE
 								-G "${CMAKE_GENERATOR}"
 								${ARCHITECTURE_OPTION_CMAKE}
 								-D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
@@ -41,8 +42,8 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 						RESULT_VARIABLE XERCES_CMAKE_SUCCESS)				
 						
 		# logfile
-		file(APPEND ${LOGFILE} ${XERCES_CMAKE_OUT} ${XERCES_Release_ERR})
-		
+		file(APPEND ${LOGFILE} ${XERCES_CMAKE_OUT})
+		message( STATUS "Building Xerces-C Debug ...")
 		execute_process(COMMAND ${CMAKE_COMMAND}
 						--build .
 						--config Debug
@@ -52,8 +53,9 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 				ERROR_VARIABLE XERCES_Debug_ERR
 				RESULT_VARIABLE XERCES_Debug_SUCCESS)
 				
-		file(APPEND ${LOGFILE} ${XERCES_Debug_OUT})
+		file(APPEND ${LOGFILE} ${XERCES_Debug_OUT} ${XERCES_Debug_ERR})
 				
+		message( STATUS "Building Xerces-C Release ...")
 		execute_process(COMMAND ${CMAKE_COMMAND}
 						--build .
 						--config Release
@@ -64,6 +66,7 @@ MACRO( OPENMS_CONTRIB_BUILD_XERCESC )
 				RESULT_VARIABLE XERCES_Release_SUCCESS)
 		
 		file(APPEND ${LOGFILE} ${XERCES_Release_OUT} ${XERCES_Release_ERR})
+    message( STATUS "Building Xerces-C done.")
 	else()
 
 		if(APPLE)
