@@ -39,6 +39,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true # Will only build if this is not here
-          context: dockerfiles/contrib
+          context: dockerfiles
           tags: |
             ghcr.io/${{ steps.downcase_repo.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
