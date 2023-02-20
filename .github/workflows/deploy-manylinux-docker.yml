@@ -40,7 +40,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true # Will only build if this is not here
-          context: dockerfiles
+          context: dockerfiles/pyOpenMS/manylinux
           tags: |
             ghcr.io/openms/contrib_manylinux2014:${{ steps.tag_name.outputs.tag }}
             
