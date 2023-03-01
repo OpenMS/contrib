@@ -13,6 +13,7 @@ jobs:
     steps:
       - name: Extract branch name
         shell: bash
+        # export branch name to be available in the GA environment as: steps.extract_branch.outputs.branch
         run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_OUTPUT
         id: extract_branch
       - name: Define tag name
@@ -25,6 +26,7 @@ jobs:
               BRANCH="latest"
             fi
             ## Remove release/ from release branch name
+            ## export tag name (latest or version number) to be available in the GA environment as: steps.tag_name.outputs.tag
             echo "tag=$(echo ${BRANCH#release/})" >> $GITHUB_OUTPUT
         id: tag_name
       - name: Downcase REPO
@@ -41,6 +43,9 @@ jobs:
         with:
           push: true # Will only build if this is not here
           context: dockerfiles/pyOpenMS/manylinux
+          build-args: |
+            OPENMS_BRANCH=${{ steps.extract_branch.outputs.branch }}
+            OPENMS_VERSION=${{ steps.tag_name.outputs.tag }}
           tags: |
             ghcr.io/openms/contrib_manylinux2014:${{ steps.tag_name.outputs.tag }}
             
