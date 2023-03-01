@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Extract branch name
         shell: bash
+        # export branch name to be available in the GA environment as: steps.extract_branch.outputs.branch
         run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_OUTPUT
         id: extract_branch
       - name: Define tag name
@@ -40,5 +41,8 @@ jobs:
         with:
           push: true # Will only build if this is not here
           context: dockerfiles
+          build-args: |
+            OPENMS_BRANCH=${{ steps.extract_branch.outputs.branch }}
+            OPENMS_VERSION=${{ steps.tag_name.outputs.tag }}
           tags: |
             ghcr.io/${{ steps.downcase_repo.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
