@@ -1,7 +1,7 @@
 FROM quay.io/pypa/manylinux2014_x86_64
 
 #defaults, can be overwritten from outside
-ARG OPENMS_BRANCH="develop" 
+ARG OPENMS_BRANCH="master" 
 ARG OPENMS_VERSION="latest"
 
 RUN yum install -y wget
