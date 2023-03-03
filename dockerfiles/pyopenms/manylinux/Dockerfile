@@ -1,6 +1,7 @@
 FROM quay.io/pypa/manylinux2014_x86_64
 
-ARG OPENMS_BRANCH="develop"
+#defaults, can be overwritten from outside
+ARG OPENMS_BRANCH="master" 
 ARG OPENMS_VERSION="latest"
 
 RUN yum install -y wget
@@ -12,24 +13,21 @@ RUN yum install -y libtool
 RUN yum install -y cmake3
 RUN ln -s /usr/bin/cmake3 /usr/bin/cmake
 
-# install contrib based on the OpenMS branch used! 
-RUN git clone https://github.com/OpenMS/OpenMS.git --branch "$OPENMS_BRANCH" --single-branch && \
-    cd OpenMS && \
-    git submodule update --init contrib && \
+# install contrib based on the OpenMS branch used! TODO: set context in action then we can get rid of the clone
+RUN git clone https://github.com/OpenMS/contrib.git --branch "$OPENMS_BRANCH" --single-branch && \
     mkdir contrib-build && \
     cd contrib-build && \
     cmake -DBUILD_TYPE=ALL ../contrib && \
     rm -rf archives src && \
     cp -r . /contrib-build &&\
-    cd / && \
-    rm -rf OpenMS
+    cd /
 
 WORKDIR /
 
 # Metadata
 LABEL base.image="manylinux2014_x86_64"
 LABEL version="1.0"
-LABEL software="OpenMS (dependencies for manylinux2010)"
+LABEL software="OpenMS (dependencies for manylinux2014)"
 LABEL software.version="$OPENMS_VERSION"
 LABEL description="C++ libraries and tools for MS/MS data analysis"
 LABEL website="http://www.openms.org/"

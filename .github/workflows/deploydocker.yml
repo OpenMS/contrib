@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:        
-      - develop
+      - master
       - 'release/**'
 
 jobs:
@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Extract branch name
         shell: bash
+        # export branch name to be available in the GA environment as: steps.extract_branch.outputs.branch
         run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_OUTPUT
         id: extract_branch
       - name: Define tag name
@@ -19,7 +20,7 @@ jobs:
         run: |
             BRANCH=${{ steps.extract_branch.outputs.branch }}
             ## use latest to follow docker conventions
-            if [[ "$BRANCH" == "develop" ]]
+            if [[ "$BRANCH" == "master" ]]
             then 
               BRANCH="latest"
             fi
@@ -33,12 +34,15 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: jpfeuffer
-          password: ${{ secrets.GH_REGISTRY_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v3
         with:
           push: true # Will only build if this is not here
           context: dockerfiles
+          build-args: |
+            OPENMS_BRANCH=${{ steps.extract_branch.outputs.branch }}
+            OPENMS_VERSION=${{ steps.tag_name.outputs.tag }}
           tags: |
             ghcr.io/${{ steps.downcase_repo.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
