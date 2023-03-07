@@ -13,13 +13,11 @@ RUN yum install -y libtool
 RUN yum install -y cmake3
 RUN ln -s /usr/bin/cmake3 /usr/bin/cmake
 
-# install contrib based on the OpenMS branch used! TODO: set context in action then we can get rid of the clone
-RUN git clone https://github.com/OpenMS/contrib.git --branch "$OPENMS_BRANCH" --single-branch && \
-    mkdir contrib-build && \
+# build contrib for the current checked out branch (e.g. the github action context)
+RUN mkdir contrib-build && \
     cd contrib-build && \
     cmake -DBUILD_TYPE=ALL ../contrib && \
     rm -rf archives src && \
-    cp -r . /contrib-build &&\
     cd /
 
 WORKDIR /
