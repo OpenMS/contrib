@@ -4,6 +4,9 @@ FROM quay.io/pypa/manylinux2014_x86_64
 ARG OPENMS_BRANCH="master" 
 ARG OPENMS_VERSION="latest"
 
+# make source files from context available in docker
+COPY ./contrib
+
 RUN yum install -y wget
 RUN yum install -y xz qt5-qtbase-devel 
 RUN yum install -y qt5-qtbase-devel qt5-qtsvg qt5-qtsvg-devel python-devel 
@@ -13,7 +16,7 @@ RUN yum install -y libtool
 RUN yum install -y cmake3
 RUN ln -s /usr/bin/cmake3 /usr/bin/cmake
 
-# builds contrib for the current checked out branch (e.g. the github action context)
+# builds contrib for the current checked out branch
 # during cleanup: removes all source folders and only keeps contrib-build
 RUN mkdir contrib-build
 RUN ls -l
