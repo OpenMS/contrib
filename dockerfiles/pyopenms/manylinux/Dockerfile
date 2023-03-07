@@ -5,7 +5,7 @@ ARG OPENMS_BRANCH="master"
 ARG OPENMS_VERSION="latest"
 
 # make source files from context available in docker
-COPY contrib /contrib
+COPY . /contrib
 
 RUN yum install -y wget
 RUN yum install -y xz qt5-qtbase-devel 
@@ -22,7 +22,7 @@ RUN mkdir contrib-build
 RUN ls -l
 WORKDIR /contrib-build
 RUN ls -l
-RUN cmake -DBUILD_TYPE=ALL "../" && rm -rf archives src
+RUN cmake -DBUILD_TYPE=ALL ../contrib && rm -rf archives src
     
 WORKDIR /
 

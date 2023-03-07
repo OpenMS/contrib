@@ -4,6 +4,8 @@ FROM ubuntu:22.04
 # Step 1: set up a sane build system
 USER root
 
+COPY . /contrib
+
 RUN apt-get -y update
 RUN apt-get install -y --no-install-recommends --no-install-suggests g++ autoconf automake patch libtool make git gpg wget ca-certificates curl
 RUN update-ca-certificates
@@ -31,7 +33,6 @@ RUN apt-get install -y --no-install-recommends --no-install-suggests qtbase5-dev
 
 ###################################
 # Step 4: Compiled dependencies
-RUN git clone https://github.com/OpenMS/contrib.git && rm -rf contrib/.git/
 RUN mkdir contrib-build
 
 WORKDIR /contrib-build
