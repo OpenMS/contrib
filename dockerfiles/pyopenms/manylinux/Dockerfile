@@ -16,9 +16,10 @@ RUN ln -s /usr/bin/cmake3 /usr/bin/cmake
 # builds contrib for the current checked out branch (e.g. the github action context)
 # during cleanup: removes all source folders and only keeps contrib-build
 RUN mkdir contrib-build
+RUN ls -l
 WORKDIR /contrib-build
-RUN cmake -DBUILD_TYPE=ALL ../ && \
-    rm -rf archives src
+RUN ls -l
+RUN cmake -DBUILD_TYPE=ALL "../" && rm -rf archives src
     
 WORKDIR /
 
