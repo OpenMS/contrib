@@ -36,6 +36,8 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout to make context with dockerfiles available
+        uses: actions/checkout@v3        
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v3
         with:
