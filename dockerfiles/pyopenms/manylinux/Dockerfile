@@ -13,12 +13,14 @@ RUN yum install -y libtool
 RUN yum install -y cmake3
 RUN ln -s /usr/bin/cmake3 /usr/bin/cmake
 
-# build contrib for the current checked out branch (e.g. the github action context)
+# builds contrib for the current checked out branch (e.g. the github action context)
+# during cleanup: removes all source folders and only keeps contrib-build
 RUN mkdir contrib-build && \
     cd contrib-build && \
-    cmake -DBUILD_TYPE=ALL ../contrib && \
+    cmake -DBUILD_TYPE=ALL ../ && \
     rm -rf archives src && \
     cd /
+    rm -rf !(contrib-build)
 
 WORKDIR /
 
