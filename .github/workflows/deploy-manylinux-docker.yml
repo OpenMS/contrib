@@ -45,6 +45,7 @@ jobs:
         with:
           push: true # Will only build if this is not here
           file: dockerfiles/pyopenms/manylinux/Dockerfile
+          context: .          
           build-args: |
             OPENMS_BRANCH=${{ steps.extract_branch.outputs.branch }}
             OPENMS_VERSION=${{ steps.tag_name.outputs.tag }}

@@ -5,7 +5,7 @@ ARG OPENMS_BRANCH="master"
 ARG OPENMS_VERSION="latest"
 
 # make source files from context available in docker
-COPY ./contrib/ ./contrib/
+COPY contrib /contrib
 
 RUN yum install -y wget
 RUN yum install -y xz qt5-qtbase-devel 
@@ -17,7 +17,7 @@ RUN yum install -y cmake3
 RUN ln -s /usr/bin/cmake3 /usr/bin/cmake
 
 # builds contrib for the current checked out branch
-# during cleanup: removes all source folders and only keeps contrib-build
+# during cleanup: removes archives
 RUN mkdir contrib-build
 RUN ls -l
 WORKDIR /contrib-build
