@@ -5,7 +5,7 @@ ARG OPENMS_BRANCH="master"
 ARG OPENMS_VERSION="latest"
 
 # make source files from context available in docker
-COPY ./contrib
+COPY ./contrib/ ./contrib/
 
 RUN yum install -y wget
 RUN yum install -y xz qt5-qtbase-devel 
