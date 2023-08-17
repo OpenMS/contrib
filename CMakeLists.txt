@@ -45,7 +45,7 @@
 ##
 ## WINDOWS ONLY: [the information below applies only to WINDOWS, but when you update the contrib you MUST do both Linux, Mac OS X and Windows - so read carefully!]
 ## - usually each package contains a build-system for Windows (solution [*.sln] files or NMake files [Makefile.win] ) and Linux(Makefiles) already provided by
-##   the original developer. In some cases you need to rely on third party packages, e.g. the gsl-win project, which provides solution files.
+##   the original developer. In some cases you need to rely on third party packages which provides solution files.
 ##   HOWEVER, for Windows they are usually not complete (e.g. missing 64bit targets, or even whole solution files
 ##   for a certain Visual Studio version (we support 8 and above).
 ##   Case a: 64bit targets are missing in Solution file
@@ -73,8 +73,6 @@
 ## Boost:  NA, Boost uses its in-house Boost-Jam which supports everything we need
 ## LibSVM: comes with a Makefile.win, but libsvm needed some serious tweaking to support debug mode and to build a lib (instead of object files only)
 ## XERCES-C: they offer a VS version on their website (http://xerces.apache.org/xerces-c/), usually not for bleeding edge release though - bad luck for us.
-## GSL:    get the src package from http://gnuwin32.sourceforge.net/packages/gsl.htm,
-##         This should still contain the Linux Makefiles.
 ## GLPK:   download from http://ftp.gnu.org/gnu/glpk/glpk-4.46.tar.gz
 ## COIN-OR: we use the CoinMP package available from
 ##         http://www.coin-or.org/download/source/CoinMP/CoinMP-1.3.3.tgz
@@ -93,7 +91,7 @@
 ##       - however: exec_process seems to handle our arguments incorrectly (at least on Windows). Check functionality before you commit!
 
 # Determine what to build (all or single library)
-set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,GSL,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP")
+set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP")
 set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "KISSFFT" "HDF5" "OPENMP")
 
 # check build type
