@@ -44,9 +44,9 @@ WORKDIR /
 
 # Metadata
 LABEL base.image="ubuntu:22.04"
-LABEL version="3.0"
+LABEL version="3.1"
 LABEL software="OpenMS (dependencies)"
-LABEL software.version="3.0.0-Ubuntu22.04"
+LABEL software.version="3.1.0-Ubuntu22.04"
 LABEL description="Baseimage to build OpenMS: C++ libraries and tools for MS/MS data analysis"
 LABEL website="http://www.openms.org/"
 LABEL documentation="http://www.openms.org/"
