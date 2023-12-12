@@ -45,7 +45,7 @@ MACRO( OPENMS_CONTRIB_BUILD_HDF5 )
                         -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                         -D BUILD_TESTING=Off
                         -D HDF5_BUILD_EXAMPLES=Off
-                        -D HDF5_BUILD_TOOLS=Off
+                        -D HDF5_BUILD_TOOLS=On
                         ${_HDF5_CMAKE_ARGS}
                         ${HDF5_DIR}
                         WORKING_DIRECTORY ${_HDF5_NATIVE_BUILD_DIR}
