@@ -193,7 +193,7 @@ set(GLPK_DIR ${CONTRIB_BIN_SOURCE_DIR}/glpk-4.46)
 set(COINOR_DIR ${CONTRIB_BIN_SOURCE_DIR}/CoinMP-1.8.3)
 set(EIGEN_DIR ${CONTRIB_BIN_SOURCE_DIR}/eigen-eigen-5a0156e40feb)
 set(KISSFFT_DIR ${CONTRIB_BIN_SOURCE_DIR}/kissfft)
-set(HDF5_DIR ${CONTRIB_BIN_SOURCE_DIR}/hdf5-1.10.5)
+set(HDF5_DIR ${CONTRIB_BIN_SOURCE_DIR}/hdfsrc)
 set(OPENMP_DIR ${CONTRIB_BIN_SOURCE_DIR}/openmp-12.0.1.src)
 
 ## source(archive) paths
@@ -266,9 +266,9 @@ set(ARCHIVE_KISSFFT kissfft-130.tar.gz)
 set(ARCHIVE_KISSFFT_TAR kissfft-130.tar)
 set(ARCHIVE_KISSFFT_SHA1 "14ee3bd4a6480dc7fbec9a6d3a16d5d9fbbfc0fb")
 
-set(ARCHIVE_HDF5 hdf5-1.10.5.tar.gz)
-set(ARCHIVE_HDF5_TAR hdf5-1.10.5.tar)
-set(ARCHIVE_HDF5_SHA1 "541bdf33b1a9676a8340db958a277993a4193189")
+set(ARCHIVE_HDF5 hdf5-1_14_3.tar.gz)
+set(ARCHIVE_HDF5_TAR hdf5-1_14_3.tar)
+set(ARCHIVE_HDF5_SHA1 "0e464802c2f9185f8b8db6e04149ca1d3eaf27c5")
 
 set(ARCHIVE_OPENMP openmp-12.0.1.src.tar.xz)
 set(ARCHIVE_OPENMP_tar openmp-12.0.1.src.tar)
