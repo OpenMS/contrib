@@ -1,16 +1,41 @@
 # syntax=docker/dockerfile:1.3-labs
 FROM ubuntu:22.04
 
-# Step 1: set up a sane build system
-USER root
+# install build dependencies
+RUN apt-get -y update \
+  && apt-get install -y --no-install-recommends --no-install-suggests \
+    libsvm-dev \
+    g++ \
+    autoconf \
+    automake \
+    patch \
+    libtool \
+    make \
+    git \
+    gpg \
+    wget \
+    ca-certificates \
+    curl \
+    libglpk-dev \
+    libzip-dev \
+    zlib1g-dev \
+    libxerces-c-dev \
+    libbz2-dev \
+    libomp-dev \
+    libhdf5-dev\
+    libboost-date-time1.74-dev \
+    libboost-iostreams1.74-dev \
+    libboost-regex1.74-dev \
+    libboost-math1.74-dev \
+    libboost-random1.74-dev \
+    qtbase5-dev \
+    libqt5svg5-dev \
+    libqt5opengl5-dev \
+    libeigen3-dev \
+    coinor-libcoinmp-dev \
+  && update-ca-certificates
 
-COPY . /contrib
-
-RUN apt-get -y update
-RUN apt-get install -y --no-install-recommends --no-install-suggests g++ autoconf automake patch libtool make git gpg wget ca-certificates curl
-RUN update-ca-certificates
-
-# Step 2: get an up-to date cmake (HEREDOC needs DOCKER_BUILDKIT=1 enabled or build with "docker buildx")
+# get an up-to date cmake (HEREDOC needs DOCKER_BUILDKIT=1 enabled or build with "docker buildx")
 RUN <<-EOF
     cmake_ubuntu_version=$(lsb_release -cs)
     if ! wget -q --method=HEAD "https://apt.kitware.com/ubuntu/dists/$cmake_ubuntu_version/Release"; then
@@ -22,19 +47,8 @@ RUN <<-EOF
     apt-get install -y cmake
 EOF
 
-# Step 3: advanced dependencies
-RUN apt-get install -y --no-install-recommends --no-install-suggests libsvm-dev libglpk-dev libzip-dev zlib1g-dev libxerces-c-dev libbz2-dev libomp-dev libhdf5-dev
-RUN apt-get install -y --no-install-recommends --no-install-suggests libboost-date-time1.74-dev \
-                                                                     libboost-iostreams1.74-dev \
-                                                                     libboost-regex1.74-dev \
-                                                                     libboost-math1.74-dev \
-                                                                     libboost-random1.74-dev
-RUN apt-get install -y --no-install-recommends --no-install-suggests qtbase5-dev libqt5svg5-dev libqt5opengl5-dev
-RUN apt-get install -y --no-install-recommends --no-install-suggests libeigen3-dev coinor-libcoinmp-dev
-###################################
-# Step 4: Compiled dependencies
+COPY . /contrib
 RUN mkdir /contrib-build
-
 WORKDIR /
 
 # Metadata
