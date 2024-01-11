@@ -30,15 +30,10 @@ RUN apt-get install -y --no-install-recommends --no-install-suggests libboost-da
                                                                      libboost-math1.74-dev \
                                                                      libboost-random1.74-dev
 RUN apt-get install -y --no-install-recommends --no-install-suggests qtbase5-dev libqt5svg5-dev libqt5opengl5-dev
-
+RUN apt-get install -y --no-install-recommends --no-install-suggests libeigen3-dev coinor-libcoinmp-dev
 ###################################
 # Step 4: Compiled dependencies
-RUN mkdir contrib-build
-
-WORKDIR /contrib-build
-
-RUN cmake -DBUILD_TYPE=EIGEN ../contrib && rm -rf archives src
-RUN cmake -DBUILD_TYPE=COINOR ../contrib && rm -rf archives src
+RUN mkdir /contrib-build
 
 WORKDIR /
 
