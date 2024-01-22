@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1.3-labs
 FROM ubuntu:22.04
 ARG CONTRIB_BUILD_DIR="/contrib-build"
+ARG OPENMS_VERSION=3.1.0
 
 # install build dependencies
 RUN apt-get -y update \
@@ -54,10 +55,10 @@ WORKDIR /
 
 # Metadata
 LABEL base.image="ubuntu:22.04"
-LABEL version="3.1"
+LABEL version="${OPENMS_VERSION}"
 LABEL software="OpenMS (dependencies)"
-LABEL software.version="3.1.0-Ubuntu22.04"
-LABEL description="Baseimage to build OpenMS: C++ libraries and tools for MS/MS data analysis"
+LABEL software.version="${OPENMS_VERSION}-Ubuntu22.04"
+LABEL description="Base image to build OpenMS: C++ libraries and tools for MS/MS data analysis"
 LABEL website="http://www.openms.org/"
 LABEL documentation="http://www.openms.org/"
 LABEL license="http://www.openms.org/"
