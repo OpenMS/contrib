@@ -47,3 +47,5 @@ jobs:
             OPENMS_VERSION=${{ steps.tag_name.outputs.tag }}
           tags: |
             ghcr.io/${{ steps.downcase_repo.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
+          cache-from: type=gha,scope=ghcr.io/${{ steps.downcase_repo.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
+          cache-to: type=gha,mode=max,scope=ghcr.io/${{ steps.downcase_repo.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
