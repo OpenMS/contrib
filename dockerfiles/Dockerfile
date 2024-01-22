@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1.3-labs
 FROM ubuntu:22.04
+ARG CONTRIB_BUILD_DIR="/contrib-build"
 
 # install build dependencies
 RUN apt-get -y update \
@@ -48,7 +49,7 @@ RUN <<-EOF
 EOF
 
 COPY . /contrib
-RUN mkdir /contrib-build
+RUN mkdir ${CONTRIB_BUILD_DIR}
 WORKDIR /
 
 # Metadata
@@ -61,5 +62,6 @@ LABEL website="http://www.openms.org/"
 LABEL documentation="http://www.openms.org/"
 LABEL license="http://www.openms.org/"
 LABEL tags="Proteomics"
+
 # to link to repo on github container registry
 LABEL org.opencontainers.image.source https://github.com/OpenMS/contrib
