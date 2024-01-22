@@ -44,7 +44,7 @@ jobs:
           push: true # Will only build if this is not here
           context: .
           file: dockerfiles/Dockerfile
-          build_args: |
+          build-args: |
             OPENMS_VERSION: ${{ steps.tag_name.outputs.tag }}
           tags: |
             ghcr.io/${{ steps.downcase_repo.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
