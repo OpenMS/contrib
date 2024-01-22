@@ -42,9 +42,6 @@ jobs:
           push: true # Will only build if this is not here
           context: .
           file: dockerfiles/Dockerfile          
-          build-args: |
-            OPENMS_BRANCH=${{ steps.extract_branch.outputs.branch }}
-            OPENMS_VERSION=${{ steps.tag_name.outputs.tag }}
           tags: |
             ghcr.io/${{ steps.downcase_repo.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
           cache-from: type=gha,scope=ghcr.io/${{ steps.downcase_repo.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
