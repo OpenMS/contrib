@@ -2,6 +2,7 @@
 FROM ubuntu:22.04
 ARG CONTRIB_BUILD_DIR="/contrib-build"
 ARG OPENMS_VERSION=3.1.0
+ARG CMAKE_VERSION=3.28.1
 
 # install build dependencies
 RUN apt-get -y update \
@@ -33,16 +34,16 @@ RUN apt-get -y update \
   && rm -rf /var/lib/apt/lists/* \
   && update-ca-certificates
 
-# get an up-to date cmake (HEREDOC needs DOCKER_BUILDKIT=1 enabled or build with "docker buildx")
+# installing cmake
+WORKDIR /tmp
+ADD https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-x86_64.sh cmake.sh
 RUN <<-EOF
-    cmake_ubuntu_version=$(lsb_release -cs)
-    if ! wget -q --method=HEAD "https://apt.kitware.com/ubuntu/dists/$cmake_ubuntu_version/Release"; then
-      bash -c "$(wget -O - https://apt.kitware.com/kitware-archive.sh)"
-    else
-      wget -qO - https://apt.kitware.com/kitware-archive.sh | bash -s -- --release $cmake_ubuntu_version
-    fi
-    apt-get -y update
-    apt-get install -y cmake
+    set -eux
+    mkdir -p /opt/cmake
+    sh cmake.sh --skip-license --prefix=/opt/cmake
+    ln -s /opt/cmake/bin/cmake /usr/local/bin/cmake
+    ln -s /opt/cmake/bin/ctest /usr/local/bin/ctest
+    rm -rf /tmp/*
 EOF
 
 COPY . /contrib
