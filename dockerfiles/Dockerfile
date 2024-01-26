@@ -6,18 +6,13 @@ ARG OPENMS_VERSION=3.1.0
 # install build dependencies
 RUN apt-get -y update \
   && apt-get install -y --no-install-recommends --no-install-suggests \
-    libsvm-dev \
+    # build system dependencies
     g++ \
-    autoconf \
-    automake \
-    patch \
-    libtool \
     make \
     git \
-    gpg \
-    wget \
     ca-certificates \
-    curl \
+    # OpenMS build dependencies
+    libsvm-dev \
     libglpk-dev \
     libzip-dev \
     zlib1g-dev \
@@ -35,6 +30,7 @@ RUN apt-get -y update \
     libqt5opengl5-dev \
     libeigen3-dev \
     coinor-libcoinmp-dev \
+  && rm -rf /var/lib/apt/lists/* \
   && update-ca-certificates
 
 # get an up-to date cmake (HEREDOC needs DOCKER_BUILDKIT=1 enabled or build with "docker buildx")
