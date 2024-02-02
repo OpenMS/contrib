@@ -7,7 +7,7 @@ on:
       - 'release/**'
 
 jobs:
-  Deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Extract branch name
@@ -30,22 +30,25 @@ jobs:
       - name: Downcase REPO
         run: echo "repo=$(echo ${GITHUB_REPOSITORY,,})" >> $GITHUB_OUTPUT
         id: downcase_repo
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Checkout to make context with dockerfiles available
-        uses: actions/checkout@v3        
+        uses: actions/checkout@v4
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           push: true # Will only build if this is not here
           context: .
-          file: dockerfiles/Dockerfile          
+          file: dockerfiles/Dockerfile
           build-args: |
-            OPENMS_BRANCH=${{ steps.extract_branch.outputs.branch }}
-            OPENMS_VERSION=${{ steps.tag_name.outputs.tag }}
+            OPENMS_VERSION: ${{ steps.tag_name.outputs.tag }}
           tags: |
             ghcr.io/${{ steps.downcase_repo.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
+          cache-from: type=gha,scope=ghcr.io/${{ steps.downcase_repo.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
+          cache-to: type=gha,mode=max,scope=ghcr.io/${{ steps.downcase_repo.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
