@@ -6,21 +6,34 @@ ARG OPENMS_VERSION="latest"
 COPY . /contrib
 
 RUN yum install -y \
+    # build system dependencies
     wget \
     xz \
+    libtool \
+    cmake3 \
+    # OpenMS and PyOpenMS build dependencies
+    libsvm-devel \
+    glpk-devel \
+    libzip-devel \
+    zlib-devel \
+    xerces-c-devel \
+    bzip2-devel \
+    hdf5-devel \
     qt5-qtbase-devel \
     qt5-qtsvg-devel \
-    python-devel \
-    qt5-qtsvg \
-    libtool \
-    cmake3
-# RUN yum install -y libsvm-devel glpk-devel libzip-devel zlib-devel xerces-c-devel bzip2-devel sqlite-devel hdf5-devel
+    eigen3-devel \
+    python-devel
+# TODO: do we need sqlite-devel?
+# TODO: can we install boost from yum?
+# TODO: is coin-or-CoinUtils-devel useful?
+# TODO: do we need KissFFT? It's not installed in the regular contrib Dockerfile
+
 RUN ln -s /usr/bin/cmake3 /usr/bin/cmake
 
 # builds contrib for the current checked out branch
 # during cleanup: removes archives
 WORKDIR ${CONTRIB_BUILD_DIR}
-RUN cmake -DBUILD_TYPE=ALL ../contrib && rm -rf archives src
+RUN cmake -DBUILD_TYPE="BOOST;COINOR;KISSFFT;OPENMP" ../contrib && rm -rf archives src
 
 WORKDIR /
 
