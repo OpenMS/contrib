@@ -14,18 +14,6 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_EIGEN "EIGEN" "CMakeLists.txt")
 
-  # disable testing using blas libraries
-  set(_PATCH_FILE "${PATCH_DIR}/eigen/CMakeLists.txt.patch")		
-  set(_PATCHED_FILE "${EIGEN_DIR}/CMakeLists.txt")		
-  OPENMS_PATCH( _PATCH_FILE EIGEN_DIR _PATCHED_FILE)		
-
-  set(_PATCH_FILE "${PATCH_DIR}/eigen/blasCMakeLists.txt.patch")		
-  set(_PATCHED_FILE "${EIGEN_DIR}/blas/CMakeLists.txt")		
-  OPENMS_PATCH( _PATCH_FILE EIGEN_DIR _PATCHED_FILE)		
-  set(_PATCH_FILE "${PATCH_DIR}/eigen/unsupportedCMakeLists.txt.patch")		
-  set(_PATCHED_FILE "${EIGEN_DIR}/unsupported/CMakeLists.txt")		
-  OPENMS_PATCH( _PATCH_FILE EIGEN_DIR _PATCHED_FILE)		
-
   # eigen doesn't allow insource builds
   set(_EIGEN_BUILD_DIR "${EIGEN_DIR}/build")
   file(TO_NATIVE_PATH "${_EIGEN_BUILD_DIR}" _EIGEN_NATIVE_BUILD_DIR)
