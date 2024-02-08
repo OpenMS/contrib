@@ -67,6 +67,7 @@ jobs:
            find . -maxdepth 1 -type f -not -name 'contrib_build.log' -delete
            tar czf contrib_build-${{runner.os}}.tar.gz $(ls -d lib) $(ls -d bin) $(ls -d include) $(ls -d share)
 
+    # Contrib releases are intended to be used in CI in OpenMS/OpenMS
     - name: Create Release
       id: create_release
       uses: softprops/action-gh-release@v1
