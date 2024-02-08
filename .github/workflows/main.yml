@@ -65,8 +65,29 @@ jobs:
            rm -rf src
            rm -rf CMakeFiles
            find . -maxdepth 1 -type f -not -name 'contrib_build.log' -delete
+           tar czf contrib_build-${{runner.os}}.tar.gz $(ls -d lib) $(ls -d bin) $(ls -d include) $(ls -d share)
 
-    #TODO switch to V2 once it is released (this is to only upload relevant folders)
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./contrib-build   
+        asset_name: contrib_build-${{runner.os}}.tar.gz
+        asset_content_type: application/gzip
+
     - uses: actions/upload-artifact@v3
       with:
         name: contrib-build-${{runner.os}}
