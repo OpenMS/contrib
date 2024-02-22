@@ -96,6 +96,7 @@ jobs:
           ./contrib-build/contrib_build-${{runner.os}}.tar.gz
 
     - uses: actions/upload-artifact@v4
+      if: github.event_name == 'workflow_dispatch'
       with:
         name: contrib-build-${{runner.os}}
         path: contrib-build
