@@ -1,6 +1,8 @@
 name: CI
 
-on: [push]
+on:
+  push:
+  workflow_dispatch:  # This allows you to manually trigger the workflow from the GitHub UI
 
 jobs:
   build:
@@ -66,8 +68,35 @@ jobs:
            rm -rf CMakeFiles
            find . -maxdepth 1 -type f -not -name 'contrib_build.log' -delete
 
-    #TODO switch to V2 once it is released (this is to only upload relevant folders)
-    - uses: actions/upload-artifact@v3
+    - name: Configure Git for Tagging
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'actions@github.com'
+
+    - name: Create and Push Tag
+      if: github.event_name == 'workflow_dispatch'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        TAG_NAME="release-$(date +'%Y%m%d%H%M%S')"
+        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV  # Save the tag name to an environment variable
+        git tag $TAG_NAME
+        git push origin $TAG_NAME
+
+    - name: Create Release
+      if: github.event_name == 'workflow_dispatch'
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.TAG_NAME }}  # Explicitly specify the tag name for the release
+        files:
+          ./contrib-build/contrib_build-${{runner.os}}.tar.gz
+
+    - uses: actions/upload-artifact@v4
+      if: github.event_name == 'workflow_dispatch'
       with:
         name: contrib-build-${{runner.os}}
         path: contrib-build
