@@ -1,4 +1,4 @@
-FROM quay.io/pypa/manylinux2_28_x86_64
+FROM quay.io/pypa/manylinux_2_28_x86_64
 
 #defaults, can be overwritten from outside
 ARG OPENMS_BRANCH="master" 
@@ -27,9 +27,9 @@ RUN cmake -DBUILD_TYPE=ALL ../contrib && rm -rf archives src
 WORKDIR /
 
 # Metadata
-LABEL base.image="manylinux2_28_x86_64"
+LABEL base.image="manylinux_2_28_x86_64"
 LABEL version="1.0"
-LABEL software="OpenMS (dependencies for manylinux2_28)"
+LABEL software="OpenMS (dependencies for manylinux_2_28)"
 LABEL software.version="$OPENMS_VERSION"
 LABEL description="C++ libraries and tools for MS/MS data analysis"
 LABEL website="http://www.openms.org/"
