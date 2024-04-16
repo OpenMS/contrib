@@ -46,16 +46,16 @@ jobs:
               exit 1
          fi
 
-    - name: Print folder structure (Windows)
-      if: runner.os == 'Windows'
-      run: tree /f /a
-      shell: cmd
-
     # https://github.com/marketplace/actions/visual-studio-shell
     - name: Set up Visual Studio shell
       uses: egor-tensin/vs-shell@v2
       with:
         arch: x64
+
+    - name: Print folder structure (Windows) for debugging
+      if: runner.os == 'Windows'
+      run: tree D: /f /a
+      shell: cmd
 
     # TODO use appropriate number of cores
     - name: Build contrib
