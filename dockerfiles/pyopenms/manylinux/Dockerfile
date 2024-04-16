@@ -11,10 +11,7 @@ RUN yum install -y wget
 RUN yum install -y xz qt5-qtbase-devel 
 RUN yum install -y qt5-qtbase-devel qt5-qtsvg qt5-qtsvg-devel
 # RUN yum install -y libsvm-devel glpk-devel libzip-devel zlib-devel xerces-c-devel bzip2-devel sqlite-devel hdf5-devel
-RUN yum install -y libtool
-
-RUN yum install -y cmake3
-RUN ln -s /usr/bin/cmake3 /usr/bin/cmake
+RUN yum install -y libtool cmake3
 
 # builds contrib for the current checked out branch
 # during cleanup: removes archives
