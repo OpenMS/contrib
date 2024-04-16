@@ -99,7 +99,7 @@ jobs:
     - name: Clean build
       shell: bash
       run: |
-           cd ${{ github.workspace }}/contrib-build
+           cd "${{ github.workspace }}/contrib-build"
            rm -rf archives
            rm -rf src
            rm -rf CMakeFiles
