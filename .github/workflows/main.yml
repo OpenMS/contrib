@@ -54,7 +54,7 @@ jobs:
 
     - name: Print folder structure (Windows) for debugging
       if: runner.os == 'Windows'
-      run: tree D: /f /a
+      run: tree D:\ /f /a
       shell: cmd
 
     # TODO use appropriate number of cores
