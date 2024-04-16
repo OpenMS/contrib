@@ -23,6 +23,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        path: contrib
 
     - name: Setup cmake
       uses: jwlawson/actions-setup-cmake@v2
