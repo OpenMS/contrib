@@ -25,11 +25,12 @@ jobs:
     - uses: actions/checkout@v4
       with:
         path: contrib
-
+        
     - name: Setup cmake
       uses: jwlawson/actions-setup-cmake@v2
       with:
         cmake-version: '3.29.x'
+        
     - name: Install prerequisites
       shell: bash
       run: |
@@ -44,6 +45,11 @@ jobs:
               echo "$RUNNER_OS not supported"
               exit 1
          fi
+
+    - name: Print folder structure (Windows)
+      if: runner.os == 'Windows'
+      run: tree /f /a
+      shell: cmd
 
     # https://github.com/marketplace/actions/visual-studio-shell
     - name: Set up Visual Studio shell
