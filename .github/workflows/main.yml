@@ -52,10 +52,10 @@ jobs:
       with:
         arch: x64
 
-    - name: Print folder structure (Windows) for debugging
-      if: runner.os == 'Windows'
-      run: tree D:\ /f /a
-      shell: cmd
+#    - name: Print folder structure (Windows) for debugging
+#      if: runner.os == 'Windows'
+#      run: tree D:\ /f /a
+#      shell: cmd
 
     # TODO use appropriate number of cores
     - name: Build contrib
@@ -76,7 +76,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        cd $GITHUB_WORKSPACE/contrib
+        cd ${{ github.workspace }}/contrib
         TAG_NAME="release-$(date +'%Y%m%d%H%M%S')"
         echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV  # Save the tag name to an environment variable
         git tag $TAG_NAME
