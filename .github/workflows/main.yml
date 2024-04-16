@@ -60,8 +60,8 @@ jobs:
     # TODO use appropriate number of cores
     - name: Build contrib
       run: |
-           mkdir $GITHUB_WORKSPACE/contrib-build
-           cd $GITHUB_WORKSPACE/contrib-build
+           mkdir ${{ github.workspace }}/contrib-build
+           cd ${{ github.workspace }}/contrib-build
            cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=4 ${{ github.workspace }}/contrib
            cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=4 ${{ github.workspace }}/contrib
 
@@ -99,7 +99,7 @@ jobs:
     - name: Clean build
       shell: bash
       run: |
-           cd $GITHUB_WORKSPACE/contrib-build
+           cd ${{ github.workspace }}/contrib-build
            rm -rf archives
            rm -rf src
            rm -rf CMakeFiles
