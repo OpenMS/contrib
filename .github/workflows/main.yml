@@ -72,21 +72,28 @@ jobs:
         git config --global user.email 'actions@github.com'
 
     - name: Create and Push Tag
-      if: github.event_name == 'workflow_dispatch' # MANUAL RELEASE TRIGGER
+      if: github.event_name == 'workflow_dispatch' && runner.os == 'Windows' # MANUAL RELEASE TRIGGER
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cd ${{ github.workspace }}/contrib
-        if (${{ runner.os }} -eq 'Windows') {
-          $TAG_NAME="release-" + (Get-Date -Format "yyyyMMddHHmmss")
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-        } else {
-          TAG_NAME="release-$(date +'%Y%m%d%H%M%S')"
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-        }
+        $TAG_NAME="release-" + (Get-Date -Format "yyyyMMddHHmmss")
+        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
         git tag $TAG_NAME
         git push origin $TAG_NAME
-      shell: ${{ runner.os == 'Windows' && 'pwsh' || 'bash' }}
+      shell: 'pwsh'
+
+    - name: Create and Push Tag
+      if: github.event_name == 'workflow_dispatch' && runner.os != 'Windows' # MANUAL RELEASE TRIGGER
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cd ${{ github.workspace }}/contrib
+        TAG_NAME="release-$(date +'%Y%m%d%H%M%S')"
+        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+        git tag $TAG_NAME
+        git push origin $TAG_NAME
+      shell: 'bash'      
 
     # TODO hope that they finally release a decent uploading action.
     - name: Clean build
