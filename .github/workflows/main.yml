@@ -99,7 +99,7 @@ jobs:
     - name: Clean build
       shell: bash
       run: |
-           cd $GITHUB_WORKSPACE/contrib-build
+           cd ${{ github.workspace }}/contrib-build
            rm -rf archives
            rm -rf src
            rm -rf CMakeFiles
@@ -114,10 +114,10 @@ jobs:
       with:
         tag_name: ${{ env.TAG_NAME }}  # Explicitly specify the tag name for the release
         files:
-          $GITHUB_WORKSPACE/contrib-build/contrib_build-${{runner.os}}.tar.gz
+          ${{ github.workspace }}/contrib-build/contrib_build-${{runner.os}}.tar.gz
 
     - uses: actions/upload-artifact@v4
       if: github.event_name == 'workflow_dispatch'
       with:
         name: contrib-build-${{runner.os}}
-        path: contrib-build
+        path: ${{ github.workspace }}/contrib-build
