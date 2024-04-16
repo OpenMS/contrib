@@ -77,10 +77,16 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cd ${{ github.workspace }}/contrib
-        TAG_NAME="release-$(date +'%Y%m%d%H%M%S')"
-        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV  # Save the tag name to an environment variable
+        if (${{ runner.os }} -eq 'Windows') {
+          $TAG_NAME="release-" + (Get-Date -Format "yyyyMMddHHmmss")
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+        } else {
+          TAG_NAME="release-$(date +'%Y%m%d%H%M%S')"
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+        }
         git tag $TAG_NAME
         git push origin $TAG_NAME
+      shell: ${{ runner.os == 'Windows' && 'pwsh' || 'bash' }}
 
     # TODO hope that they finally release a decent uploading action.
     - name: Clean build
