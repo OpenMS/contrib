@@ -26,9 +26,9 @@ jobs:
       with:
         path: contrib
     - name: Setup cmake
-      uses: jwlawson/actions-setup-cmake@v1.13
+      uses: jwlawson/actions-setup-cmake@v2
       with:
-        cmake-version: '3.23.x'
+        cmake-version: '3.29.x'
     - name: Install prerequisites
       shell: bash
       run: |
