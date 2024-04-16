@@ -62,8 +62,8 @@ jobs:
       run: |
            mkdir $GITHUB_WORKSPACE/contrib-build
            cd $GITHUB_WORKSPACE/contrib-build
-           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=4 $GITHUB_WORKSPACE/contrib
-           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=4 $GITHUB_WORKSPACE/contrib
+           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=4 ${{GITHUB_WORKSPACE}}/contrib
+           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=4 ${{GITHUB_WORKSPACE}}/contrib
 
     - name: Configure Git for Tagging
       if: github.event_name == 'workflow_dispatch' # MANUAL RELEASE TRIGGER
