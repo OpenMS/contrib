@@ -9,7 +9,7 @@ COPY . /contrib
 
 RUN yum install -y wget
 RUN yum install -y xz qt5-qtbase-devel 
-RUN yum install -y qt5-qtbase-devel qt5-qtsvg qt5-qtsvg-devel python-devel 
+RUN yum install -y qt5-qtbase-devel qt5-qtsvg qt5-qtsvg-devel
 # RUN yum install -y libsvm-devel glpk-devel libzip-devel zlib-devel xerces-c-devel bzip2-devel sqlite-devel hdf5-devel
 RUN yum install -y libtool
 
