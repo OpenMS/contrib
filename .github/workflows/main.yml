@@ -53,36 +53,37 @@ jobs:
     # TODO use appropriate number of cores
     - name: Build contrib
       run: |
-           mkdir contrib-build
-           cd contrib-build
-           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=4 ../contrib
-           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=4 ../contrib
-
-    # TODO hope that they finally release a decent uploading action.
-    - name: Clean build
-      shell: bash
-      run: |
-           cd contrib-build
-           rm -rf archives
-           rm -rf src
-           rm -rf CMakeFiles
-           find . -maxdepth 1 -type f -not -name 'contrib_build.log' -delete
+           mkdir $GITHUB_WORKSPACE/contrib-build
+           cd $GITHUB_WORKSPACE/contrib-build
+           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=4 $GITHUB_WORKSPACE/contrib
+           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=4 $GITHUB_WORKSPACE/contrib
 
     - name: Configure Git for Tagging
-      if: github.event_name == 'workflow_dispatch'
+      if: github.event_name == 'workflow_dispatch' # MANUAL RELEASE TRIGGER
       run: |
         git config --global user.name 'GitHub Actions'
         git config --global user.email 'actions@github.com'
 
     - name: Create and Push Tag
-      if: github.event_name == 'workflow_dispatch'
+      if: github.event_name == 'workflow_dispatch' # MANUAL RELEASE TRIGGER
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        cd $GITHUB_WORKSPACE/contrib
         TAG_NAME="release-$(date +'%Y%m%d%H%M%S')"
         echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV  # Save the tag name to an environment variable
         git tag $TAG_NAME
         git push origin $TAG_NAME
+
+    # TODO hope that they finally release a decent uploading action.
+    - name: Clean build
+      shell: bash
+      run: |
+           cd $GITHUB_WORKSPACE/contrib-build
+           rm -rf archives
+           rm -rf src
+           rm -rf CMakeFiles
+           find . -maxdepth 1 -type f -not -name 'contrib_build.log' -delete
 
     - name: Create Release
       if: github.event_name == 'workflow_dispatch'
@@ -93,7 +94,7 @@ jobs:
       with:
         tag_name: ${{ env.TAG_NAME }}  # Explicitly specify the tag name for the release
         files:
-          ./contrib-build/contrib_build-${{runner.os}}.tar.gz
+          $GITHUB_WORKSPACE/contrib-build/contrib_build-${{runner.os}}.tar.gz
 
     - uses: actions/upload-artifact@v4
       if: github.event_name == 'workflow_dispatch'
