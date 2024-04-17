@@ -49,6 +49,7 @@ jobs:
           else
             echo "$RUNNER_OS not supported"
             exit 1
+          fi
 
       - name: Set up Visual Studio shell
         uses: egor-tensin/vs-shell@v2
