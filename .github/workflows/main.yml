@@ -5,7 +5,7 @@ on:
   workflow_dispatch:  # This allows you to manually trigger the workflow from the GitHub UI
 
 jobs:
-  prepare:
+  prepare: # separate job to generate tag name exactly once based on the date
     runs-on: ubuntu-latest
     outputs:
       TAG_NAME: ${{ steps.generate_tag_name.outputs.TAG_NAME }} # map step output to job output
@@ -29,9 +29,9 @@ jobs:
             CMAKE_ARGS: -G"Visual Studio 17 2022" -A"x64"
 
     steps:
-      - env:
-          TAG_NAME: ${{needs.prepare.outputs.TAG_NAME}} # get job variable TAG_NAME
-        run: echo "$TAG_NAME" # check if variable properly transferred between jobs
+      - name: Transfer variable TAG_NAME between jobs to be available as step output in this job
+        id: generate_tag_name
+        run: echo "TAG_NAME=${{needs.prepare.outputs.TAG_NAME}}" >> $GITHUB_OUTPUT
 
       - uses: actions/checkout@v4
         with:
