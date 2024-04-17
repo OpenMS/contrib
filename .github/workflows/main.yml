@@ -114,7 +114,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ env.TAG_NAME }}  # Explicitly specify the tag name for the release
-        files:
+        files: |
           ${{ github.workspace }}/contrib-build/contrib_build-${{runner.os}}.tar.gz
 
 #    - uses: actions/upload-artifact@v4
