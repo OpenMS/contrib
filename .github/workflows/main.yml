@@ -5,143 +5,110 @@ on:
   workflow_dispatch:  # This allows you to manually trigger the workflow from the GitHub UI
 
 jobs:
-  prepare: # creates a timestamp once to be used on all matrix jobs
+  prepare:
     runs-on: ubuntu-latest
     outputs:
       timestamp: ${{ steps.timestamp.outputs.timestamp }}
     steps:
       - name: Generate timestamp
         id: timestamp
-        run: echo "::set-output name=timestamp::$(date +%Y%m%d%H%M%S)"
+        run: echo "timestamp=$(date +%Y%m%d%H%M%S)" | tee $GITHUB_ENV
 
       - name: Save timestamp
         uses: actions/upload-artifact@v3
         with:
           name: timestamp
-          path: ${{ steps.timestamp.outputs.timestamp }}
-          
+          path: timestamp.txt  # Correct path to an actual file
+
   build:
     needs: prepare
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        include: 
-        - os: ubuntu-latest
-          CMAKE_ARGS: ""
-
-        - os:  macos-latest
-          CMAKE_ARGS: -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9   
-
-        - os: windows-latest
-          CMAKE_ARGS: -G"Visual Studio 17 2022" -A"x64"
+        include:
+          - os: ubuntu-latest
+            CMAKE_ARGS: ""
+          - os: macos-latest
+            CMAKE_ARGS: -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9
+          - os: windows-latest
+            CMAKE_ARGS: -G"Visual Studio 17 2022" -A"x64"
 
     steps:
-    - name: Download timestamp
-      uses: actions/download-artifact@v3
-      with:
-        name: timestamp
+      - name: Download timestamp
+        uses: actions/download-artifact@v3
+        with:
+          name: timestamp
 
-    - name: Read timestamp and create tag name
-      id: set_env
-      run: echo "TAG_NAME=$(cat timestamp)" >> $GITHUB_ENV
-              
-    - uses: actions/checkout@v4
-      with:
-        path: contrib
-        
-    - name: Setup cmake
-      uses: jwlawson/actions-setup-cmake@v2
-      with:
-        cmake-version: '3.29.x'
-        
-    - name: Install prerequisites
-      shell: bash
-      run: |
-         if [ "$RUNNER_OS" == "Linux" ]; then
-              sudo apt-get -y install make autoconf automake tar patch libtool gcc
-         elif [ "$RUNNER_OS" == "Windows" ]; then
-              #choco install important_windows_software
-              echo "Nothing to install"
-         elif [ "$RUNNER_OS" == "macOS" ]; then
-              brew install autoconf automake libtool
-         else
-              echo "$RUNNER_OS not supported"
-              exit 1
-         fi
+      - name: Read timestamp and create tag name
+        run: |
+          timestamp=$(cat timestamp)
+          echo "TAG_NAME=release-$timestamp" >> $GITHUB_ENV
 
-    # https://github.com/marketplace/actions/visual-studio-shell
-    - name: Set up Visual Studio shell
-      uses: egor-tensin/vs-shell@v2
-      with:
-        arch: x64
+      - uses: actions/checkout@v4
+        with:
+          path: contrib
 
-#    - name: Print folder structure (Windows) for debugging
-#      if: runner.os == 'Windows'
-#      run: tree D:\ /f /a
-#      shell: cmd
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.29.x'
 
-    # TODO use appropriate number of cores
-    - name: Build contrib
-      run: |
-           mkdir "${{ github.workspace }}/contrib-build"
-           cd "${{ github.workspace }}/contrib-build"
-           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=4 ${{ github.workspace }}/contrib
-           cmake ${{matrix.CMAKE_ARGS}} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=4 ${{ github.workspace }}/contrib
+      - name: Install prerequisites
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get -y install make autoconf automake tar patch libtool gcc
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            # choco install important_windows_software
+            echo "Nothing to install"
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            brew install autoconf automake libtool
+          else
+            echo "$RUNNER_OS not supported"
+            exit 1
 
-    - name: Configure Git for Tagging
-      if: github.event_name == 'workflow_dispatch' # MANUAL RELEASE TRIGGER
-      run: |
-        git config --global user.name 'GitHub Actions'
-        git config --global user.email 'actions@github.com'
+      - name: Set up Visual Studio shell
+        uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
 
-#    - name: Create and Push Tag
-#      if: github.event_name == 'workflow_dispatch' && runner.os == 'Windows' # MANUAL RELEASE TRIGGER
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      run: |
-#        cd "${{ github.workspace }}/contrib"
-#        $TAG_NAME="release-" + (Get-Date -Format "yyyyMMddHHmmss")
-#        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-#        git tag $TAG_NAME
-#        git push origin $TAG_NAME
-#      shell: 'pwsh'
-# should work with bash on windows as well, see below
+      - name: Build contrib
+        run: |
+          mkdir "${{ github.workspace }}/contrib-build"
+          cd "${{ github.workspace }}/contrib-build"
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=4 ${{ github.workspace }}/contrib
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=4 ${{ github.workspace }}/contrib
 
-    - name: Create and Push Tag
-      if: github.event_name == 'workflow_dispatch' # MANUAL RELEASE TRIGGER
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        cd "${{ github.workspace }}/contrib"
-        git tag $TAG_NAME
-        git push origin $TAG_NAME
-      shell: 'bash'      
+      - name: Configure Git for Tagging
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
 
-    # TODO hope that they finally release a decent uploading action.
-    - name: Clean build and package
-      shell: bash
-      run: |
-           cd "${{ github.workspace }}/contrib-build"
-           rm -rf archives
-           rm -rf src
-           rm -rf CMakeFiles    
-           # Creating a tar.gz archive of the contrib-build directory
-           tar czf "contrib_build-${{ runner.os }}.tar.gz" $(ls -d lib) $(ls -d bin) $(ls -d include) $(ls -d share)           
+      - name: Create and Push Tag
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd "${{ github.workspace }}/contrib"
+          git tag ${{ env.TAG_NAME }}
+          git push origin ${{ env.TAG_NAME }}
+        shell: bash
 
-    - name: Create Release
-      if: github.event_name == 'workflow_dispatch'
-      id: create_release
-      uses: softprops/action-gh-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ env.TAG_NAME }}  # Explicitly specify the tag name for the release
-        files: |
-          ${{ github.workspace }}/contrib-build/contrib_build-${{runner.os}}.tar.gz
+      - name: Clean build and package
+        run: |
+          cd "${{ github.workspace }}/contrib-build"
+          rm -rf archives src CMakeFiles
+          tar czf "contrib_build-${{ runner.os }}.tar.gz" $(ls -d lib) $(ls -d bin) $(ls -d include) $(ls -d share)
 
-#    - uses: actions/upload-artifact@v4
-#      if: github.event_name == 'workflow_dispatch'
-#      with:
-#        name: contrib-build-${{runner.os}}
-#        path: ${{ github.workspace }}/contrib-build
+      - name: Create Release
+        if: github.event_name == 'workflow_dispatch'
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          files: |
+            ${{ github.workspace }}/contrib-build/contrib_build-${{runner.os}}.tar.gz
