@@ -97,7 +97,7 @@ jobs:
       shell: 'bash'      
 
     # TODO hope that they finally release a decent uploading action.
-    - name: Clean build
+    - name: Clean build and package
       shell: bash
       run: |
            cd "${{ github.workspace }}/contrib-build"
@@ -105,6 +105,9 @@ jobs:
            rm -rf src
            rm -rf CMakeFiles
            find . -maxdepth 1 -type f -not -name 'contrib_build.log' -delete
+           
+           # Creating a tar.gz archive of the contrib-build directory
+           tar -czvf "contrib_build-${{ runner.os }}.tar.gz" .
 
     - name: Create Release
       if: github.event_name == 'workflow_dispatch'
