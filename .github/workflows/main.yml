@@ -7,8 +7,6 @@ on:
 jobs:
   prepare:
     runs-on: ubuntu-latest
-    outputs:
-      timestamp: ${{ steps.timestamp.outputs.timestamp }}
     steps:
       - name: Generate tag name
         id: tag_name
