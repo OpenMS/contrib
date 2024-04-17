@@ -5,8 +5,23 @@ on:
   workflow_dispatch:  # This allows you to manually trigger the workflow from the GitHub UI
 
 jobs:
-  build:
+  prepare: # creates a timestamp once to be used on all matrix jobs
+    runs-on: ubuntu-latest
+    outputs:
+      timestamp: ${{ steps.timestamp.outputs.timestamp }}
+    steps:
+      - name: Generate timestamp
+        id: timestamp
+        run: echo "::set-output name=timestamp::$(date +%Y%m%d%H%M%S)"
 
+      - name: Save timestamp
+        uses: actions/upload-artifact@v3
+        with:
+          name: timestamp
+          path: ${{ steps.timestamp.outputs.timestamp }}
+          
+  build:
+    needs: prepare
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -22,13 +37,15 @@ jobs:
           CMAKE_ARGS: -G"Visual Studio 17 2022" -A"x64"
 
     steps:
-    
-    - name: Set global action variables
-      shell: bash
-      run: |
-        TAG_NAME="release-$(date +'%Y%m%d')"
-        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-      
+    - name: Download timestamp
+      uses: actions/download-artifact@v3
+      with:
+        name: timestamp
+
+    - name: Read timestamp and create tag name
+      id: set_env
+      run: echo "TAG_NAME=$(cat timestamp)" >> $GITHUB_ENV
+              
     - uses: actions/checkout@v4
       with:
         path: contrib
