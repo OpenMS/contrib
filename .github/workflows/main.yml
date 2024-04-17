@@ -71,20 +71,21 @@ jobs:
         git config --global user.name 'GitHub Actions'
         git config --global user.email 'actions@github.com'
 
-    - name: Create and Push Tag
-      if: github.event_name == 'workflow_dispatch' && runner.os == 'Windows' # MANUAL RELEASE TRIGGER
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        cd "${{ github.workspace }}/contrib"
-        $TAG_NAME="release-" + (Get-Date -Format "yyyyMMddHHmmss")
-        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-        git tag $TAG_NAME
-        git push origin $TAG_NAME
-      shell: 'pwsh'
+#    - name: Create and Push Tag
+#      if: github.event_name == 'workflow_dispatch' && runner.os == 'Windows' # MANUAL RELEASE TRIGGER
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      run: |
+#        cd "${{ github.workspace }}/contrib"
+#        $TAG_NAME="release-" + (Get-Date -Format "yyyyMMddHHmmss")
+#        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+#        git tag $TAG_NAME
+#        git push origin $TAG_NAME
+#      shell: 'pwsh'
+# should work with bash on windows as well, see below
 
     - name: Create and Push Tag
-      if: github.event_name == 'workflow_dispatch' && runner.os != 'Windows' # MANUAL RELEASE TRIGGER
+      if: github.event_name == 'workflow_dispatch' # MANUAL RELEASE TRIGGER
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
