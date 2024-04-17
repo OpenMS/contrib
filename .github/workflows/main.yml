@@ -10,16 +10,10 @@ jobs:
     outputs:
       timestamp: ${{ steps.timestamp.outputs.timestamp }}
     steps:
-      - name: Generate timestamp
-        id: timestamp
-        run: echo "timestamp=$(date +%Y%m%d%H%M%S)" | tee $GITHUB_ENV
-
-      - name: Save timestamp
-        uses: actions/upload-artifact@v3
-        with:
-          name: timestamp
-          path: timestamp.txt  # Correct path to an actual file
-
+      - name: Generate tag name
+        id: tag_name
+        run: echo "TAG_NAME=$(date +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
+        
   build:
     needs: prepare
     runs-on: ${{ matrix.os }}
@@ -35,16 +29,6 @@ jobs:
             CMAKE_ARGS: -G"Visual Studio 17 2022" -A"x64"
 
     steps:
-      - name: Download timestamp
-        uses: actions/download-artifact@v3
-        with:
-          name: timestamp
-
-      - name: Read timestamp and create tag name
-        run: |
-          timestamp=$(cat timestamp)
-          echo "TAG_NAME=release-$timestamp" >> $GITHUB_ENV
-
       - uses: actions/checkout@v4
         with:
           path: contrib
@@ -92,8 +76,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd "${{ github.workspace }}/contrib"
-          git tag ${{ env.TAG_NAME }}
-          git push origin ${{ env.TAG_NAME }}
+          git tag ${{ steps.tag_name.outputs.TAG_NAME }}
+          git push origin ${{ steps.tag_name.outputs.TAG_NAME }}
         shell: bash
 
       - name: Clean build and package
@@ -109,6 +93,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.TAG_NAME }}
+          tag_name: ${{ steps.tag_name.outputs.TAG_NAME }}
           files: |
             ${{ github.workspace }}/contrib-build/contrib_build-${{runner.os}}.tar.gz
