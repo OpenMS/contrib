@@ -91,7 +91,8 @@ jobs:
           cd "${{ github.workspace }}/contrib-build"
           rm -rf archives src CMakeFiles
           tar czf "contrib_build-${{ runner.os }}.tar.gz" $(ls -d lib) $(ls -d bin) $(ls -d include) $(ls -d share)
-
+        shell: bash
+        
       - name: Create Release
         if: github.event_name == 'workflow_dispatch'
         id: create_release
