@@ -32,6 +32,7 @@ jobs:
       - name: Transfer variable TAG_NAME between jobs to be available as step output in this job
         id: generate_tag_name
         run: echo "TAG_NAME=${{needs.prepare.outputs.TAG_NAME}}" >> $GITHUB_OUTPUT
+        shell: bash
 
       - uses: actions/checkout@v4
         with:
