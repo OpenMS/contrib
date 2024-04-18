@@ -63,7 +63,9 @@ jobs:
       # Normalize path to only contain front slashes
       - name: Normalize path on windows
         id: normalize_ws
-        run: echo "NORMALIZED_WORKSPACE=$(echo ${{ github.workspace }} | sed 's/\\/\//g')" >> $GITHUB_ENV
+        run: |
+          echo "NORMALIZED_WORKSPACE=$(echo ${{ github.workspace }} | sed 's/\\/\//g')" >> $GITHUB_ENV
+          echo "$NORMALIZED_WORKSPACE"
         shell: bash
 
       - name: Set up Visual Studio shell
@@ -111,4 +113,4 @@ jobs:
         with:
           tag_name: ${{ steps.generate_tag_name.outputs.TAG_NAME }}
           files: |
-            ${{ steps.normalize_ws.outputs.NORMALIZED_WORKSPACE}}/contrib-build/contrib_build-${{runner.os}}.tar.gz # can't use ${{ github.workspace }} here because windows backslash is not supported by pattern
+            "${{ steps.normalize_ws.outputs.NORMALIZED_WORKSPACE }}/contrib-build/contrib_build-${{runner.os}}.tar.gz"
