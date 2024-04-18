@@ -1,4 +1,6 @@
 name: CI
+# builds and (manually) releases the contrib for mac, linux and windows
+# note: prepare job is run first to determine a tag that can be used by all OS runners 
 
 on:
   push:
@@ -103,4 +105,4 @@ jobs:
         with:
           tag_name: ${{ steps.generate_tag_name.outputs.TAG_NAME }}
           files: |
-            ${{ github.workspace }}/contrib-build/contrib_build-${{runner.os}}.tar.gz
+            ./contrib-build/contrib_build-${{runner.os}}.tar.gz # can't use ${{ github.workspace }} here because windows backslash is not supported by pattern
