@@ -60,6 +60,12 @@ jobs:
             exit 1
           fi
 
+      # Normalize path to only contain front slashes
+      - name: Normalize path on windows
+        id: normalize_ws
+        run: echo "NORMALIZED_WORKSPACE=$(echo ${{ github.workspace }} | sed 's/\\/\//g')" >> $GITHUB_ENV
+        shell: bash
+
       - name: Set up Visual Studio shell
         uses: egor-tensin/vs-shell@v2
         with:
@@ -105,4 +111,4 @@ jobs:
         with:
           tag_name: ${{ steps.generate_tag_name.outputs.TAG_NAME }}
           files: |
-            ./contrib-build/contrib_build-${{runner.os}}.tar.gz # can't use ${{ github.workspace }} here because windows backslash is not supported by pattern
+            ${{ steps.normalize_ws.outputs.NORMALIZED_WORKSPACE}}/contrib-build/contrib_build-${{runner.os}}.tar.gz # can't use ${{ github.workspace }} here because windows backslash is not supported by pattern
