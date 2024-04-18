@@ -64,9 +64,9 @@ jobs:
       - name: Normalize path on windows
         id: normalize_ws
         run: |
-          echo "NORMALIZED_WORKSPACE=$(echo ${{ github.workspace }} | sed 's/\\/\//g')" >> $GITHUB_ENV
-          echo "$NORMALIZED_WORKSPACE"
-        shell: bash
+          $normalizedWorkspace = $env:GITHUB_WORKSPACE -replace '\\', '/'
+          Write-Output "NORMALIZED_WORKSPACE=$normalizedWorkspace" >> $env:GITHUB_OUTPUT
+        shell: pwsh
 
       - name: Set up Visual Studio shell
         uses: egor-tensin/vs-shell@v2
@@ -104,9 +104,9 @@ jobs:
           tar -czvf "contrib_build-${{ runner.os }}.tar.gz" $(ls -d lib) $(ls -d bin) $(ls -d include) $(ls -d share)
         shell: bash
         
-      - name: Create Release
-        if: github.event_name == 'workflow_dispatch'
-        id: create_release
+      - name: Create Release (Windows)
+        if: github.event_name == 'workflow_dispatch' && runner.os == "Windows"
+        id: create_release_win
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -114,3 +114,14 @@ jobs:
           tag_name: ${{ steps.generate_tag_name.outputs.TAG_NAME }}
           files: |
             "${{ steps.normalize_ws.outputs.NORMALIZED_WORKSPACE }}/contrib-build/contrib_build-${{runner.os}}.tar.gz"
+
+      - name: Create Release (Mac and Linux)
+        if: github.event_name == 'workflow_dispatch' && runner.os != "Windows"
+        id: create_release_mac_linux
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.generate_tag_name.outputs.TAG_NAME }}
+          files: |
+            "${{ github.workspace }}/contrib-build/contrib_build-${{runner.os}}.tar.gz"
