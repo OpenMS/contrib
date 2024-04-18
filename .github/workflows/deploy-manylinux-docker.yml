@@ -33,7 +33,7 @@ jobs:
         run: echo "repo=$(echo ${GITHUB_REPOSITORY,,})" >> $GITHUB_OUTPUT
         id: downcase_repo
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
