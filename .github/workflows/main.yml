@@ -62,6 +62,7 @@ jobs:
 
       # Normalize path to only contain front slashes
       - name: Normalize path on windows
+        if: startsWith(matrix.os, 'windows')
         id: normalize_ws
         run: |
           $normalizedWorkspace = $env:GITHUB_WORKSPACE -replace '\\', '/'
@@ -105,7 +106,7 @@ jobs:
         shell: bash
         
       - name: Create Release (Windows)
-        if: github.event_name == 'workflow_dispatch' && runner.os == "Windows"
+        if: github.event_name == 'workflow_dispatch' &&  && startsWith(matrix.os, 'windows')
         id: create_release_win
         uses: softprops/action-gh-release@v2
         env:
@@ -116,7 +117,7 @@ jobs:
             "${{ steps.normalize_ws.outputs.NORMALIZED_WORKSPACE }}/contrib-build/contrib_build-${{runner.os}}.tar.gz"
 
       - name: Create Release (Mac and Linux)
-        if: github.event_name == 'workflow_dispatch' && runner.os != "Windows"
+        if: github.event_name == 'workflow_dispatch' && !startsWith(matrix.os, 'windows')
         id: create_release_mac_linux
         uses: softprops/action-gh-release@v2
         env:
