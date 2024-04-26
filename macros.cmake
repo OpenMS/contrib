@@ -78,10 +78,7 @@ endmacro()
 ## downloads the archive for the given library
 ## @param libname The library that should be downloaded
 macro(download_contrib_archive libname)
-  # constant
-  # Currently this points to the OpenMS build archive
-  # Sources are checked out regularly from OpenMS/contrib-sources via a cron job
-  set(_BASE_URL "https://abibuilder.cs.uni-tuebingen.de/archive/openms/contrib/source_packages/")
+  set(_BASE_URL "https://github.com/OpenMS/contrib-sources/releases/download/latest/")
 
   # the files/folders where downloads are stored
   set(_archive_folder "${PROJECT_BINARY_DIR}/archives")
