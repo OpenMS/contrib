@@ -16,8 +16,7 @@ Please note that an internet connection is required to
 build the contrib since the actual source packages are
 only downloaded when built.
 
-You can find prebuilt versions and the used sources
-(e.g. for manual download) on our [archive](https://abibuilder.cs.uni-tuebingen.de/archive/openms/contrib).
+You can find the sources on [(https://abibuilder.cs.uni-tuebingen.de/archive/openms/contrib)](https://github.com/OpenMS/contrib-sources).
 
 Build
 ============
