@@ -132,27 +132,28 @@ PROJECT("OpenMS_CONTRIB")
 # quick manual for most commands: https://cmake.org/cmake/help/v3.3/manual/cmake-commands.7.html
 # useful predefined variables: http://www.paraview.org/Wiki/CMake_Useful_Variables
 
-# force cmake > 3.1 to force enable c11 support
-cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+# force cmake > 3.10 to force enable c++20 support
+cmake_minimum_required(VERSION 3.10.0 FATAL_ERROR)
 
 SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 # Set C++ version (does only work if we had a target-based CMake script)
-SET(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_CXX_STANDARD 20)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Until then, check again manually. MSVC is checked separately later
+# Update compiler version requirements for C++20 support
 if (UNIX)
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.3")
-      message(FATAL_ERROR "clang++: OpenMS-contrib requires version 3.3 to build but found ${CMAKE_CXX_COMPILER_VERSION}")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.0.0")
+      message(FATAL_ERROR "clang++: OpenMS-contrib requires version 10.0.0 or later to build but found ${CMAKE_CXX_COMPILER_VERSION}")
     endif()  
   elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "5.0.0")
-      message(FATAL_ERROR "appleclang: OpenMS-contrib requires version 5.0.0 to build but found ${CMAKE_CXX_COMPILER_VERSION}")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "12.0.0")
+      message(FATAL_ERROR "appleclang: OpenMS-contrib requires version 12.0.0 or later to build but found ${CMAKE_CXX_COMPILER_VERSION}")
     endif()  
   elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.7.2")
-      message(FATAL_ERROR "g++: OpenMS-contrib requires version 4.7.2 to build but found ${CMAKE_CXX_COMPILER_VERSION}")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.0.0")
+      message(FATAL_ERROR "g++: OpenMS-contrib requires version 10.0.0 or later to build but found ${CMAKE_CXX_COMPILER_VERSION}")
     endif()  
   endif()
 endif()
