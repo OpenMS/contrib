@@ -161,6 +161,7 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
         CC=${CMAKE_C_COMPILER}
       WORKING_DIRECTORY ${COINOR_DIR}
       OUTPUT_VARIABLE COINOR_CONFIGURE_OUT
+      ERROR_VARIABLE COINOR_CONFIGURE_ERR
       RESULT_VARIABLE COINOR_CONFIGURE_SUCCESS
     )
 
@@ -178,13 +179,15 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
 
     ## make install
     message( STATUS "Building and installing COIN-OR library (make install).. ")
-    exec_program(${CMAKE_MAKE_PROGRAM} "${COINOR_DIR}"
-      ARGS 
-      install
-      #-j ${NUMBER_OF_JOBS} # the project has problems with multiple jobs. It tries to create folders at the same time and fails.
-      -j 1
+    execute_process(
+      COMMAND 
+      ${CMAKE_MAKE_PROGRAM}
+      install 
+      "-j1"
+      WORKING_DIRECTORY ${COINOR_DIR} 
+        # Explicitly pass as one argument      
       OUTPUT_VARIABLE COINOR_MAKE_OUT
-      RETURN_VALUE COINOR_MAKE_SUCCESS
+      RESULT_VARIABLE COINOR_MAKE_SUCCESS
       )
 
     ## logfile
