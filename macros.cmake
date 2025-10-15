@@ -153,7 +153,7 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
       execute_process(COMMAND ${PROGRAM_ZIP} ${PROJECT_BINARY_DIR}
         OUTPUT_VARIABLE ZIP_OUT
         ARGS ${${zip_args_varname}} "\"${PROJECT_BINARY_DIR}/archives/${${libfile_varname}}\""
-        RETURN_VALUE EXTRACT_SUCCESS)
+        RESULT_VARIABLE EXTRACT_SUCCESS)
 
       if (NOT EXTRACT_SUCCESS EQUAL 0)
         message(STATUS "Extracting ${libname} .. failed")
@@ -165,7 +165,7 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
         execute_process(COMMAND ${PROGRAM_ZIP} ${PROJECT_BINARY_DIR}
           OUTPUT_VARIABLE ZIP2_OUT
           ARGS ${${zip_args_varname}} "\"${PROJECT_BINARY_DIR}/src/${${libfile_varname}_TAR}\""
-          RETURN_VALUE EXTRACT_SUCCESS)
+          RESULT_VARIABLE EXTRACT_SUCCESS)
 
         # logfile
         file(APPEND ${LOGFILE} ${ZIP2_OUT})
@@ -189,7 +189,7 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
       execute_process(COMMAND ${PROGRAM_ZIP} ${PROJECT_BINARY_DIR}
         ARGS ${${zip_args_varname}} "${PROJECT_BINARY_DIR}/archives/${${libfile_varname}}" " -C " ${CONTRIB_BIN_SOURCE_DIR}
         OUTPUT_VARIABLE ZIP_OUT
-        RETURN_VALUE EXTRACT_SUCCESS)
+        RESULT_VARIABLE EXTRACT_SUCCESS)
 
       if (NOT EXTRACT_SUCCESS EQUAL 0)
         message(STATUS "Extracting ${libname} .. failed")
@@ -221,7 +221,7 @@ MACRO ( OPENMS_BUILDLIB libname solutionfile_varname target_varname config worki
   execute_process(COMMAND ${MSBUILD_EXECUTABLE} ${${workingdir_varname}}
     ARGS ${MSBUILD_ARGS}
     OUTPUT_VARIABLE BUILDLIB_OUT
-    RETURN_VALUE BUILD_SUCCESS)
+    RESULT_VARIABLE BUILD_SUCCESS)
 
   # logfile
   file(APPEND ${LOGFILE} ${BUILDLIB_OUT})
@@ -247,7 +247,7 @@ MACRO ( OPENMS_PATCH patchfile_varname workingdir_varname patchedfile_varname)
     execute_process(COMMAND ${PROGRAM_PATCH} ${${workingdir_varname}}
       ARGS ${PATCH_ARGUMENTS} "\"${${patchfile_varname}}\""
       OUTPUT_VARIABLE PATCH_OUT
-      RETURN_VALUE PATCH_SUCCESS)
+      RESULT_VARIABLE PATCH_SUCCESS)
 
     # logfile
     file(APPEND ${LOGFILE} "${PATCH_OUT}\n\r")
@@ -259,7 +259,7 @@ MACRO ( OPENMS_PATCH patchfile_varname workingdir_varname patchedfile_varname)
       execute_process(COMMAND ${PROGRAM_PATCH} ${${workingdir_varname}}
         ARGS ${PATCH_ARGUMENTS} "\"${${patchfile_varname}}\""
         OUTPUT_VARIABLE PATCH_OUT
-        RETURN_VALUE PATCH_SUCCESS)
+        RESULT_VARIABLE PATCH_SUCCESS)
 
       # logfile
       file(APPEND ${LOGFILE} "${PATCH_OUT}\n\r")
@@ -291,7 +291,7 @@ MACRO (OPENMS_COPYDIR dir_source dir_target)
     execute_process(COMMAND ${CMAKE_COMMAND}
       ARGS -E copy_directory "\"${${dir_source}}\"" "\"${${dir_target}}\""
       OUTPUT_VARIABLE COPYDIR_OUT
-      RETURN_VALUE COPY_SUCCESS)
+      RESULT_VARIABLE COPY_SUCCESS)
 
     # logfile
     file(APPEND ${LOGFILE} ${COPYDIR_OUT})
