@@ -262,8 +262,8 @@ MACRO ( OPENMS_PATCH patchfile_varname workingdir_varname patchedfile_varname)
       set( PATCH_ARGUMENTS "-p0 -b -N -i") ## NOTE: always keep -i as last argument !!
       message(STATUS "Try patching ${${patchedfile_varname}} without binary option ... ")
       execute_process(COMMAND ${PROGRAM_PATCH} 
-        WORKING_DIRECTORY ${${workingdir_varname}}
         ${PATCH_ARGUMENTS} ${${patchfile_varname}}
+        WORKING_DIRECTORY ${${workingdir_varname}}
         OUTPUT_VARIABLE PATCH_OUT
         RESULT_VARIABLE PATCH_SUCCESS)
 
