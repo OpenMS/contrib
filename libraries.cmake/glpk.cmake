@@ -19,7 +19,7 @@ MACRO( OPENMS_CONTRIB_BUILD_GLPK )
 		configure_file("${PROJECT_SOURCE_DIR}/patches/gplk/Win_config_VC" "${GLPK_DIR}/w32/config.h" COPYONLY)
 		configure_file("${PROJECT_SOURCE_DIR}/patches/gplk/Makefile_VC" "${GLPK_DIR}/w32/Makefile_VC" COPYONLY)
 		
-	  execute_process(${NMAKE_EXECUTABLE} "${GLPK_DIR}/w32"  ## w32 and w64 contain the same makefiles, so it does not matter (the cmd environment we are using to call nmake matters though)
+	  execute_process(COMMAND ${NMAKE_EXECUTABLE} "${GLPK_DIR}/w32"  ## w32 and w64 contain the same makefiles, so it does not matter (the cmd environment we are using to call nmake matters though)
 	    ARGS /f Makefile_VC DEBUG=1 check
       OUTPUT_VARIABLE GLPK_MAKE_OUT
 	    RETURN_VALUE BUILD_SUCCESS)
@@ -34,7 +34,7 @@ MACRO( OPENMS_CONTRIB_BUILD_GLPK )
       message(STATUS "Building GLPK library (nmake) .. done")
 	  endif()
 
-	  execute_process(${NMAKE_EXECUTABLE} "${GLPK_DIR}/w32"  ## w32 and w64 contain the same makefiles, so it does not matter (the cmd environment we are using to call nmake matters though)
+	  execute_process(COMMAND ${NMAKE_EXECUTABLE} "${GLPK_DIR}/w32"  ## w32 and w64 contain the same makefiles, so it does not matter (the cmd environment we are using to call nmake matters though)
 	    ARGS /f Makefile_VC check
       OUTPUT_VARIABLE GLPK_MAKE_OUT
 	    RETURN_VALUE BUILD_SUCCESS)
@@ -70,7 +70,7 @@ MACRO( OPENMS_CONTRIB_BUILD_GLPK )
 	
 
 		message( STATUS "Configuring GLPK (./configure --disable-dependency-tracking --prefix ${CMAKE_BINARY_DIR} --disable-shared CPPFLAGS='${GLPK_CFLAGS}' CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} .. ")
-    execute_process("./configure" "${GLPK_DIR}"
+    execute_process(COMMAND "./configure" "${GLPK_DIR}"
       ARGS
       --prefix ${CMAKE_BINARY_DIR}
       ${STATIC_BUILD}
@@ -95,7 +95,7 @@ MACRO( OPENMS_CONTRIB_BUILD_GLPK )
 
     # make 
     message( STATUS "Building GLPK library (make).. ")
-    execute_process(${CMAKE_MAKE_PROGRAM} "${GLPK_DIR}"
+    execute_process(COMMAND ${CMAKE_MAKE_PROGRAM} "${GLPK_DIR}"
       ARGS -j ${NUMBER_OF_JOBS}
       OUTPUT_VARIABLE GLPK_MAKE_OUT
       RETURN_VALUE GLPK_MAKE_SUCCESS
@@ -113,7 +113,7 @@ MACRO( OPENMS_CONTRIB_BUILD_GLPK )
     
     # make install
     message( STATUS "Installing GLPK library (make install) .. ")
-    execute_process(${CMAKE_MAKE_PROGRAM} "${GLPK_DIR}"
+    execute_process(COMMAND ${CMAKE_MAKE_PROGRAM} "${GLPK_DIR}"
       ARGS "install"
       -j ${NUMBER_OF_JOBS}
       OUTPUT_VARIABLE GLPK_INSTALL_OUT

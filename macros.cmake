@@ -150,7 +150,7 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
     # ms way
     message(STATUS "Extracting ${libname} ..")
     if (NOT EXISTS ${${libnameUP}_DIR}/${checkfile}) ## last file to be extracted
-      execute_process(${PROGRAM_ZIP} ${PROJECT_BINARY_DIR}
+      execute_process(COMMAND ${PROGRAM_ZIP} ${PROJECT_BINARY_DIR}
         OUTPUT_VARIABLE ZIP_OUT
         ARGS ${${zip_args_varname}} "\"${PROJECT_BINARY_DIR}/archives/${${libfile_varname}}\""
         RETURN_VALUE EXTRACT_SUCCESS)
@@ -162,7 +162,7 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
         message(STATUS "Extracting ${libname} .. done (1st pass)")
         message(STATUS "Extracting ${libname} .. ")
         ## extract the tar
-        execute_process(${PROGRAM_ZIP} ${PROJECT_BINARY_DIR}
+        execute_process(COMMAND ${PROGRAM_ZIP} ${PROJECT_BINARY_DIR}
           OUTPUT_VARIABLE ZIP2_OUT
           ARGS ${${zip_args_varname}} "\"${PROJECT_BINARY_DIR}/src/${${libfile_varname}_TAR}\""
           RETURN_VALUE EXTRACT_SUCCESS)
@@ -186,7 +186,7 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
     ## do it the unix way
     message(STATUS "Extracting ${libname} .. ")
     if (NOT EXISTS ${${libnameUP}_DIR}/${checkfile}) ## last file to be extracted
-      execute_process(${PROGRAM_ZIP} ${PROJECT_BINARY_DIR}
+      execute_process(COMMAND ${PROGRAM_ZIP} ${PROJECT_BINARY_DIR}
         ARGS ${${zip_args_varname}} "${PROJECT_BINARY_DIR}/archives/${${libfile_varname}}" " -C " ${CONTRIB_BIN_SOURCE_DIR}
         OUTPUT_VARIABLE ZIP_OUT
         RETURN_VALUE EXTRACT_SUCCESS)
@@ -218,7 +218,7 @@ MACRO ( OPENMS_BUILDLIB libname solutionfile_varname target_varname config worki
     set (MSBUILD_ARGS "${MSBUILD_ARGS} /maxcpucount")
   endif()
 
-  execute_process(${MSBUILD_EXECUTABLE} ${${workingdir_varname}}
+  execute_process(COMMAND ${MSBUILD_EXECUTABLE} ${${workingdir_varname}}
     ARGS ${MSBUILD_ARGS}
     OUTPUT_VARIABLE BUILDLIB_OUT
     RETURN_VALUE BUILD_SUCCESS)
@@ -244,7 +244,7 @@ MACRO ( OPENMS_PATCH patchfile_varname workingdir_varname patchedfile_varname)
     message(STATUS "Patching ${${patchedfile_varname}} ... skipped (already applied)")
   else()
     message(STATUS "Try patching ${${patchedfile_varname}} with binary option ... ")
-    execute_process(${PROGRAM_PATCH} ${${workingdir_varname}}
+    execute_process(COMMAND ${PROGRAM_PATCH} ${${workingdir_varname}}
       ARGS ${PATCH_ARGUMENTS} "\"${${patchfile_varname}}\""
       OUTPUT_VARIABLE PATCH_OUT
       RETURN_VALUE PATCH_SUCCESS)
@@ -256,7 +256,7 @@ MACRO ( OPENMS_PATCH patchfile_varname workingdir_varname patchedfile_varname)
       ## Second try: without --binary
       set( PATCH_ARGUMENTS "-p0 -b -N -i") ## NOTE: always keep -i as last argument !!
       message(STATUS "Try patching ${${patchedfile_varname}} without binary option ... ")
-      execute_process(${PROGRAM_PATCH} ${${workingdir_varname}}
+      execute_process(COMMAND ${PROGRAM_PATCH} ${${workingdir_varname}}
         ARGS ${PATCH_ARGUMENTS} "\"${${patchfile_varname}}\""
         OUTPUT_VARIABLE PATCH_OUT
         RETURN_VALUE PATCH_SUCCESS)
@@ -288,7 +288,7 @@ MACRO (OPENMS_COPYDIR dir_source dir_target)
   # Message(STATUS "Copying ${${dir_source}} --> ${${dir_target}} .. skipped (already exists)")
   #else()
     Message(STATUS "Copying ${${dir_source}} --> ${${dir_target}} .. ")
-    execute_process(${CMAKE_COMMAND}
+    execute_process(COMMAND ${CMAKE_COMMAND}
       ARGS -E copy_directory "\"${${dir_source}}\"" "\"${${dir_target}}\""
       OUTPUT_VARIABLE COPYDIR_OUT
       RETURN_VALUE COPY_SUCCESS)
