@@ -151,7 +151,7 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
     message(STATUS "Extracting ${libname} ..")
     if (NOT EXISTS ${${libnameUP}_DIR}/${checkfile}) ## last file to be extracted
       execute_process(COMMAND
-        ${${zip_args_varname}} "\"${PROJECT_BINARY_DIR}/archives/${${libfile_varname}}\""
+        ${${zip_args_varname}} ${PROJECT_BINARY_DIR}/archives/${${libfile_varname}}
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         OUTPUT_VARIABLE ZIP_OUT
         RESULT_VARIABLE EXTRACT_SUCCESS)
@@ -164,7 +164,7 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
         message(STATUS "Extracting ${libname} .. ")
         ## extract the tar
         execute_process(COMMAND ${PROGRAM_ZIP}
-          ${${zip_args_varname}} "\"${PROJECT_BINARY_DIR}/src/${${libfile_varname}_TAR}\""
+          ${${zip_args_varname}} ${PROJECT_BINARY_DIR}/src/${${libfile_varname}_TAR}
           WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
           OUTPUT_VARIABLE ZIP2_OUT
           RESULT_VARIABLE EXTRACT_SUCCESS)
@@ -189,7 +189,7 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
     message(STATUS "Extracting ${libname} .. ")
     if (NOT EXISTS ${${libnameUP}_DIR}/${checkfile}) ## last file to be extracted
       execute_process(COMMAND ${PROGRAM_ZIP} 
-        ${${zip_args_varname}} "${PROJECT_BINARY_DIR}/archives/${${libfile_varname}}" -C ${CONTRIB_BIN_SOURCE_DIR}
+        ${${zip_args_varname}} ${PROJECT_BINARY_DIR}/archives/${${libfile_varname}} -C ${CONTRIB_BIN_SOURCE_DIR}
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR} 
         OUTPUT_VARIABLE ZIP_OUT
         RESULT_VARIABLE EXTRACT_SUCCESS)
@@ -249,7 +249,7 @@ MACRO ( OPENMS_PATCH patchfile_varname workingdir_varname patchedfile_varname)
   else()
     message(STATUS "Try patching ${${patchedfile_varname}} with binary option ... ")
     execute_process(COMMAND ${PROGRAM_PATCH}
-      ${PATCH_ARGUMENTS} "\"${${patchfile_varname}}\""
+      ${PATCH_ARGUMENTS} ${${patchfile_varname}}
       WORKING_DIRECTORY ${${workingdir_varname}}
       OUTPUT_VARIABLE PATCH_OUT
       RESULT_VARIABLE PATCH_SUCCESS)
@@ -263,7 +263,7 @@ MACRO ( OPENMS_PATCH patchfile_varname workingdir_varname patchedfile_varname)
       message(STATUS "Try patching ${${patchedfile_varname}} without binary option ... ")
       execute_process(COMMAND ${PROGRAM_PATCH} 
         WORKING_DIRECTORY ${${workingdir_varname}}
-        ${PATCH_ARGUMENTS} "\"${${patchfile_varname}}\""
+        ${PATCH_ARGUMENTS} ${${patchfile_varname}}
         OUTPUT_VARIABLE PATCH_OUT
         RESULT_VARIABLE PATCH_SUCCESS)
 
@@ -295,7 +295,7 @@ MACRO (OPENMS_COPYDIR dir_source dir_target)
   #else()
     Message(STATUS "Copying ${${dir_source}} --> ${${dir_target}} .. ")
     execute_process(COMMAND ${CMAKE_COMMAND}
-      -E copy_directory "\"${${dir_source}}\"" "\"${${dir_target}}\""
+      -E copy_directory ${${dir_source}} ${${dir_target}}
       OUTPUT_VARIABLE COPYDIR_OUT
       RESULT_VARIABLE COPY_SUCCESS)
 
@@ -351,7 +351,7 @@ MACRO (OPENMS_CLEAN_INSTALLED_LIBS libname)
 
   foreach (FTD ${LIB_FILES})
     get_filename_component(RFTD ${FTD} NAME)
-    execute_process(COMMAND ${CMAKE_COMMAND}-E remove "\"${CONTRIB_BIN_LIB_DIR}/${RFTD}\""
+    execute_process(COMMAND ${CMAKE_COMMAND}-E remove ${CONTRIB_BIN_LIB_DIR}/${RFTD}
                     OUTPUT_VARIABLE DELETE_LIB_OUT
                     RESULT_VARIABLE DELETE_LIB_SUCCESS)
     if( NOT DELETE_LIB_SUCCESS EQUAL 0)
@@ -380,7 +380,7 @@ MACRO (OPENMS_CLEAN_HEADERS libname)
 
     foreach(FTD ${INCLUDE_FILES_${libnameUP}})
       if(EXISTS ${FTD})
-        execute_process(COMMAND ${CMAKE_COMMAND} -E remove "${FTD}"
+        execute_process(COMMAND ${CMAKE_COMMAND} -E remove ${FTD}
                         OUTPUT_VARIABLE DELETE_HEADER_FILE_OUT
                         RESULT_VARIABLE DELETE_HEADER_FILE_SUCCESS)
         if( NOT DELETE_HEADER_FILE_SUCCESS EQUAL 0)
@@ -395,7 +395,7 @@ MACRO (OPENMS_CLEAN_HEADERS libname)
   else()
     # remove complete include directory
     if(EXISTS ${INCLUDE_DIR_${libnameUP}})
-      execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory "${INCLUDE_DIR_${libnameUP}}"
+      execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${INCLUDE_DIR_${libnameUP}}
                       OUTPUT_VARIABLE DELETE_DIR_HEADER_OUT
                       RESULT_VARIABLE DELETE_DIR_HEADER_SUCCESS)
       if( NOT DELETE_DIR_HEADER_SUCCESS EQUAL 0)
@@ -419,7 +419,7 @@ MACRO(OPENMS_CLEAN_SOURCE libname)
   message(STATUS "Removing ${libname} source directory .. ")
   if(EXISTS "${${libnameUP}_DIR}")
     # delete source directory
-    execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory "\"${${libnameUP}_DIR}\""
+    execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${${libnameUP}_DIR}
                     OUTPUT_VARIABLE DELETE_SRC_DIR_OUT
                     RESULT_VARIABLE DELETE_SRC_DIR_SUCCESS)
     if( NOT DELETE_SRC_DIR_SUCCESS EQUAL 0)
@@ -436,7 +436,7 @@ MACRO(OPENMS_CLEAN_SOURCE libname)
     if(DEFINED ARCHIVE_${libnameUP}_TAR)
       message(STATUS "Removing ${libname} intermediate archives .. ")
       if(EXISTS ${ARCHIVE_${libnameUP}_TAR})
-        execute_process(COMMAND ${CMAKE_COMMAND} -E remove "\"${ARCHIVE_${libnameUP}_TAR}\""
+        execute_process(COMMAND ${CMAKE_COMMAND} -E remove ${ARCHIVE_${libnameUP}_TAR}
                         OUTPUT_VARIABLE DELETE_INTERMEDIATE_TAR_OUT
                         RESULT_VARIABLE DELETE_INTERMEDIATE_TAR_SUCCESS)
         if( NOT DELETE_INTERMEDIATE_TAR_SUCCESS EQUAL 0)
@@ -469,7 +469,7 @@ MACRO(OPENMS_COPY_LIBS libname)
     file(GLOB_RECURSE LIB_FILES "${${libnameUP}_DIR}/*.lib" "${${libnameUP}_DIR}/*.dll")
 
     foreach (FTC ${LIB_FILES})
-      execute_process(COMMAND ${CMAKE_COMMAND} -E copy "${FTC}" "${CONTRIB_BIN_LIB_DIR}"
+      execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${FTC} ${CONTRIB_BIN_LIB_DIR}
                       OUTPUT_VARIABLE COPY_LIB_OUT
                       RESULT_VARIABLE COPY_LIB_SUCCESS)
       if( NOT COPY_LIB_SUCCESS EQUAL 0)
