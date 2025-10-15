@@ -189,7 +189,7 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
     message(STATUS "Extracting ${libname} .. ")
     if (NOT EXISTS ${${libnameUP}_DIR}/${checkfile}) ## last file to be extracted
       execute_process(COMMAND ${PROGRAM_ZIP} 
-        ${${zip_args_varname}} "${PROJECT_BINARY_DIR}/archives/${${libfile_varname}}" " -C " ${CONTRIB_BIN_SOURCE_DIR}
+        ARGS ${${zip_args_varname}} "${PROJECT_BINARY_DIR}/archives/${${libfile_varname}}" -C ${CONTRIB_BIN_SOURCE_DIR}
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR} 
         OUTPUT_VARIABLE ZIP_OUT
         RESULT_VARIABLE EXTRACT_SUCCESS)
