@@ -150,9 +150,10 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
     # ms way
     message(STATUS "Extracting ${libname} ..")
     if (NOT EXISTS ${${libnameUP}_DIR}/${checkfile}) ## last file to be extracted
-      execute_process(COMMAND ${PROGRAM_ZIP} ${PROJECT_BINARY_DIR}
+      execute_process(COMMAND
+        ${${zip_args_varname}} "\"${PROJECT_BINARY_DIR}/archives/${${libfile_varname}}\""
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         OUTPUT_VARIABLE ZIP_OUT
-        ARGS ${${zip_args_varname}} "\"${PROJECT_BINARY_DIR}/archives/${${libfile_varname}}\""
         RESULT_VARIABLE EXTRACT_SUCCESS)
 
       if (NOT EXTRACT_SUCCESS EQUAL 0)
@@ -162,9 +163,10 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
         message(STATUS "Extracting ${libname} .. done (1st pass)")
         message(STATUS "Extracting ${libname} .. ")
         ## extract the tar
-        execute_process(COMMAND ${PROGRAM_ZIP} ${PROJECT_BINARY_DIR}
+        execute_process(COMMAND ${PROGRAM_ZIP}
+          ${${zip_args_varname}} "\"${PROJECT_BINARY_DIR}/src/${${libfile_varname}_TAR}\""
+          WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
           OUTPUT_VARIABLE ZIP2_OUT
-          ARGS ${${zip_args_varname}} "\"${PROJECT_BINARY_DIR}/src/${${libfile_varname}_TAR}\""
           RESULT_VARIABLE EXTRACT_SUCCESS)
 
         # logfile
@@ -186,8 +188,9 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
     ## do it the unix way
     message(STATUS "Extracting ${libname} .. ")
     if (NOT EXISTS ${${libnameUP}_DIR}/${checkfile}) ## last file to be extracted
-      execute_process(COMMAND ${PROGRAM_ZIP} ${PROJECT_BINARY_DIR}
-        ARGS ${${zip_args_varname}} "${PROJECT_BINARY_DIR}/archives/${${libfile_varname}}" " -C " ${CONTRIB_BIN_SOURCE_DIR}
+      execute_process(COMMAND ${PROGRAM_ZIP} 
+        ${${zip_args_varname}} "${PROJECT_BINARY_DIR}/archives/${${libfile_varname}}" " -C " ${CONTRIB_BIN_SOURCE_DIR}
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR} 
         OUTPUT_VARIABLE ZIP_OUT
         RESULT_VARIABLE EXTRACT_SUCCESS)
 
@@ -218,8 +221,9 @@ MACRO ( OPENMS_BUILDLIB libname solutionfile_varname target_varname config worki
     set (MSBUILD_ARGS "${MSBUILD_ARGS} /maxcpucount")
   endif()
 
-  execute_process(COMMAND ${MSBUILD_EXECUTABLE} ${${workingdir_varname}}
-    ARGS ${MSBUILD_ARGS}
+  execute_process(COMMAND ${MSBUILD_EXECUTABLE}
+    ${MSBUILD_ARGS}
+    WORKING_DIRECTORY ${${workingdir_varname}}
     OUTPUT_VARIABLE BUILDLIB_OUT
     RESULT_VARIABLE BUILD_SUCCESS)
 
@@ -244,8 +248,9 @@ MACRO ( OPENMS_PATCH patchfile_varname workingdir_varname patchedfile_varname)
     message(STATUS "Patching ${${patchedfile_varname}} ... skipped (already applied)")
   else()
     message(STATUS "Try patching ${${patchedfile_varname}} with binary option ... ")
-    execute_process(COMMAND ${PROGRAM_PATCH} ${${workingdir_varname}}
-      ARGS ${PATCH_ARGUMENTS} "\"${${patchfile_varname}}\""
+    execute_process(COMMAND ${PROGRAM_PATCH}
+      ${PATCH_ARGUMENTS} "\"${${patchfile_varname}}\""
+      WORKING_DIRECTORY ${${workingdir_varname}}
       OUTPUT_VARIABLE PATCH_OUT
       RESULT_VARIABLE PATCH_SUCCESS)
 
@@ -256,8 +261,9 @@ MACRO ( OPENMS_PATCH patchfile_varname workingdir_varname patchedfile_varname)
       ## Second try: without --binary
       set( PATCH_ARGUMENTS "-p0 -b -N -i") ## NOTE: always keep -i as last argument !!
       message(STATUS "Try patching ${${patchedfile_varname}} without binary option ... ")
-      execute_process(COMMAND ${PROGRAM_PATCH} ${${workingdir_varname}}
-        ARGS ${PATCH_ARGUMENTS} "\"${${patchfile_varname}}\""
+      execute_process(COMMAND ${PROGRAM_PATCH} 
+        WORKING_DIRECTORY ${${workingdir_varname}}
+        ${PATCH_ARGUMENTS} "\"${${patchfile_varname}}\""
         OUTPUT_VARIABLE PATCH_OUT
         RESULT_VARIABLE PATCH_SUCCESS)
 
@@ -289,7 +295,7 @@ MACRO (OPENMS_COPYDIR dir_source dir_target)
   #else()
     Message(STATUS "Copying ${${dir_source}} --> ${${dir_target}} .. ")
     execute_process(COMMAND ${CMAKE_COMMAND}
-      ARGS -E copy_directory "\"${${dir_source}}\"" "\"${${dir_target}}\""
+      -E copy_directory "\"${${dir_source}}\"" "\"${${dir_target}}\""
       OUTPUT_VARIABLE COPYDIR_OUT
       RESULT_VARIABLE COPY_SUCCESS)
 
@@ -345,7 +351,7 @@ MACRO (OPENMS_CLEAN_INSTALLED_LIBS libname)
 
   foreach (FTD ${LIB_FILES})
     get_filename_component(RFTD ${FTD} NAME)
-    execute_process(COMMAND ${CMAKE_COMMAND} -E remove "\"${CONTRIB_BIN_LIB_DIR}/${RFTD}\""
+    execute_process(COMMAND ${CMAKE_COMMAND}-E remove "\"${CONTRIB_BIN_LIB_DIR}/${RFTD}\""
                     OUTPUT_VARIABLE DELETE_LIB_OUT
                     RESULT_VARIABLE DELETE_LIB_SUCCESS)
     if( NOT DELETE_LIB_SUCCESS EQUAL 0)
