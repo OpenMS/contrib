@@ -215,33 +215,13 @@ set(ARCHIVE_BZIP2 bzip2-1.0.5.tar.gz)
 set(ARCHIVE_BZIP2_TAR bzip2-1.0.5.tar)
 set(ARCHIVE_BZIP2_SHA1 "8b02713ea0c8eb501cc8bdac4432d7f29700f767")
 
-# set(ARCHIVE_ZLIB zlib-1.2.5.tar.gz)
-# set(ARCHIVE_ZLIB_TAR  zlib-1.2.5.tar)
-# set(ARCHIVE_ZLIB_SHA1 "8e8b93fa5eb80df1afe5422309dca42964562d7e")
-
-#set(ARCHIVE_ZLIB zlib-1.2.8.tar.gz)
-#set(ARCHIVE_ZLIB_TAR  zlib-1.2.8.tar)
-#set(ARCHIVE_ZLIB_SHA1 "a4d316c404ff54ca545ea71a27af7dbc29817088")
-
-set(ARCHIVE_ZLIB zlib-1.2.11.tar.gz)
-set(ARCHIVE_ZLIB_TAR  zlib-1.2.11.tar)
-set(ARCHIVE_ZLIB_SHA1 "56559d4c03beaedb0be1c7481d6a371e2458a496")
+set(ARCHIVE_ZLIB zlib-1.3.1.tar.gz)
+set(ARCHIVE_ZLIB_TAR  zlib-1.3.1.tar)
+set(ARCHIVE_ZLIB_SHA1 "f535367b1a11e2f9ac3bec723fb007fbc0d189e5")
 
 set(ARCHIVE_BOOST boost_1_78_0.tar.gz)
 set(ARCHIVE_BOOST_TAR  boost_1_78_0.tar)
 set(ARCHIVE_BOOST_SHA1 "ff717ea23af2900e0ad3cae616b3e4ae43e68ad7")
-
-#set(ARCHIVE_BOOST boost_1_71_0.tar.gz)
-#set(ARCHIVE_BOOST_TAR  boost_1_71_0.tar)
-#set(ARCHIVE_BOOST_SHA1 "4f3846b0cd92ecdd56961484d757388fb07a2ada")
-
-#set(ARCHIVE_BOOST boost_1_67_0.tar.gz)
-#set(ARCHIVE_BOOST_TAR  boost_1_67_0.tar)
-#set(ARCHIVE_BOOST_SHA1 "77e73c9fd7bf85b14067767b9e8fdc39b49ee0f2")
-
-# set(ARCHIVE_XERCES xerces-c-3.1.1-vs17.tar.gz)
-# set(ARCHIVE_XERCES_TAR  xerces-c-3.1.1.tar)
-# set(ARCHIVE_XERCES_SHA1 "af2bd237b8272f92dc6486f703b921a864f3006e")
 
 set(ARCHIVE_XERCES Xerces-C_3_2_0.tar.gz)
 set(ARCHIVE_XERCES_TAR  Xerces-C_3_2_0.tar)
