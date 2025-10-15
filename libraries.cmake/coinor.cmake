@@ -146,7 +146,7 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
 		endif()
 		
     message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER})")
-    exec_program("./configure" "${COINOR_DIR}"
+    execute_process("./configure" "${COINOR_DIR}"
       ARGS 
       -C 
       --prefix=${PROJECT_BINARY_DIR}
@@ -177,7 +177,7 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
 
     ## make install
     message( STATUS "Building and installing COIN-OR library (make install).. ")
-    exec_program(${CMAKE_MAKE_PROGRAM} "${COINOR_DIR}"
+    execute_process(${CMAKE_MAKE_PROGRAM} "${COINOR_DIR}"
       ARGS 
       install
       #-j ${NUMBER_OF_JOBS} # the project has problems with multiple jobs. It tries to create folders at the same time and fails.

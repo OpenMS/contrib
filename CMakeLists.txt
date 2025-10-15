@@ -86,10 +86,6 @@
 ## Linux & MinGW: Tar & patch
 ## (these are searched for and an appropriate error message is given when not found)
 
-
-## NOTE: remove "exec_program" calls and substitute with exec_process (see http://www.cmake.org/cmake/help/cmake2.6docs.html#command:execute_process)
-##       - however: exec_process seems to handle our arguments incorrectly (at least on Windows). Check functionality before you commit!
-
 # Determine what to build (all or single library)
 set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP")
 set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "KISSFFT" "HDF5" "OPENMP")
