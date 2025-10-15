@@ -1,7 +1,6 @@
 ##################################################
 ###       LIBSVM   														 ###
 ##################################################
-
 MACRO( OPENMS_CONTRIB_BUILD_LIBSVM )
   OPENMS_LOGHEADER_LIBRARY("libSVM")
   #extract: (takes very long.. so skip if possible)
@@ -46,7 +45,7 @@ MACRO( OPENMS_CONTRIB_BUILD_LIBSVM )
 		file(APPEND ${LOGFILE} ${LIBSVM_CMAKE_ERR})
 
 		if (NOT LIBSVM_CMAKE_SUCCESS EQUAL 0)
-			message(FATAL_ERROR "Generating libsvm build system .. failed")
+			message(FATAL_ERROR "Generating libsvm build system .. failed:\n${LIBSVM_BUILD_ERR}")
 		else()
 			message(STATUS "Generating libsvm build system .. done")
 		endif()
@@ -63,7 +62,7 @@ MACRO( OPENMS_CONTRIB_BUILD_LIBSVM )
 		file(APPEND ${LOGFILE} ${LIBSVM_BUILD_ERR})
 
 		if (NOT LIBSVM_BUILD_SUCCESS EQUAL 0)
-			message(FATAL_ERROR "Building libsvm lib (Debug) .. failed")
+			message(FATAL_ERROR "Building libsvm lib (Debug) .. failed:\n${LIBSVM_BUILD_ERR}")
 		else()
 			message(STATUS "Building libsvm lib (Debug) .. done")
 		endif()
@@ -80,7 +79,7 @@ MACRO( OPENMS_CONTRIB_BUILD_LIBSVM )
 		file(APPEND ${LOGFILE} ${LIBSVM_BUILD_ERR})
 
 		if (NOT LIBSVM_BUILD_SUCCESS EQUAL 0)
-			message(FATAL_ERROR "Building libsvm lib (Release) .. failed")
+			message(FATAL_ERROR "Building libsvm lib (Release) .. failed:\n${LIBSVM_BUILD_ERR}")
 		else()
 			message(STATUS "Building libsvm lib (Release) .. done")
 		endif()
@@ -116,7 +115,8 @@ MACRO( OPENMS_CONTRIB_BUILD_LIBSVM )
 		file(APPEND ${LOGFILE} ${LIBSVM_CMAKE_ERR})
 
     if (NOT LIBSVM_CMAKE_SUCCESS EQUAL 0)
-      message(FATAL_ERROR "Generating libsvm build system .. failed")
+	
+      message(FATAL_ERROR "Generating libsvm build system .. failed:\n${LIBSVM_BUILD_ERR}")
     else()
       message(STATUS "Generating libsvm build system .. done")
     endif()
@@ -133,7 +133,7 @@ MACRO( OPENMS_CONTRIB_BUILD_LIBSVM )
 		file(APPEND ${LOGFILE} ${LIBSVM_BUILD_ERR})
 
 		if (NOT LIBSVM_BUILD_SUCCESS EQUAL 0)
-			message(FATAL_ERROR "Building libsvm lib (Release) .. failed")
+			message(FATAL_ERROR "Building libsvm lib (Release) .. failed:\n${LIBSVM_BUILD_ERR}")
 		else()
 			message(STATUS "Building libsvm lib (Release) .. done")
 		endif()
