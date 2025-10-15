@@ -174,7 +174,7 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
                     --disable-icu
                     -s NO_LZMA=1
                     -s NO_ZSTD=1
-                    link=${BOOST_BUILD_TYPE} "cxxflags=-fPIC ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG}" ${BOOST_LINKER_FLAGS}  install 
+                    link=${BOOST_BUILD_TYPE} "cxxflags=-fPIC ${BOOST_EXTRA_CXXFLAGS} ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG}" ${BOOST_LINKER_FLAGS}  install 
                     --build-type=complete
                     --layout=tagged
                     --threading=single,multi
