@@ -115,9 +115,8 @@ MACRO( OPENMS_CONTRIB_BUILD_LIBSVM )
 		file(APPEND ${LOGFILE} ${LIBSVM_CMAKE_ERR})
 
     if (NOT LIBSVM_CMAKE_SUCCESS EQUAL 0)
-	
-      message(FATAL_ERROR "Generating libsvm build system .. failed:\n${LIBSVM_BUILD_ERR}")
-    else()
+		message(FATAL_ERROR "Generating libsvm build system .. failed:\n${LIBSVM_CMAKE_ERR}")
+	else()
       message(STATUS "Generating libsvm build system .. done")
     endif()
     
