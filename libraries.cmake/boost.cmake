@@ -98,6 +98,16 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
     # we need to know the compiler version for proper formating boost user-config.jam
     determine_compiler_version()
 
+    # Set architecture based on CMake's processor detection
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64|i386|i686")
+      set(BOOST_ARCHITECTURE "architecture=x86")
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|ARM64|arm64")
+      set(BOOST_ARCHITECTURE "architecture=arm")
+    else()
+      message(WARNING "Unknown architecture '${CMAKE_SYSTEM_PROCESSOR}'. Letting Boost auto-detect architecture. This may cause build issues.")
+      set(BOOST_ARCHITECTURE "")
+    endif()
+
     # use proper toolchain (random guesses. There is not proper documentation)
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
       # Modern Clang chokes on boost 1.78 unless we pass this (https://github.com/boostorg/mpl/issues/74)
@@ -165,11 +175,11 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
       set(BOOST_DEBUG_FLAGS "--debug-configuration -d+2")
     endif()
     # boost cmd (use b2 since sometimes the copying/symlinking from b2 to bjam fails)
-    set (BOOST_CMD "./b2 ${BOOST_DEBUG_FLAGS} architecture=x86 toolset=${_boost_toolchain} -j ${NUMBER_OF_JOBS} --disable-icu link=${BOOST_BUILD_TYPE} cxxflags=-fPIC ${BOOST_EXTRA_CXXFLAGS} ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi")
+    set (BOOST_CMD "./b2 ${BOOST_DEBUG_FLAGS} ${BOOST_ARCHITECTURE} toolset=${_boost_toolchain} -j ${NUMBER_OF_JOBS} --disable-icu link=${BOOST_BUILD_TYPE} cxxflags=-fPIC ${BOOST_EXTRA_CXXFLAGS} ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi")
     
     # boost install
     message(STATUS "Installing Boost libraries (${BOOST_CMD}) ...")
-    execute_process(COMMAND ./b2 ${BOOST_DEBUG_FLAGS} architecture=x86 toolset=${_boost_toolchain} 
+    execute_process(COMMAND ./b2 ${BOOST_DEBUG_FLAGS} ${BOOST_ARCHITECTURE} toolset=${_boost_toolchain} 
                     -j ${NUMBER_OF_JOBS} 
                     --disable-icu
                     -s NO_LZMA=1

@@ -134,22 +134,37 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
       set(COINOR_EXTRA_FLAGS "ADD_FFLAGS='${OSX_DEPLOYMENT_FLAG}' ADD_CFLAGS='${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG}' ADD_CXXFLAGS='${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG} -fPIC' --disable-dependency-tracking")
     else()
       set(COINOR_EXTRA_FLAGS "ADD_CXXFLAGS='-fPIC'")
-    endif()    
+    endif()
 
-		# check if we prefer shared or static libs
-		if (BUILD_SHARED_LIBRARIES)
-			set(STATIC_BUILD "--enable-static=no")
-			set(SHARED_BUILD "--enable-shared=yes")
-		else()
-			set(STATIC_BUILD "--enable-static=yes")
-			set(SHARED_BUILD "--enable-shared=no")		
-		endif()
-		
-    message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER})")
+    # Determine build triplet for configure (only needed for Linux with old config.guess)
+    if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+      if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|ARM64|arm64")
+        set(BUILD_TRIPLET "--build=arm-linux-gnu")
+      elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
+        set(BUILD_TRIPLET "--build=x86_64-linux-gnu")
+      else()
+        set(BUILD_TRIPLET "")
+      endif()
+    else()
+      # macOS can auto-detect, no need to specify build triplet
+      set(BUILD_TRIPLET "")
+    endif()
+
+    # check if we prefer shared or static libs
+    if (BUILD_SHARED_LIBRARIES)
+      set(STATIC_BUILD "--enable-static=no")
+      set(SHARED_BUILD "--enable-shared=yes")
+    else()
+      set(STATIC_BUILD "--enable-static=yes")
+      set(SHARED_BUILD "--enable-shared=no")		
+    endif()
+    
+    message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER})")
     exec_program("./configure" "${COINOR_DIR}"
       ARGS 
       -C 
       --prefix=${PROJECT_BINARY_DIR}
+      ${BUILD_TRIPLET}
       ## Following two lines can be combined with prefix
       ## But maybe they avoid building the doc into share (wanted?)
       #--libdir=${CONTRIB_BIN_LIB_DIR} 
@@ -169,10 +184,10 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
     file(APPEND ${LOGFILE} ${COINOR_CONFIGURE_OUT})
 
     if( NOT COINOR_CONFIGURE_SUCCESS EQUAL 0)
-      message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER}) .. failed")
+      message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER}) .. failed")
       message( FATAL_ERROR ${COINOR_CONFIGURE_OUT})
     else()
-      message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER}) .. done")
+      message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER}) .. done")
     endif()
 
     ## make install
