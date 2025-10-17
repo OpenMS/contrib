@@ -9,7 +9,10 @@ on:
 
 jobs:
   Deploy:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.arch == 'amd64' && 'ubuntu-latest' || 'ubuntu-22.04-arm' }}
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
     steps:
       - name: Extract branch name
         shell: bash
@@ -39,16 +42,24 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Checkout to make context with dockerfiles available
-        uses: actions/checkout@v3          
-      - name: Build and Push Docker Image
+        uses: actions/checkout@v4
+      - name: Set architecture-specific variables
+        run: |
+          if [[ "${{ matrix.arch }}" == "amd64" ]]; then
+            echo "dockerfile=dockerfiles/pyopenms/manylinux/Dockerfile" >> $GITHUB_ENV
+            echo "platform_tag=x86_64" >> $GITHUB_ENV
+          else
+            echo "dockerfile=dockerfiles/pyopenms/manylinux/ARM64_Dockerfile" >> $GITHUB_ENV
+            echo "platform_tag=arm64" >> $GITHUB_ENV
+          fi
+      - name: Build and Push Docker Image (${{ matrix.arch }})
         uses: docker/build-push-action@v3
         with:
-          push: true # Will only build if this is not here
-          file: dockerfiles/pyopenms/manylinux/Dockerfile
+          push: true
+          file: ${{ env.dockerfile }}
           context: .          
           build-args: |
             OPENMS_BRANCH=${{ steps.extract_branch.outputs.branch }}
             OPENMS_VERSION=${{ steps.tag_name.outputs.tag }}
           tags: |
-            ghcr.io/openms/contrib_manylinux_2_34:${{ steps.tag_name.outputs.tag }}
-            
+            ghcr.io/${{ steps.downcase_repo.outputs.repo }}/contrib_manylinux_2_34:${{ steps.tag_name.outputs.tag }}-${{ env.platform_tag }}
