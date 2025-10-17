@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest, ubuntu-22.04-arm]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: ubuntu-latest
             CMAKE_ARGS: ""
@@ -30,8 +30,6 @@ jobs:
             CMAKE_ARGS: -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9
           - os: windows-latest
             CMAKE_ARGS: -G"Visual Studio 17 2022" -A"x64"
-          - os: ubuntu-22.04-arm
-            CMAKE_ARGS: "-DCMAKE_CXX_FLAGS='-ffp-contract=off'"
 
     steps:
       - name: Transfer variable TAG_NAME between jobs to be available as step output in this job
@@ -128,4 +126,4 @@ jobs:
         with:
           tag_name: ${{ steps.generate_tag_name.outputs.TAG_NAME }}
           files: |
-            ${{ github.workspace }}/contrib-build/contrib_build-${{runner.os}}-${{ runner.arch }}.tar.gz
+            ${{ github.workspace }}/contrib-build/contrib_build-${{runner.os}}.tar.gz
