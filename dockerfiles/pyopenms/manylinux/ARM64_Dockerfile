@@ -1,4 +1,4 @@
-FROM quay.io/pypa/manylinux_2_34_aarch64_main
+FROM quay.io/pypa/manylinux_2_34_aarch64
 
 # Defaults, can be overwritten from outside
 ARG OPENMS_BRANCH="master" 
