@@ -175,11 +175,11 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
       set(BOOST_DEBUG_FLAGS "--debug-configuration -d+2")
     endif()
     # boost cmd (use b2 since sometimes the copying/symlinking from b2 to bjam fails)
-    set (BOOST_CMD "./b2 ${BOOST_DEBUG_FLAGS} architecture=${BOOST_ARCHITECTURE} toolset=${_boost_toolchain} -j ${NUMBER_OF_JOBS} --disable-icu link=${BOOST_BUILD_TYPE} cxxflags=-fPIC ${BOOST_EXTRA_CXXFLAGS} ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi")
+    set (BOOST_CMD "./b2 ${BOOST_DEBUG_FLAGS} ${BOOST_ARCHITECTURE} toolset=${_boost_toolchain} -j ${NUMBER_OF_JOBS} --disable-icu link=${BOOST_BUILD_TYPE} cxxflags=-fPIC ${BOOST_EXTRA_CXXFLAGS} ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi")
     
     # boost install
     message(STATUS "Installing Boost libraries (${BOOST_CMD}) ...")
-    execute_process(COMMAND ./b2 ${BOOST_DEBUG_FLAGS} architecture=${BOOST_ARCHITECTURE} toolset=${_boost_toolchain} 
+    execute_process(COMMAND ./b2 ${BOOST_DEBUG_FLAGS} ${BOOST_ARCHITECTURE} toolset=${_boost_toolchain} 
                     -j ${NUMBER_OF_JOBS} 
                     --disable-icu
                     -s NO_LZMA=1
