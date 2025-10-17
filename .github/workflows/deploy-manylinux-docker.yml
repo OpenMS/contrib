@@ -62,4 +62,4 @@ jobs:
             OPENMS_BRANCH=${{ steps.extract_branch.outputs.branch }}
             OPENMS_VERSION=${{ steps.tag_name.outputs.tag }}
           tags: |
-            ghcr.io/${{ steps.downcase_repo.outputs.repo }}/contrib_manylinux_2_34:${{ steps.tag_name.outputs.tag }}-${{ env.platform_tag }}
+            ghcr.io/openms/contrib_manylinux_2_34:${{ steps.tag_name.outputs.tag }}-${{ env.platform_tag }}
