@@ -39,8 +39,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Checkout to make context with dockerfiles available
-        uses: actions/checkout@v3          
-      - name: Build and Push Docker Image
+        uses: actions/checkout@v4          
+      - name: Build and Push AMD64 Docker Image
         uses: docker/build-push-action@v3
         with:
           push: true # Will only build if this is not here
@@ -50,5 +50,15 @@ jobs:
             OPENMS_BRANCH=${{ steps.extract_branch.outputs.branch }}
             OPENMS_VERSION=${{ steps.tag_name.outputs.tag }}
           tags: |
-            ghcr.io/openms/contrib_manylinux_2_34:${{ steps.tag_name.outputs.tag }}
-            
+            ghcr.io/openms/contrib_manylinux_2_34:${{ steps.tag_name.outputs.tag }}-x86_64
+      - name: Build and Push ARM64 Docker Image
+        uses: docker/build-push-action@v3
+        with:
+          push: true # Will only build if this is not here
+          file: dockerfiles/pyopenms/manylinux/ARM64_Dockerfile
+          context: .          
+          build-args: |
+            OPENMS_BRANCH=${{ steps.extract_branch.outputs.branch }}
+            OPENMS_VERSION=${{ steps.tag_name.outputs.tag }}
+          tags: |
+            ghcr.io/openms/contrib_manylinux_2_34:${{ steps.tag_name.outputs.tag }}-arm64
