@@ -30,6 +30,8 @@ jobs:
             CMAKE_ARGS: -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9
           - os: windows-latest
             CMAKE_ARGS: -G"Visual Studio 17 2022" -A"x64"
+          - os: ubuntu-22.04-arm
+            CMAKE_ARGS: ""
 
     steps:
       - name: Transfer variable TAG_NAME between jobs to be available as step output in this job
