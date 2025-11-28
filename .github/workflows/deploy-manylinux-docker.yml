@@ -47,7 +47,7 @@ jobs:
         run: |
           if [[ "${{ matrix.arch }}" == "amd64" ]]; then
             echo "dockerfile=dockerfiles/pyopenms/manylinux/Dockerfile" >> $GITHUB_ENV
-            echo "platform_tag=x86_64" >> $GITHUB_ENV
+            echo "platform_tag=amd64" >> $GITHUB_ENV
           else
             echo "dockerfile=dockerfiles/pyopenms/manylinux/ARM64_Dockerfile" >> $GITHUB_ENV
             echo "platform_tag=arm64" >> $GITHUB_ENV
