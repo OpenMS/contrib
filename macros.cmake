@@ -78,7 +78,7 @@ endmacro()
 ## downloads the archive for the given library
 ## @param libname The library that should be downloaded
 macro(download_contrib_archive libname)
-  set(_BASE_URL "https://github.com/OpenMS/contrib-sources/releases/download/3.5.0pre1/")
+  set(_BASE_URL "https://github.com/OpenMS/contrib-sources/releases/download/3.5.0pre_2/")
 
   # the files/folders where downloads are stored
   set(_archive_folder "${PROJECT_BINARY_DIR}/archives")
