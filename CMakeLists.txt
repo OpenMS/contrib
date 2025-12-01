@@ -187,7 +187,7 @@ set (PATCH_DIR "${PROJECT_SOURCE_DIR}/patches/" CACHE STRING "Directory containi
 ## Warning: ensure these are all upper-case names!
 set(BZIP2_DIR ${CONTRIB_BIN_SOURCE_DIR}/bzip2-1.0.5)
 set(ZLIB_DIR ${CONTRIB_BIN_SOURCE_DIR}/zlib-1.3.1)
-set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost_1_81_0)
+set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost-1.81.0)
 set(XERCES_DIR ${CONTRIB_BIN_SOURCE_DIR}/Xerces-C_3_2_0)
 set(LIBSVM_DIR ${CONTRIB_BIN_SOURCE_DIR}/libsvm-3.12)
 set(GLPK_DIR ${CONTRIB_BIN_SOURCE_DIR}/glpk-4.46)
@@ -221,8 +221,8 @@ set(ARCHIVE_ZLIB zlib-1.3.1.tar.gz)
 set(ARCHIVE_ZLIB_TAR  zlib-1.3.1.tar)
 set(ARCHIVE_ZLIB_SHA256 "9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23")
 
-set(ARCHIVE_BOOST boost_1_81_0.tar.gz)
-set(ARCHIVE_BOOST_TAR  boost_1_81_0.tar)
+set(ARCHIVE_BOOST boost-1.81.0.tar.gz)
+set(ARCHIVE_BOOST_TAR  boost-1.81.0.tar)
 set(ARCHIVE_BOOST_SHA256 "121da556b718fd7bd700b5f2e734f8004f1cfa78b7d30145471c526ba75a151c")
 
 set(ARCHIVE_XERCES Xerces-C_3_2_0.tar.gz)
