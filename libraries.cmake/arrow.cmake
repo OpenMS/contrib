@@ -104,6 +104,19 @@ else() ## Linux/MacOS
                   ERROR_VARIABLE ARROW_CMAKE_ERR
                   RESULT_VARIABLE ARROW_CMAKE_SUCCESS)
 
+  # output to logfile
+  file(APPEND ${LOGFILE} ${ARROW_CMAKE_OUT})
+  file(APPEND ${LOGFILE} ${ARROW_CMAKE_ERR})
+
+  if(NOT ARROW_CMAKE_SUCCESS EQUAL 0)
+    message(STATUS "Generating arrow build system .. failed")
+    message(STATUS "Output: ${ARROW_CMAKE_OUT}")
+    message(STATUS "Error: ${ARROW_CMAKE_ERR}")
+    message(FATAL_ERROR "Arrow configuration failed. Check the log file for details: ${LOGFILE}")
+  else()
+    message(STATUS "Generating arrow build system .. done")
+  endif()
+
   # rebuild as release
   message(STATUS "Building arrow lib (Release) .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
