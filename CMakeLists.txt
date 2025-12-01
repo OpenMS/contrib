@@ -220,8 +220,8 @@ set(ARCHIVE_ZLIB zlib-1.3.1.tar.gz)
 set(ARCHIVE_ZLIB_TAR  zlib-1.3.1.tar)
 set(ARCHIVE_ZLIB_SHA256 "9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23")
 
-set(ARCHIVE_BOOST boost_1_78_0.tar.gz)
-set(ARCHIVE_BOOST_TAR  boost_1_78_0.tar)
+set(ARCHIVE_BOOST boost_1_81_0.tar.gz)
+set(ARCHIVE_BOOST_TAR  boost_1_81_0.tar)
 set(ARCHIVE_BOOST_SHA256 "121da556b718fd7bd700b5f2e734f8004f1cfa78b7d30145471c526ba75a151c")
 
 set(ARCHIVE_XERCES Xerces-C_3_2_0.tar.gz)
