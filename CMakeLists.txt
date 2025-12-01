@@ -256,9 +256,9 @@ set(ARCHIVE_OPENMP openmp-12.0.1.src.tar.xz)
 set(ARCHIVE_OPENMP_tar openmp-12.0.1.src.tar)
 set(ARCHIVE_OPENMP_SHA256 "60fe79440eaa9ebf583a6ea7f81501310388c02754dbe7dc210776014d06b091")
 
-set(ARCHIVE_ARROW arrow-8.0.0.tar.gz)
-set(ARCHIVE_ARROW_TAR arrow-8.0.0.tar)
-set(ARCHIVE_ARROW_SHA256 "8d21f7c5ac29d3c38182081eca770c21176b8dbca9227d540cc78be10a7aff09")
+set(ARCHIVE_ARROW arrow-cpp-22.0.0.tar.xz)
+set(ARCHIVE_ARROW_TAR arrow-cpp-22.0.0.tar)
+set(ARCHIVE_ARROW_SHA256 "01cb498b5db59009cbbdc0a2c9a7543c6854879bc8bc8cac382e60a8b2dcf356")
 
 ## necessary for clean up .. change if install process of library changes
 set(INCLUDE_DIR_BOOST ${CONTRIB_BIN_INCLUDE_DIR}/boost)
