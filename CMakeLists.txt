@@ -204,13 +204,14 @@ set(ARROW_DIR ${CONTRIB_BIN_SOURCE_DIR}/arrow-cpp-22.0.0/cpp)
 ##  and provide the necessary information below
 ##  ARCHIVE_<LIBNAME> the name of the archive as it was uploaded
 ##  ARCHIVE_<LIBNAME>_TAR the name of the tar in the tar.gz
-##  ARCHIVE_<LIBNAME>_SHA256 the sha256 of the file uploaded to sourceforge
+##  ARCHIVE_<LIBNAME>_SHA256 the sha256 of the file uploaded
 ## e.g.
 ##  set(ARCHIVE_ZLIB zlib.tar.gz)
 ##  set(ARCHIVE_ZLIB_TAR zlib.tar)
-##  set(ARCHIVE_ZLIB_SHA256 "8e8b93fa5eb80df1afe5422309dca42964562d7e")
+##  set(ARCHIVE_ZLIB_SHA256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
 ## NOTE: for local development you can simply place the *.tar.gz in the binary
 ##       directory to prevent the download and sha256 verification
+## LIBRARIES: BZIP2, ZLIB, BOOST, XERCES, LIBSVM, GLPK, COINOR, EIGEN, KISSFFT, HDF5, OPENMP, ARROW
 
 set(ARCHIVE_BZIP2 bzip2-1.0.5.tar.gz)
 set(ARCHIVE_BZIP2_TAR bzip2-1.0.5.tar)
