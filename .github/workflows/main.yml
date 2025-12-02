@@ -101,6 +101,8 @@ jobs:
           mkdir "$WORKSPACE/contrib-build"
           cd "$WORKSPACE/contrib-build"
           cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=$CMAKE_BUILD_PARALLEL_LEVEL "$WORKSPACE/contrib"
+          mkdir -p "$WORKSPACE/contrib-build-openmp"
+          cd "$WORKSPACE/contrib-build-openmp"
           cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=$CMAKE_BUILD_PARALLEL_LEVEL "$WORKSPACE/contrib"
 
       - name: Configure Git for Tagging
