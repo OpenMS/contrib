@@ -17,6 +17,13 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
     set(ZIP_ARGS "xzf")
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_BOOST "BOOST" "index.htm")
+
+  # Determine number of parallel jobs (fallback to 2 if not set)
+  if(DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL} AND NOT "$ENV{CMAKE_BUILD_PARALLEL_LEVEL}" STREQUAL "")
+    set(_BOOST_PARALLEL_JOBS $ENV{CMAKE_BUILD_PARALLEL_LEVEL})
+  else()
+    set(_BOOST_PARALLEL_JOBS 2)
+  endif()
   
   if(MSVC) ## build boost library for windows
     
@@ -50,6 +57,7 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
       endif()
 
       set(BOOST_CMD_ARGS "${BOOST_ARG}" 
+                         "-j" "${_BOOST_PARALLEL_JOBS}"
                          "install" 
                          "--prefix=${PROJECT_BINARY_DIR}" 
                          "--layout=tagged"                   # create libnames without vcXXX in filename; include dir is /include/boost (as opposed to "versioned" where /include/boost-1.52/boost plus ...vc110.lib
@@ -172,13 +180,6 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
     set (BOOST_DEBUG_FLAGS "")
     if (BOOST_DEBUG)
       set(BOOST_DEBUG_FLAGS "--debug-configuration -d+2")
-    endif()
-
-    # Determine number of parallel jobs (fallback to 2 if not set)
-    if(DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL} AND NOT "$ENV{CMAKE_BUILD_PARALLEL_LEVEL}" STREQUAL "")
-      set(_BOOST_PARALLEL_JOBS $ENV{CMAKE_BUILD_PARALLEL_LEVEL})
-    else()
-      set(_BOOST_PARALLEL_JOBS 2)
     endif()
 
     # boost cmd (use b2 since sometimes the copying/symlinking from b2 to bjam fails)
