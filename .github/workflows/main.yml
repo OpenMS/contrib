@@ -44,13 +44,13 @@ jobs:
           path: contrib
 
       - name: Setup cmake
-        if: matrix.os != 'ubuntu-22.04-arm'
+        if: ${{ !endsWith(matrix.os, '-arm') }}
         uses: jwlawson/actions-setup-cmake@v2
         with:
           cmake-version: '3.29.x'
 
       - name: Install CMake (Ubuntu arm64)
-        if: matrix.os == 'ubuntu-22.04-arm'
+        if: ${{ endsWith(matrix.os, '-arm') }}
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake
