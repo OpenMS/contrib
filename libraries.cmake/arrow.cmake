@@ -22,6 +22,8 @@ if (MSVC)
                           ${ARCHITECTURE_OPTION_CMAKE}
                           -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                           -D CMAKE_PREFIX_PATH=${PROJECT_BINARY_DIR}
+                          -D BOOST_ROOT=${PROJECT_BINARY_DIR}
+                          -D Boost_DIR=${PROJECT_BINARY_DIR}
                           -D ARROW_CSV=ON
                           -D ARROW_PARQUET=ON
                           -D ARROW_WITH_ZLIB=ON
@@ -91,6 +93,7 @@ else() ## Linux/MacOS
 
   # CFLAGS for arrow compiler
   set(ARROW_CFLAGS "-Wall -O3 -fPIC")
+  set(ARROW_CXXFLAGS "-Wall -O3 -fPIC -I${PROJECT_BINARY_DIR}/include")
 
   message(STATUS "Generating arrow build system .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
@@ -100,6 +103,9 @@ else() ## Linux/MacOS
                           -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                           -D CMAKE_PREFIX_PATH=${PROJECT_BINARY_DIR}
                           -D CMAKE_C_FLAGS=${ARROW_CFLAGS}
+                          -D CMAKE_CXX_FLAGS=${ARROW_CXXFLAGS}
+                          -D BOOST_ROOT=${PROJECT_BINARY_DIR}
+                          -D Boost_DIR=${PROJECT_BINARY_DIR}
                           -D ARROW_CSV=ON
                           -D ARROW_PARQUET=ON
                           -D ARROW_WITH_ZLIB=ON
