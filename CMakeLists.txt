@@ -508,12 +508,6 @@ endforeach()
 set( FORCE_REBUILD OFF CACHE BOOL "All installation and build traces of the contrib packages will be removed before building.")
 message(STATUS "FORCE_REBUILD: ${FORCE_REBUILD}")
 
-set( NUMBER_OF_JOBS 2 CACHE STRING "Number of jobs executed in parallel during the build process if the build system supports multi-job builds (e.g., make, bjam)")
-if("${NUMBER_OF_JOBS}" STREQUAL "")
-  set( NUMBER_OF_JOBS 1 )
-endif("${NUMBER_OF_JOBS}" STREQUAL "")
-message(STATUS "NUMBER_OF_JOBS: ${NUMBER_OF_JOBS} (maximal number of concurrent compile jobs)")
-
 ## define building of shared or unshared versions of the contrib libraries
 set( BUILD_SHARED_LIBRARIES Off CACHE BOOL "Builds all contrib libraries as shared libraries.")
 
