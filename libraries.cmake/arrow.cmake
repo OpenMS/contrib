@@ -8,7 +8,7 @@ OPENMS_LOGHEADER_LIBRARY("arrow")
 if(MSVC)
   set(ZIP_ARGS "x -y -osrc")
 else()
-  set(ZIP_ARGS "xJf")
+  set(ZIP_ARGS "xzf")
 endif()
 OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_ARROW "ARROW" "README")
 

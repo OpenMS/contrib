@@ -196,7 +196,7 @@ set(EIGEN_DIR ${CONTRIB_BIN_SOURCE_DIR}/eigen-3.4.0)
 set(KISSFFT_DIR ${CONTRIB_BIN_SOURCE_DIR}/kissfft)
 set(HDF5_DIR ${CONTRIB_BIN_SOURCE_DIR}/hdfsrc)
 set(OPENMP_DIR ${CONTRIB_BIN_SOURCE_DIR}/openmp-12.0.1.src)
-set(ARROW_DIR ${CONTRIB_BIN_SOURCE_DIR}/arrow-cpp-22.0.0/cpp)
+set(ARROW_DIR ${CONTRIB_BIN_SOURCE_DIR}/arrow-apache-arrow-22.0.0/cpp)
 
 ## source(archive) paths
 ## PLEASE upload all source archives to
@@ -257,9 +257,9 @@ set(ARCHIVE_OPENMP openmp-12.0.1.src.tar.xz)
 set(ARCHIVE_OPENMP_tar openmp-12.0.1.src.tar)
 set(ARCHIVE_OPENMP_SHA256 "60fe79440eaa9ebf583a6ea7f81501310388c02754dbe7dc210776014d06b091")
 
-set(ARCHIVE_ARROW arrow-cpp-22.0.0.tar.xz)
-set(ARCHIVE_ARROW_TAR arrow-cpp-22.0.0.tar)
-set(ARCHIVE_ARROW_SHA256 "01cb498b5db59009cbbdc0a2c9a7543c6854879bc8bc8cac382e60a8b2dcf356")
+set(ARCHIVE_ARROW arrow-apache-arrow-22.0.0.tar.gz )
+set(ARCHIVE_ARROW_TAR arrow-apache-arrow-22.0.0.tar )
+set(ARCHIVE_ARROW_SHA256 "8a95e6c7b9bec2bc0058feb73efe38ad6cfd49a0c7094db29b37ecaa8ab16051")
 
 ## necessary for clean up .. change if install process of library changes
 set(INCLUDE_DIR_BOOST ${CONTRIB_BIN_INCLUDE_DIR}/boost)
