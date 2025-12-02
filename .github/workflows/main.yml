@@ -87,18 +87,21 @@ jobs:
       - name: Build contrib
         shell: bash
         run: |
-          mkdir "${{ github.workspace }}/contrib-build"
-          cd "${{ github.workspace }}/contrib-build"
           if [ "$RUNNER_OS" == "Windows" ]; then
             NPROC=$NUMBER_OF_PROCESSORS
+            WORKSPACE="${GITHUB_WORKSPACE//\\//}"
           elif [ "$RUNNER_OS" == "macOS" ]; then
             NPROC=$(sysctl -n hw.ncpu)
+            WORKSPACE="$GITHUB_WORKSPACE"
           else
             NPROC=$(nproc)
+            WORKSPACE="$GITHUB_WORKSPACE"
           fi
           export CMAKE_BUILD_PARALLEL_LEVEL=${NPROC:-4}
-          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=$CMAKE_BUILD_PARALLEL_LEVEL ${{ github.workspace }}/contrib
-          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=$CMAKE_BUILD_PARALLEL_LEVEL ${{ github.workspace }}/contrib
+          mkdir "$WORKSPACE/contrib-build"
+          cd "$WORKSPACE/contrib-build"
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=$CMAKE_BUILD_PARALLEL_LEVEL "$WORKSPACE/contrib"
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=$CMAKE_BUILD_PARALLEL_LEVEL "$WORKSPACE/contrib"
 
       - name: Configure Git for Tagging
         if: github.event_name == 'workflow_dispatch'
