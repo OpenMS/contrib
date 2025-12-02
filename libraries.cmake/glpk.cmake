@@ -52,7 +52,7 @@ MACRO( OPENMS_CONTRIB_BUILD_GLPK )
 		configure_file("${GLPK_DIR}/src/glpk.h" "${CMAKE_BINARY_DIR}/include/glpk.h" COPYONLY)
 
   else()  
-		# CFLAGS for libsvm compiler (see libsvm Makefile)
+		# CFLAGS for glpk compiler
 	  set(GLPK_CFLAGS "-Wall -O3 -fPIC")
 	  
 		# add OS X specific flags

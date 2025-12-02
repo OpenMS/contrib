@@ -76,7 +76,7 @@ MACRO( OPENMS_CONTRIB_BUILD_BZIP2 )
 
   else()
 
-    # CFLAGS for libsvm compiler (see libsvm Makefile)
+    # CFLAGS for bzip2 compiler
     set(BZIP2_CFLAGS "-Wall -Winline -O2 -g -fPIC -D_FILE_OFFSET_BITS=64")
 
     # add OS X specific flags

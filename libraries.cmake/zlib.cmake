@@ -83,7 +83,7 @@ else() ## Linux/MacOS
     set(_ZLIB_CMAKE_ARGS "")
   endif()
 
-  # CFLAGS for libsvm compiler (see libsvm Makefile)
+  # CFLAGS for zlib compiler
   set(ZLIB_CFLAGS "-Wall -O3 -fPIC")
 
   message(STATUS "Generating zlib build system .. ")
