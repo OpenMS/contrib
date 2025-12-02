@@ -60,6 +60,7 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
                          "--with-regex"
                          "--with-system"
                          "--with-thread"
+                         "--with-numeric_conversion"
                          "--build-type=complete"
                          "--disable-icu"
                          "-s"
