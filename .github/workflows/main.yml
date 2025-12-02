@@ -88,8 +88,9 @@ jobs:
         run: |
           mkdir "${{ github.workspace }}/contrib-build"
           cd "${{ github.workspace }}/contrib-build"
-          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=4 ${{ github.workspace }}/contrib
-          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=4 ${{ github.workspace }}/contrib
+          export CMAKE_BUILD_PARALLEL_LEVEL=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=$CMAKE_BUILD_PARALLEL_LEVEL ${{ github.workspace }}/contrib
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=$CMAKE_BUILD_PARALLEL_LEVEL ${{ github.workspace }}/contrib
 
       - name: Configure Git for Tagging
         if: github.event_name == 'workflow_dispatch'

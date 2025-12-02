@@ -81,14 +81,14 @@ if (MSVC)
 
 else() ## Linux/MacOS
 
+  # Build list of platform-specific CMake args
+  set(_ARROW_CMAKE_ARGS)
   if(APPLE)
-    set(_ARROW_CMAKE_ARGS
+    list(APPEND _ARROW_CMAKE_ARGS
         "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
         "-DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}"
         "-DCMAKE_MACOSX_RPATH=TRUE"
       )
-  else()
-    set(_ARROW_CMAKE_ARGS "")
   endif()
 
   # CFLAGS for arrow compiler
@@ -99,18 +99,18 @@ else() ## Linux/MacOS
   execute_process(COMMAND ${CMAKE_COMMAND}
                           ${_ARROW_CMAKE_ARGS}
                           -G "${CMAKE_GENERATOR}"
-                          -D CMAKE_BUILD_TYPE=Release
-                          -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
-                          -D CMAKE_PREFIX_PATH=${PROJECT_BINARY_DIR}
-                          -D CMAKE_C_FLAGS=${ARROW_CFLAGS}
-                          -D CMAKE_CXX_FLAGS=${ARROW_CXXFLAGS}
-                          -D BOOST_ROOT=${PROJECT_BINARY_DIR}
-                          -D Boost_DIR=${PROJECT_BINARY_DIR}
-                          -D ARROW_CSV=ON
-                          -D ARROW_PARQUET=ON
-                          -D ARROW_WITH_ZLIB=ON
-                          -D ARROW_WITH_BZIP2=ON
-                          -D ARROW_WITH_ZSTD=ON
+                          "-DCMAKE_BUILD_TYPE=Release"
+                          "-DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}"
+                          "-DCMAKE_PREFIX_PATH=${PROJECT_BINARY_DIR}"
+                          "-DCMAKE_C_FLAGS=${ARROW_CFLAGS}"
+                          "-DCMAKE_CXX_FLAGS=${ARROW_CXXFLAGS}"
+                          "-DBOOST_ROOT=${PROJECT_BINARY_DIR}"
+                          "-DBoost_DIR=${PROJECT_BINARY_DIR}"
+                          "-DARROW_CSV=ON"
+                          "-DARROW_PARQUET=ON"
+                          "-DARROW_WITH_ZLIB=ON"
+                          "-DARROW_WITH_BZIP2=ON"
+                          "-DARROW_WITH_ZSTD=ON"
                           .
                   WORKING_DIRECTORY ${ARROW_DIR}
                   OUTPUT_VARIABLE ARROW_CMAKE_OUT

@@ -173,13 +173,21 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
     if (BOOST_DEBUG)
       set(BOOST_DEBUG_FLAGS "--debug-configuration -d+2")
     endif()
+
+    # Determine number of parallel jobs (fallback to 2 if not set)
+    if(DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL} AND NOT "$ENV{CMAKE_BUILD_PARALLEL_LEVEL}" STREQUAL "")
+      set(_BOOST_PARALLEL_JOBS $ENV{CMAKE_BUILD_PARALLEL_LEVEL})
+    else()
+      set(_BOOST_PARALLEL_JOBS 2)
+    endif()
+
     # boost cmd (use b2 since sometimes the copying/symlinking from b2 to bjam fails)
-    set (BOOST_CMD "./b2 ${BOOST_DEBUG_FLAGS} ${BOOST_ARCHITECTURE} toolset=${_boost_toolchain} -j $ENV{CMAKE_BUILD_PARALLEL_LEVEL} --disable-icu link=${BOOST_BUILD_TYPE} cxxflags=-fPIC ${BOOST_EXTRA_CXXFLAGS} ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi")
+    set (BOOST_CMD "./b2 ${BOOST_DEBUG_FLAGS} ${BOOST_ARCHITECTURE} toolset=${_boost_toolchain} -j ${_BOOST_PARALLEL_JOBS} --disable-icu link=${BOOST_BUILD_TYPE} cxxflags=-fPIC ${BOOST_EXTRA_CXXFLAGS} ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi")
     
     # boost install
     message(STATUS "Installing Boost libraries (${BOOST_CMD}) ...")
     execute_process(COMMAND ./b2 ${BOOST_DEBUG_FLAGS} ${BOOST_ARCHITECTURE} toolset=${_boost_toolchain} 
-                    -j $ENV{CMAKE_BUILD_PARALLEL_LEVEL} 
+                    -j ${_BOOST_PARALLEL_JOBS} 
                     --disable-icu
                     -s NO_LZMA=1
                     -s NO_ZSTD=1
