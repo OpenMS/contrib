@@ -139,9 +139,9 @@ else() ## Linux/MacOS
   file(APPEND ${LOGFILE} ${ARROW_BUILD_ERR})
 
   if(NOT ARROW_BUILD_SUCCESS EQUAL 0)
-    message(FATAL_ERROR "Building arrow lib (Release) .. failed")
     message(STATUS "Output: ${ARROW_BUILD_OUT}")
     message(STATUS "Error: ${ARROW_BUILD_ERR}")
+    message(FATAL_ERROR "Building arrow lib (Release) .. failed")
   else()
     message(STATUS "Building arrow lib (Release) .. done")
   endif()
