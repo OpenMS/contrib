@@ -96,7 +96,6 @@ MACRO( OPENMS_CONTRIB_BUILD_GLPK )
     # make 
     message( STATUS "Building GLPK library (make).. ")
     exec_program(${CMAKE_MAKE_PROGRAM} "${GLPK_DIR}"
-      ARGS -j ${CMAKE_BUILD_PARALLEL_LEVEL}
       OUTPUT_VARIABLE GLPK_MAKE_OUT
       RETURN_VALUE GLPK_MAKE_SUCCESS
       )
@@ -115,7 +114,6 @@ MACRO( OPENMS_CONTRIB_BUILD_GLPK )
     message( STATUS "Installing GLPK library (make install) .. ")
     exec_program(${CMAKE_MAKE_PROGRAM} "${GLPK_DIR}"
       ARGS "install"
-      -j ${CMAKE_BUILD_PARALLEL_LEVEL}
       OUTPUT_VARIABLE GLPK_INSTALL_OUT
       RETURN_VALUE GLPK_INSTALL_SUCCESS
       )

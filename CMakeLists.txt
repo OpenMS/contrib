@@ -500,12 +500,6 @@ endforeach()
 set( FORCE_REBUILD OFF CACHE BOOL "All installation and build traces of the contrib packages will be removed before building.")
 message(STATUS "FORCE_REBUILD: ${FORCE_REBUILD}")
 
-set( CMAKE_BUILD_PARALLEL_LEVEL 2 CACHE STRING "Number of jobs executed in parallel during the build process if the build system supports multi-job builds (e.g., make, bjam)")
-if("${CMAKE_BUILD_PARALLEL_LEVEL}" STREQUAL "")
-  set( CMAKE_BUILD_PARALLEL_LEVEL 1 )
-endif("${CMAKE_BUILD_PARALLEL_LEVEL}" STREQUAL "")
-message(STATUS "CMAKE_BUILD_PARALLEL_LEVEL: ${CMAKE_BUILD_PARALLEL_LEVEL} (maximal number of concurrent compile jobs)")
-
 ## define building of shared or unshared versions of the contrib libraries
 set( BUILD_SHARED_LIBRARIES Off CACHE BOOL "Builds all contrib libraries as shared libraries.")
 

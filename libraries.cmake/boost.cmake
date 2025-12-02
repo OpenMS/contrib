@@ -51,7 +51,6 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
 
       set(BOOST_CMD_ARGS "${BOOST_ARG}" 
                          "install" 
-                         "-j${CMAKE_BUILD_PARALLEL_LEVEL}" 
                          "--prefix=${PROJECT_BINARY_DIR}" 
                          "--layout=tagged"                   # create libnames without vcXXX in filename; include dir is /include/boost (as opposed to "versioned" where /include/boost-1.52/boost plus ...vc110.lib
                          "--with-math" 
@@ -175,12 +174,11 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
       set(BOOST_DEBUG_FLAGS "--debug-configuration -d+2")
     endif()
     # boost cmd (use b2 since sometimes the copying/symlinking from b2 to bjam fails)
-    set (BOOST_CMD "./b2 ${BOOST_DEBUG_FLAGS} ${BOOST_ARCHITECTURE} toolset=${_boost_toolchain} -j ${CMAKE_BUILD_PARALLEL_LEVEL} --disable-icu link=${BOOST_BUILD_TYPE} cxxflags=-fPIC ${BOOST_EXTRA_CXXFLAGS} ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi")
+    set (BOOST_CMD "./b2 ${BOOST_DEBUG_FLAGS} ${BOOST_ARCHITECTURE} toolset=${_boost_toolchain} --disable-icu link=${BOOST_BUILD_TYPE} cxxflags=-fPIC ${BOOST_EXTRA_CXXFLAGS} ${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${BOOST_LINKER_FLAGS} install --build-type=complete --layout=tagged --threading=single,multi")
     
     # boost install
     message(STATUS "Installing Boost libraries (${BOOST_CMD}) ...")
     execute_process(COMMAND ./b2 ${BOOST_DEBUG_FLAGS} ${BOOST_ARCHITECTURE} toolset=${_boost_toolchain} 
-                    -j ${CMAKE_BUILD_PARALLEL_LEVEL} 
                     --disable-icu
                     -s NO_LZMA=1
                     -s NO_ZSTD=1

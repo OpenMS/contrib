@@ -195,7 +195,7 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
     exec_program(${CMAKE_MAKE_PROGRAM} "${COINOR_DIR}"
       ARGS 
       install
-      #-j ${CMAKE_BUILD_PARALLEL_LEVEL} # the project has problems with multiple jobs. It tries to create folders at the same time and fails.
+      # the project has problems with multiple jobs. It tries to create folders at the same time and fails.
       -j 1
       OUTPUT_VARIABLE COINOR_MAKE_OUT
       RETURN_VALUE COINOR_MAKE_SUCCESS
