@@ -21,9 +21,12 @@ if (MSVC)
                           -G "${CMAKE_GENERATOR}"
                           ${ARCHITECTURE_OPTION_CMAKE}
                           -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
+                          -D CMAKE_PREFIX_PATH=${PROJECT_BINARY_DIR}
                           -D ARROW_CSV=ON
                           -D ARROW_PARQUET=ON
-                          ${ARROW_EXTRA_CMAKE_FLAG}
+                          -D ARROW_WITH_ZLIB=ON
+                          -D ARROW_WITH_BZIP2=ON
+                          -D ARROW_WITH_ZSTD=ON
                           .
                   WORKING_DIRECTORY ${ARROW_DIR}
                   OUTPUT_VARIABLE ARROW_CMAKE_OUT
@@ -86,7 +89,7 @@ else() ## Linux/MacOS
     set(_ARROW_CMAKE_ARGS "")
   endif()
 
-  # CFLAGS for libsvm compiler (see libsvm Makefile)
+  # CFLAGS for arrow compiler
   set(ARROW_CFLAGS "-Wall -O3 -fPIC")
 
   message(STATUS "Generating arrow build system .. ")
@@ -95,9 +98,13 @@ else() ## Linux/MacOS
                           -G "${CMAKE_GENERATOR}"
                           -D CMAKE_BUILD_TYPE=Release
                           -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
+                          -D CMAKE_PREFIX_PATH=${PROJECT_BINARY_DIR}
                           -D CMAKE_C_FLAGS=${ARROW_CFLAGS}
                           -D ARROW_CSV=ON
                           -D ARROW_PARQUET=ON
+                          -D ARROW_WITH_ZLIB=ON
+                          -D ARROW_WITH_BZIP2=ON
+                          -D ARROW_WITH_ZSTD=ON
                           .
                   WORKING_DIRECTORY ${ARROW_DIR}
                   OUTPUT_VARIABLE ARROW_CMAKE_OUT

@@ -254,7 +254,7 @@ set(ARCHIVE_HDF5_TAR hdf5-1_14_3.tar)
 set(ARCHIVE_HDF5_SHA256 "126b800e9b87f65e7e7ffa58ee006607bab03a8e11e5209ea3d5c0c331321d43")
 
 set(ARCHIVE_OPENMP openmp-12.0.1.src.tar.xz)
-set(ARCHIVE_OPENMP_tar openmp-12.0.1.src.tar)
+set(ARCHIVE_OPENMP_TAR openmp-12.0.1.src.tar)
 set(ARCHIVE_OPENMP_SHA256 "60fe79440eaa9ebf583a6ea7f81501310388c02754dbe7dc210776014d06b091")
 
 set(ARCHIVE_ARROW arrow-apache-arrow-22.0.0.tar.gz )
