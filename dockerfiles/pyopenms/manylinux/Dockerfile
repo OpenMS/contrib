@@ -17,7 +17,7 @@ RUN mkdir contrib-build
 RUN ls -l
 WORKDIR /contrib-build
 RUN ls -l
-RUN cmake -DBUILD_TYPE=ALL ../contrib && rm -rf archives src
+RUN cmake -DBUILD_TYPE=ALL /contrib && rm -rf archives src
 
 WORKDIR /
 
