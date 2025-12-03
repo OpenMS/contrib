@@ -255,7 +255,7 @@ ENDMACRO (OPENMS_BUILDLIB)
 ## @param patchedfile_varname Name of the variable that is patched
 MACRO ( OPENMS_PATCH patchfile_varname workingdir_varname patchedfile_varname)
   ## First try: with --binary (because of EOL problems, OS and patch.exe specific)
-  set( PATCH_ARGUMENTS "-p0 --binary -b -N -i") ## NOTE: always keep -i as last argument !!
+  set( PATCH_ARGUMENTS -p0 --binary -b -N -i) ## NOTE: always keep -i as last argument !!
   if (EXISTS ${${patchedfile_varname}}.orig)
     message(STATUS "Patching ${${patchedfile_varname}} ... skipped (already applied)")
   else()
@@ -274,7 +274,7 @@ MACRO ( OPENMS_PATCH patchfile_varname workingdir_varname patchedfile_varname)
 
     if (NOT PATCH_SUCCESS EQUAL 0)
       ## Second try: without --binary
-      set( PATCH_ARGUMENTS "-p0 -b -N -i") ## NOTE: always keep -i as last argument !!
+      set( PATCH_ARGUMENTS -p0 -b -N -i) ## NOTE: always keep -i as last argument !!
       message(STATUS "Try patching ${${patchedfile_varname}} without binary option ... ")
       execute_process(
         COMMAND ${PROGRAM_PATCH} ${PATCH_ARGUMENTS} "${${patchfile_varname}}"
@@ -293,6 +293,7 @@ MACRO ( OPENMS_PATCH patchfile_varname workingdir_varname patchedfile_varname)
       message(STATUS "Patching ${${patchedfile_varname}} ... failed (with and without --binary option)")
       message(STATUS "Check if the patch was created with 'diff -u' and if the paths are correct!")
       message(STATUS "Call was: ${${workingdir_varname}}: ${PROGRAM_PATCH}  ${PATCH_ARGUMENTS} \"${${patchfile_varname}}\"")
+      message(STATUS "Patch error: ${PATCH_ERR}")
       message(FATAL_ERROR ${PATCH_OUT})
     else()
       message(STATUS "Patching ${${patchedfile_varname}} ... done")
