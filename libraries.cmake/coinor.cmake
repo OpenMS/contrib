@@ -167,6 +167,11 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
     
     message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_ARGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} CXXFLAGS=${COINOR_CXXFLAGS})")
 
+    # Save original environment variables
+    set(_ORIG_CXXFLAGS "$ENV{CXXFLAGS}")
+    set(_ORIG_CFLAGS "$ENV{CFLAGS}")
+    set(_ORIG_FFLAGS "$ENV{FFLAGS}")
+
     # Set environment variables for configure
     set(ENV{CXXFLAGS} "${COINOR_CXXFLAGS}")
     set(ENV{CFLAGS} "${COINOR_CFLAGS}")
@@ -192,6 +197,7 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
     )
     ## logfile
     file(APPEND ${LOGFILE} ${COINOR_CONFIGURE_OUT})
+    file(APPEND ${LOGFILE} ${COINOR_CONFIGURE_ERR})
 
     if( NOT COINOR_CONFIGURE_SUCCESS EQUAL 0)
       message( STATUS "Configure COIN-OR library .. failed")
@@ -215,6 +221,23 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
     ## logfile
     file(APPEND ${LOGFILE} ${COINOR_MAKE_OUT})
     file(APPEND ${LOGFILE} ${COINOR_MAKE_ERR})
+
+    # Restore original environment variables (or unset if they were empty)
+    if(_ORIG_CXXFLAGS STREQUAL "")
+      unset(ENV{CXXFLAGS})
+    else()
+      set(ENV{CXXFLAGS} "${_ORIG_CXXFLAGS}")
+    endif()
+    if(_ORIG_CFLAGS STREQUAL "")
+      unset(ENV{CFLAGS})
+    else()
+      set(ENV{CFLAGS} "${_ORIG_CFLAGS}")
+    endif()
+    if(_ORIG_FFLAGS STREQUAL "")
+      unset(ENV{FFLAGS})
+    else()
+      set(ENV{FFLAGS} "${_ORIG_FFLAGS}")
+    endif()
 
     if( NOT COINOR_MAKE_SUCCESS EQUAL 0)
       message( STATUS "Building and installing COIN-OR library (make install) .. failed")
