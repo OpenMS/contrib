@@ -30,7 +30,7 @@ jobs:
             CMAKE_ARGS: -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9
           - os: windows-latest
             CMAKE_ARGS: -G"Visual Studio 17 2022" -A"x64"
-          - os: ubuntu-22.04-arm
+          - os: ubuntu-24.04-arm
             CMAKE_ARGS: ""
 
     steps:
@@ -44,13 +44,13 @@ jobs:
           path: contrib
 
       - name: Setup cmake
-        if: matrix.os != 'ubuntu-22.04-arm'
+        if: ${{ !endsWith(matrix.os, '-arm') }}
         uses: jwlawson/actions-setup-cmake@v2
         with:
           cmake-version: '3.29.x'
 
       - name: Install CMake (Ubuntu arm64)
-        if: matrix.os == 'ubuntu-22.04-arm'
+        if: ${{ endsWith(matrix.os, '-arm') }}
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake
@@ -59,12 +59,12 @@ jobs:
         shell: bash
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
-            sudo apt-get -y install make autoconf automake tar patch libtool gcc
+            sudo apt-get -y install make autoconf automake tar patch libtool gcc libthrift-dev 
           elif [ "$RUNNER_OS" == "Windows" ]; then
             # choco install important_windows_software
             echo "Nothing to install"
           elif [ "$RUNNER_OS" == "macOS" ]; then
-            brew install autoconf automake libtool
+            brew install autoconf automake libtool thrift
           else
             echo "$RUNNER_OS not supported"
             exit 1
@@ -84,12 +84,36 @@ jobs:
         with:
           arch: x64
 
-      - name: Build contrib
+      - name: Build contrib (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
         run: |
-          mkdir "${{ github.workspace }}/contrib-build"
-          cd "${{ github.workspace }}/contrib-build"
-          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=4 ${{ github.workspace }}/contrib
-          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=4 ${{ github.workspace }}/contrib
+          $NPROC = $env:NUMBER_OF_PROCESSORS
+          if (-not $NPROC) { $NPROC = 4 }
+          $env:CMAKE_BUILD_PARALLEL_LEVEL = $NPROC
+          New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\contrib-build"
+          Set-Location "${{ github.workspace }}\contrib-build"
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=$NPROC "${{ github.workspace }}\contrib"
+          New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\contrib-build-openmp"
+          Set-Location "${{ github.workspace }}\contrib-build-openmp"
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=$NPROC "${{ github.workspace }}\contrib"
+
+      - name: Build contrib (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            NPROC=$(sysctl -n hw.ncpu 2>/dev/null) || NPROC=4
+          else
+            NPROC=$(nproc 2>/dev/null) || NPROC=4
+          fi
+          export CMAKE_BUILD_PARALLEL_LEVEL=${NPROC:-4}
+          mkdir -p "$GITHUB_WORKSPACE/contrib-build"
+          cd "$GITHUB_WORKSPACE/contrib-build"
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=$CMAKE_BUILD_PARALLEL_LEVEL "$GITHUB_WORKSPACE/contrib"
+          mkdir -p "$GITHUB_WORKSPACE/contrib-build-openmp"
+          cd "$GITHUB_WORKSPACE/contrib-build-openmp"
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=$CMAKE_BUILD_PARALLEL_LEVEL "$GITHUB_WORKSPACE/contrib"
 
       - name: Configure Git for Tagging
         if: github.event_name == 'workflow_dispatch'

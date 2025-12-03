@@ -91,8 +91,8 @@
 ##       - however: exec_process seems to handle our arguments incorrectly (at least on Windows). Check functionality before you commit!
 
 # Determine what to build (all or single library)
-set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP")
-set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "KISSFFT" "HDF5" "OPENMP")
+set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP,ARROW")
+set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "KISSFFT" "HDF5" "OPENMP" "ARROW")
 
 # check build type
 if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
@@ -187,7 +187,7 @@ set (PATCH_DIR "${PROJECT_SOURCE_DIR}/patches/" CACHE STRING "Directory containi
 ## Warning: ensure these are all upper-case names!
 set(BZIP2_DIR ${CONTRIB_BIN_SOURCE_DIR}/bzip2-1.0.5)
 set(ZLIB_DIR ${CONTRIB_BIN_SOURCE_DIR}/zlib-1.3.1)
-set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost_1_78_0)
+set(BOOST_DIR ${CONTRIB_BIN_SOURCE_DIR}/boost-1.81.0)
 set(XERCES_DIR ${CONTRIB_BIN_SOURCE_DIR}/Xerces-C_3_2_0)
 set(LIBSVM_DIR ${CONTRIB_BIN_SOURCE_DIR}/libsvm-3.12)
 set(GLPK_DIR ${CONTRIB_BIN_SOURCE_DIR}/glpk-4.46)
@@ -196,64 +196,70 @@ set(EIGEN_DIR ${CONTRIB_BIN_SOURCE_DIR}/eigen-3.4.0)
 set(KISSFFT_DIR ${CONTRIB_BIN_SOURCE_DIR}/kissfft)
 set(HDF5_DIR ${CONTRIB_BIN_SOURCE_DIR}/hdfsrc)
 set(OPENMP_DIR ${CONTRIB_BIN_SOURCE_DIR}/openmp-12.0.1.src)
+set(ARROW_DIR ${CONTRIB_BIN_SOURCE_DIR}/arrow-apache-arrow-22.0.0/cpp)
 
 ## source(archive) paths
 ## PLEASE upload all source archives to
-##     https://abibuilder.cs.uni-tuebingen.de/archive/openms/contrib/source_packages/
-## and provide the necessary information below
+##     https://github.com/OpenMS/contrib-sources/
+##  and provide the necessary information below
 ##  ARCHIVE_<LIBNAME> the name of the archive as it was uploaded
 ##  ARCHIVE_<LIBNAME>_TAR the name of the tar in the tar.gz
-##  ARCHIVE_<LIBNAME>_SHA1 the sha1 of the file uploaded to sourceforge
+##  ARCHIVE_<LIBNAME>_SHA256 the sha256 of the file uploaded
 ## e.g.
 ##  set(ARCHIVE_ZLIB zlib.tar.gz)
 ##  set(ARCHIVE_ZLIB_TAR zlib.tar)
-##  set(ARCHIVE_ZLIB_SHA1 "8e8b93fa5eb80df1afe5422309dca42964562d7e")
+##  set(ARCHIVE_ZLIB_SHA256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
 ## NOTE: for local development you can simply place the *.tar.gz in the binary
-##       directory to prevent the download and sha1 verification
+##       directory to prevent the download and sha256 verification
+## LIBRARIES: BZIP2, ZLIB, BOOST, XERCES, LIBSVM, GLPK, COINOR, EIGEN, KISSFFT, HDF5, OPENMP, ARROW
 
 set(ARCHIVE_BZIP2 bzip2-1.0.5.tar.gz)
 set(ARCHIVE_BZIP2_TAR bzip2-1.0.5.tar)
-set(ARCHIVE_BZIP2_SHA1 "8b02713ea0c8eb501cc8bdac4432d7f29700f767")
+set(ARCHIVE_BZIP2_SHA256 "f7bf5368309d76e5daf3a89d4d1bea688dac7780742e7a0ae1af19be9316fe22")
 
 set(ARCHIVE_ZLIB zlib-1.3.1.tar.gz)
 set(ARCHIVE_ZLIB_TAR  zlib-1.3.1.tar)
-set(ARCHIVE_ZLIB_SHA1 "f535367b1a11e2f9ac3bec723fb007fbc0d189e5")
+set(ARCHIVE_ZLIB_SHA256 "9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23")
 
-set(ARCHIVE_BOOST boost_1_78_0.tar.gz)
-set(ARCHIVE_BOOST_TAR  boost_1_78_0.tar)
-set(ARCHIVE_BOOST_SHA1 "ff717ea23af2900e0ad3cae616b3e4ae43e68ad7")
+set(ARCHIVE_BOOST boost-1.81.0.tar.gz)
+set(ARCHIVE_BOOST_TAR  boost-1.81.0.tar)
+set(ARCHIVE_BOOST_SHA256 "121da556b718fd7bd700b5f2e734f8004f1cfa78b7d30145471c526ba75a151c")
 
 set(ARCHIVE_XERCES Xerces-C_3_2_0.tar.gz)
 set(ARCHIVE_XERCES_TAR  Xerces-C_3_2_0.tar)
-set(ARCHIVE_XERCES_SHA1 "da64ed4065694a88378cad340c8382d15a614837")
+set(ARCHIVE_XERCES_SHA256 "68cca38aa0db168fa8ccce1f470a89d91104c4586e2635e0cd6602baf55e4eb8")
 
 set(ARCHIVE_LIBSVM libsvm-3.12.tar.gz)
 set(ARCHIVE_LIBSVM_TAR  libsvm-3.12.tar)
-set(ARCHIVE_LIBSVM_SHA1 "6ee77eb3d89af07fe48058dba0dcc24c85020b85")
+set(ARCHIVE_LIBSVM_SHA256 "9dcd7a301665d2cbd8c109bba0e8cc2d47b5cc2a9c46aeb359f2dab67be69f74")
 
 set(ARCHIVE_GLPK glpk-4.46.tar.gz)
 set(ARCHIVE_GLPK_TAR  glpk-4.46.tar)
-set(ARCHIVE_GLPK_SHA1 "73d589452dc1d8d6a784b3f86f4268cae37420d7")
+set(ARCHIVE_GLPK_SHA256 "fbbe438262f06813850837afd0cd55ed66f17f2004e2ce4f0078754f089e3242")
 
 set(ARCHIVE_COINOR CoinMP-1.8.3-vs22.tar.gz)
 set(ARCHIVE_COINOR_TAR  CoinMP-1.8.3-vs22.tar)
-set(ARCHIVE_COINOR_SHA1 "252aabfa824a2656e7abbc14278a61e02fe63e48")
+set(ARCHIVE_COINOR_SHA256 "75eefc0b0e06dc11a1e5004222f69766366c1e08d3b739f25f53c756ae28a309")
 
 set(ARCHIVE_EIGEN eigen-3.4.0.tar.gz)
 set(ARCHIVE_EIGEN_TAR  eigen-3.4.0.tar)
-set(ARCHIVE_EIGEN_SHA1 "d222db69a9e87d9006608e029d1039039f360b52")
+set(ARCHIVE_EIGEN_SHA256 "8586084f71f9bde545ee7fa6d00288b264a2b7ac3607b974e54d13e7162c1c72")
 
 set(ARCHIVE_KISSFFT kissfft-130.tar.gz)
 set(ARCHIVE_KISSFFT_TAR kissfft-130.tar)
-set(ARCHIVE_KISSFFT_SHA1 "14ee3bd4a6480dc7fbec9a6d3a16d5d9fbbfc0fb")
+set(ARCHIVE_KISSFFT_SHA256 "d846005b3a4b45202f3b288b2d6b5b1df544526ae6aaffe8707770bd09093064")
 
 set(ARCHIVE_HDF5 hdf5-1_14_3.tar.gz)
 set(ARCHIVE_HDF5_TAR hdf5-1_14_3.tar)
-set(ARCHIVE_HDF5_SHA1 "0e464802c2f9185f8b8db6e04149ca1d3eaf27c5")
+set(ARCHIVE_HDF5_SHA256 "126b800e9b87f65e7e7ffa58ee006607bab03a8e11e5209ea3d5c0c331321d43")
 
 set(ARCHIVE_OPENMP openmp-12.0.1.src.tar.xz)
-set(ARCHIVE_OPENMP_tar openmp-12.0.1.src.tar)
-set(ARCHIVE_OPENMP_SHA1 "7c051f6050ff23763b253a757927774b5eeaf644")
+set(ARCHIVE_OPENMP_TAR openmp-12.0.1.src.tar)
+set(ARCHIVE_OPENMP_SHA256 "60fe79440eaa9ebf583a6ea7f81501310388c02754dbe7dc210776014d06b091")
+
+set(ARCHIVE_ARROW arrow-apache-arrow-22.0.0.tar.gz )
+set(ARCHIVE_ARROW_TAR arrow-apache-arrow-22.0.0.tar )
+set(ARCHIVE_ARROW_SHA256 "8a95e6c7b9bec2bc0058feb73efe38ad6cfd49a0c7094db29b37ecaa8ab16051")
 
 ## necessary for clean up .. change if install process of library changes
 set(INCLUDE_DIR_BOOST ${CONTRIB_BIN_INCLUDE_DIR}/boost)
@@ -263,6 +269,7 @@ set(INCLUDE_DIR_COINOR ${CONTRIB_BIN_INCLUDE_DIR}/coin)
 set(INCLUDE_DIR_EIGEN ${CONTRIB_BIN_INCLUDE_DIR}/eigen3)
 set(INCLUDE_DIR_KISSFFT ${CONTRIB_BIN_INCLUDE_DIR}/kissfft)
 set(INCLUDE_DIR_OPENMP ${CONTRIB_BIN_INCLUDE_DIR}/openmp.src)
+set(INCLUDE_DIR_ARROW ${CONTRIB_BIN_INCLUDE_DIR}/arrow)
 
 ## hack for simple libs that do not have include directories
 set(INCLUDE_FILES_LIBSVM ${CONTRIB_BIN_INCLUDE_DIR}/svm.h)
@@ -476,6 +483,7 @@ include ("${CMAKE_SOURCE_DIR}/libraries.cmake/eigen.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/kissfft.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/hdf5.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/openmp.cmake")
+include ("${CMAKE_SOURCE_DIR}/libraries.cmake/arrow.cmake")
 
 ## build mac os x specific C/C++ flags
 set( OPENMS_CONTRIB_MACOSX_MIXED_MODE 0 CACHE INTERNAL "building multiple architectures on MacOSX" FORCE)
@@ -499,12 +507,6 @@ endforeach()
 
 set( FORCE_REBUILD OFF CACHE BOOL "All installation and build traces of the contrib packages will be removed before building.")
 message(STATUS "FORCE_REBUILD: ${FORCE_REBUILD}")
-
-set( NUMBER_OF_JOBS 2 CACHE STRING "Number of jobs executed in parallel during the build process if the build system supports multi-job builds (e.g., make, bjam)")
-if("${NUMBER_OF_JOBS}" STREQUAL "")
-  set( NUMBER_OF_JOBS 1 )
-endif("${NUMBER_OF_JOBS}" STREQUAL "")
-message(STATUS "NUMBER_OF_JOBS: ${NUMBER_OF_JOBS} (maximal number of concurrent compile jobs)")
 
 ## define building of shared or unshared versions of the contrib libraries
 set( BUILD_SHARED_LIBRARIES Off CACHE BOOL "Builds all contrib libraries as shared libraries.")
@@ -612,6 +614,15 @@ if ("OPENMP" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("OPENMP")
   OPENMS_CONTRIB_BUILD_OPENMP()
   OPENMS_COPY_LIBS("OPENMP")
+endif()
+
+##################################################
+###       ARROW                                ###
+##################################################
+if (BUILD_TYPE STREQUAL "ALL" OR "ARROW" IN_LIST BUILD_TYPE)
+  OPENMS_CLEAN_LIB("ARROW")
+  OPENMS_CONTRIB_BUILD_ARROW()
+  OPENMS_COPY_LIBS("ARROW")
 endif()
 
 ## finally copy README.txt to project-binary directory to mark process complete
