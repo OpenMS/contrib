@@ -8,9 +8,9 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
   OPENMS_LOGHEADER_LIBRARY("eigen")
   
   if(MSVC)
-    set(ZIP_ARGS "x -y -osrc")
+    set(ZIP_ARGS x -y -osrc)
   else()
-    set(ZIP_ARGS "xzf")
+    set(ZIP_ARGS xzf)
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_EIGEN "EIGEN" "CMakeLists.txt")
 

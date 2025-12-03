@@ -6,9 +6,9 @@ MACRO( OPENMS_CONTRIB_BUILD_KISSFFT )
   OPENMS_LOGHEADER_LIBRARY("kissfft")
 
   if(MSVC)
-    set(ZIP_ARGS "x -y -osrc")
+    set(ZIP_ARGS x -y -osrc)
   else()
-    set(ZIP_ARGS "xzf")
+    set(ZIP_ARGS xzf)
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_KISSFFT "kissfft" "README")
 

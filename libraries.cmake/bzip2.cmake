@@ -6,9 +6,9 @@ MACRO( OPENMS_CONTRIB_BUILD_BZIP2 )
   OPENMS_LOGHEADER_LIBRARY("bzip2")
 
 	if(MSVC)
-    set(ZIP_ARGS "x -y -osrc")
+    set(ZIP_ARGS x -y -osrc)
   else()
-    set(ZIP_ARGS "xzf")
+    set(ZIP_ARGS xzf)
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_BZIP2 "bzip2" "README")
 

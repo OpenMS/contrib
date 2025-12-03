@@ -6,9 +6,9 @@ MACRO( OPENMS_CONTRIB_BUILD_GLPK )
   OPENMS_LOGHEADER_LIBRARY("glpk")
   #extract: (takes very long.. so skip if possible)
   if(MSVC)
-    set(ZIP_ARGS "x -y -osrc")
+    set(ZIP_ARGS x -y -osrc)
   else()
-    set(ZIP_ARGS "xzf")
+    set(ZIP_ARGS xzf)
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_GLPK "GLPK" "README")
 
@@ -96,7 +96,6 @@ MACRO( OPENMS_CONTRIB_BUILD_GLPK )
     # make 
     message( STATUS "Building GLPK library (make).. ")
     exec_program(${CMAKE_MAKE_PROGRAM} "${GLPK_DIR}"
-      ARGS -j ${NUMBER_OF_JOBS}
       OUTPUT_VARIABLE GLPK_MAKE_OUT
       RETURN_VALUE GLPK_MAKE_SUCCESS
       )
@@ -115,7 +114,6 @@ MACRO( OPENMS_CONTRIB_BUILD_GLPK )
     message( STATUS "Installing GLPK library (make install) .. ")
     exec_program(${CMAKE_MAKE_PROGRAM} "${GLPK_DIR}"
       ARGS "install"
-      -j ${NUMBER_OF_JOBS}
       OUTPUT_VARIABLE GLPK_INSTALL_OUT
       RETURN_VALUE GLPK_INSTALL_SUCCESS
       )

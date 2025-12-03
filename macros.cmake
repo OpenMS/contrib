@@ -224,9 +224,15 @@ ENDMACRO (OPENMS_SMARTEXTRACT)
 MACRO ( OPENMS_BUILDLIB libname solutionfile_varname target_varname config workingdir_varname)
   message(STATUS "Building ${libname} ... ")
   file(TO_NATIVE_PATH ${${solutionfile_varname}} _sln_file_path)
-  set (MSBUILD_ARGS "/p:Configuration=${config} /consoleloggerparameters:Verbosity=minimal /target:${${target_varname}} /p:Platform=${WIN_PLATFORM_ARG} \"${_sln_file_path}\"")
+  set(MSBUILD_ARGS
+    /p:Configuration=${config}
+    /consoleloggerparameters:Verbosity=minimal
+    /target:${${target_varname}}
+    /p:Platform=${WIN_PLATFORM_ARG}
+    "${_sln_file_path}"
+  )
   if(NOT CONTRIB_MSVC_VERSION STREQUAL "8")
-    set (MSBUILD_ARGS "${MSBUILD_ARGS} /maxcpucount")
+    list(APPEND MSBUILD_ARGS /maxcpucount)
   endif()
 
   execute_process(
@@ -373,7 +379,7 @@ MACRO (OPENMS_CLEAN_INSTALLED_LIBS libname)
 
   foreach (FTD ${LIB_FILES})
     get_filename_component(RFTD ${FTD} NAME)
-    execute_process(COMMAND ${CMAKE_COMMAND} -E remove "\"${CONTRIB_BIN_LIB_DIR}/${RFTD}\""
+    execute_process(COMMAND ${CMAKE_COMMAND} -E remove "${CONTRIB_BIN_LIB_DIR}/${RFTD}"
                     OUTPUT_VARIABLE DELETE_LIB_OUT
                     RESULT_VARIABLE DELETE_LIB_SUCCESS)
     if( NOT DELETE_LIB_SUCCESS EQUAL 0)
@@ -441,7 +447,7 @@ MACRO(OPENMS_CLEAN_SOURCE libname)
   message(STATUS "Removing ${libname} source directory .. ")
   if(EXISTS "${${libnameUP}_DIR}")
     # delete source directory
-    execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory "\"${${libnameUP}_DIR}\""
+    execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory "${${libnameUP}_DIR}"
                     OUTPUT_VARIABLE DELETE_SRC_DIR_OUT
                     RESULT_VARIABLE DELETE_SRC_DIR_SUCCESS)
     if( NOT DELETE_SRC_DIR_SUCCESS EQUAL 0)
@@ -458,7 +464,7 @@ MACRO(OPENMS_CLEAN_SOURCE libname)
     if(DEFINED ARCHIVE_${libnameUP}_TAR)
       message(STATUS "Removing ${libname} intermediate archives .. ")
       if(EXISTS ${ARCHIVE_${libnameUP}_TAR})
-        execute_process(COMMAND ${CMAKE_COMMAND} -E remove "\"${ARCHIVE_${libnameUP}_TAR}\""
+        execute_process(COMMAND ${CMAKE_COMMAND} -E remove "${ARCHIVE_${libnameUP}_TAR}"
                         OUTPUT_VARIABLE DELETE_INTERMEDIATE_TAR_OUT
                         RESULT_VARIABLE DELETE_INTERMEDIATE_TAR_SUCCESS)
         if( NOT DELETE_INTERMEDIATE_TAR_SUCCESS EQUAL 0)
