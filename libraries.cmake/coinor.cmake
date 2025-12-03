@@ -168,6 +168,7 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
         --prefix=${PROJECT_BINARY_DIR}
         ${STATIC_BUILD}
         ${SHARED_BUILD}
+        ${BUILD_TRIPLET}
         --with-lapack=no
         --with-blas=no
         ${COINOR_EXTRA_FLAGS}
@@ -194,7 +195,7 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
     execute_process(
       COMMAND 
       ${CMAKE_MAKE_PROGRAM}
-      install 
+      install
       WORKING_DIRECTORY ${COINOR_DIR} 
         # Explicitly pass as one argument
       OUTPUT_VARIABLE COINOR_MAKE_OUT
