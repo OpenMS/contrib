@@ -183,6 +183,7 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
 
     if( NOT COINOR_CONFIGURE_SUCCESS EQUAL 0)
       message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER}) .. failed")
+      message( STATUS ${COINOR_CONFIGURE_ERR})
       message( FATAL_ERROR ${COINOR_CONFIGURE_OUT})
     else()
       message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER}) .. done")
