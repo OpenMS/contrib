@@ -179,6 +179,7 @@ MACRO (OPENMS_SMARTEXTRACT zip_args_varname libfile_varname libname checkfile)
 
         if (NOT EXTRACT_SUCCESS EQUAL 0)
           message(STATUS "Extracting ${libname} .. failed")
+          message(STATUS ${ZIP2_ERR})
           message(FATAL_ERROR ${ZIP2_OUT})
         else()
           message(STATUS "Extracting ${libname} .. done (2nd pass)")
