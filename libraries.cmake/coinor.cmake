@@ -8,9 +8,9 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
   OPENMS_LOGHEADER_LIBRARY("COINOR")
   ## extract: (takes very long.. so skip if possible)
   if(MSVC)
-    set(ZIP_ARGS "x -y -osrc")
+    set(ZIP_ARGS x -y -osrc)
   else()
-    set(ZIP_ARGS "xzf")
+    set(ZIP_ARGS xzf)
   endif()
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_COINOR "COINOR" "AUTHORS")
 
@@ -131,9 +131,15 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
   
     # configure -- 
     if( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
-      set(COINOR_EXTRA_FLAGS "ADD_FFLAGS='${OSX_DEPLOYMENT_FLAG}' ADD_CFLAGS='${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG}' ADD_CXXFLAGS='${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG} -fPIC' --disable-dependency-tracking")
+      set(COINOR_CXXFLAGS "${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG} -fPIC -std=c++14")
+      set(COINOR_CFLAGS "${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG}")
+      set(COINOR_FFLAGS "${OSX_DEPLOYMENT_FLAG}")
+      set(COINOR_EXTRA_ARGS "--disable-dependency-tracking")
     else()
-      set(COINOR_EXTRA_FLAGS "ADD_CXXFLAGS='-fPIC'")
+      set(COINOR_CXXFLAGS "-fPIC -std=c++14")
+      set(COINOR_CFLAGS "")
+      set(COINOR_FFLAGS "")
+      set(COINOR_EXTRA_ARGS "")
     endif()
 
     # Determine build triplet for configure (only needed for Linux with old config.guess)
@@ -159,51 +165,83 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
       set(SHARED_BUILD "--enable-shared=no")		
     endif()
     
-    message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER})")
-    exec_program("./configure" "${COINOR_DIR}"
-      ARGS 
-      -C 
-      --prefix=${PROJECT_BINARY_DIR}
-      ${BUILD_TRIPLET}
-      ## Following two lines can be combined with prefix
-      ## But maybe they avoid building the doc into share (wanted?)
-      #--libdir=${CONTRIB_BIN_LIB_DIR} 
-      #--includedir=${CONTRIB_BIN_INCLUDE_DIR}
-      ${STATIC_BUILD}
-      ${SHARED_BUILD}
-      --with-lapack=no
-      --with-blas=no
-      ${COINOR_EXTRA_FLAGS} 
-      CXX=${CMAKE_CXX_COMPILER} 
-      CC=${CMAKE_C_COMPILER}
+    message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_ARGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} CXXFLAGS=${COINOR_CXXFLAGS})")
+
+    # Save original environment variables
+    set(_ORIG_CXXFLAGS "$ENV{CXXFLAGS}")
+    set(_ORIG_CFLAGS "$ENV{CFLAGS}")
+    set(_ORIG_FFLAGS "$ENV{FFLAGS}")
+
+    # Set environment variables for configure
+    set(ENV{CXXFLAGS} "${COINOR_CXXFLAGS}")
+    set(ENV{CFLAGS} "${COINOR_CFLAGS}")
+    set(ENV{FFLAGS} "${COINOR_FFLAGS}")
+
+    execute_process(
+      COMMAND 
+        ./configure 
+        -C 
+        --prefix=${PROJECT_BINARY_DIR}
+        ${STATIC_BUILD}
+        ${SHARED_BUILD}
+        ${BUILD_TRIPLET}
+        --with-lapack=no
+        --with-blas=no
+        ${COINOR_EXTRA_ARGS}
+        CXX=${CMAKE_CXX_COMPILER}
+        CC=${CMAKE_C_COMPILER}
+      WORKING_DIRECTORY ${COINOR_DIR}
       OUTPUT_VARIABLE COINOR_CONFIGURE_OUT
-      RETURN_VALUE COINOR_CONFIGURE_SUCCESS
-      )
-    
+      ERROR_VARIABLE COINOR_CONFIGURE_ERR
+      RESULT_VARIABLE COINOR_CONFIGURE_SUCCESS
+    )
     ## logfile
     file(APPEND ${LOGFILE} ${COINOR_CONFIGURE_OUT})
+    file(APPEND ${LOGFILE} ${COINOR_CONFIGURE_ERR})
 
     if( NOT COINOR_CONFIGURE_SUCCESS EQUAL 0)
-      message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER}) .. failed")
+      message( STATUS "Configure COIN-OR library .. failed")
+      message( STATUS ${COINOR_CONFIGURE_ERR})
       message( FATAL_ERROR ${COINOR_CONFIGURE_OUT})
     else()
-      message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER}) .. done")
+      message( STATUS "Configure COIN-OR library .. done")
     endif()
 
     ## make install
     message( STATUS "Building and installing COIN-OR library (make install).. ")
-    exec_program(${CMAKE_MAKE_PROGRAM} "${COINOR_DIR}"
-      ARGS 
-      install
+    execute_process(
+      COMMAND 
+        ${CMAKE_MAKE_PROGRAM}
+        install
+      WORKING_DIRECTORY ${COINOR_DIR}
       OUTPUT_VARIABLE COINOR_MAKE_OUT
-      RETURN_VALUE COINOR_MAKE_SUCCESS
-      )
-
+      ERROR_VARIABLE COINOR_MAKE_ERR
+      RESULT_VARIABLE COINOR_MAKE_SUCCESS
+    )
     ## logfile
     file(APPEND ${LOGFILE} ${COINOR_MAKE_OUT})
+    file(APPEND ${LOGFILE} ${COINOR_MAKE_ERR})
+
+    # Restore original environment variables (or unset if they were empty)
+    if(_ORIG_CXXFLAGS STREQUAL "")
+      unset(ENV{CXXFLAGS})
+    else()
+      set(ENV{CXXFLAGS} "${_ORIG_CXXFLAGS}")
+    endif()
+    if(_ORIG_CFLAGS STREQUAL "")
+      unset(ENV{CFLAGS})
+    else()
+      set(ENV{CFLAGS} "${_ORIG_CFLAGS}")
+    endif()
+    if(_ORIG_FFLAGS STREQUAL "")
+      unset(ENV{FFLAGS})
+    else()
+      set(ENV{FFLAGS} "${_ORIG_FFLAGS}")
+    endif()
 
     if( NOT COINOR_MAKE_SUCCESS EQUAL 0)
       message( STATUS "Building and installing COIN-OR library (make install) .. failed")
+      message( STATUS ${COINOR_MAKE_ERR})
       message( FATAL_ERROR ${COINOR_MAKE_OUT})
     else()
       message( STATUS "Building and installing COIN-OR library (make install) .. done")

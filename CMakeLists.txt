@@ -126,14 +126,14 @@ if (NOT DEFINED CMAKE_C_COMPILER)
   endif()
 endif()
 
-PROJECT("OpenMS_CONTRIB")
-
 # Heart of the BUILD system : only edit when you know what you are doing (we don't)
 # quick manual for most commands: https://cmake.org/cmake/help/v3.3/manual/cmake-commands.7.html
 # useful predefined variables: http://www.paraview.org/Wiki/CMake_Useful_Variables
 
 # force cmake > 3.10 to force enable c++20 support
 cmake_minimum_required(VERSION 3.10.0 FATAL_ERROR)
+
+PROJECT("OpenMS_CONTRIB")
 
 SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
