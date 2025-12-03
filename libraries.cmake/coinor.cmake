@@ -205,18 +205,20 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
     message( STATUS "Building and installing COIN-OR library (make install).. ")
     execute_process(
       COMMAND 
-      ${CMAKE_MAKE_PROGRAM}
-      install
-      WORKING_DIRECTORY ${COINOR_DIR} 
-        # Explicitly pass as one argument
+        ${CMAKE_MAKE_PROGRAM}
+        install
+      WORKING_DIRECTORY ${COINOR_DIR}
       OUTPUT_VARIABLE COINOR_MAKE_OUT
+      ERROR_VARIABLE COINOR_MAKE_ERR
       RESULT_VARIABLE COINOR_MAKE_SUCCESS
     )
     ## logfile
     file(APPEND ${LOGFILE} ${COINOR_MAKE_OUT})
+    file(APPEND ${LOGFILE} ${COINOR_MAKE_ERR})
 
     if( NOT COINOR_MAKE_SUCCESS EQUAL 0)
       message( STATUS "Building and installing COIN-OR library (make install) .. failed")
+      message( STATUS ${COINOR_MAKE_ERR})
       message( FATAL_ERROR ${COINOR_MAKE_OUT})
     else()
       message( STATUS "Building and installing COIN-OR library (make install) .. done")
