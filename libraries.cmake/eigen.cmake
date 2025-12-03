@@ -21,6 +21,9 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
   execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_EIGEN_NATIVE_BUILD_DIR})
 
   message(STATUS "Generating eigen build system .. ")
+  message(STATUS "  CMake generator: ${CMAKE_GENERATOR}")
+  message(STATUS "  Source dir: ${EIGEN_DIR}")
+  message(STATUS "  Build dir: ${_EIGEN_NATIVE_BUILD_DIR}")
 
   execute_process(COMMAND ${CMAKE_COMMAND}
                   -G "${CMAKE_GENERATOR}"
@@ -32,14 +35,17 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
                   WORKING_DIRECTORY ${_EIGEN_NATIVE_BUILD_DIR}
                   OUTPUT_VARIABLE _EIGEN_CMAKE_OUT
                   ERROR_VARIABLE _EIGEN_CMAKE_ERR
-                  RESULT_VARIABLE _EIGEN_CMAKE_SUCCESS)
+                  RESULT_VARIABLE _EIGEN_CMAKE_SUCCESS
+                  TIMEOUT 300)
 
   # output to logfile
   file(APPEND ${LOGFILE} ${_EIGEN_CMAKE_OUT})
   file(APPEND ${LOGFILE} ${_EIGEN_CMAKE_ERR})
 
   if (NOT _EIGEN_CMAKE_SUCCESS EQUAL 0)
-    message(FATAL_ERROR "Generating eigen build system .. failed")
+    message(STATUS "CMake stdout: ${_EIGEN_CMAKE_OUT}")
+    message(STATUS "CMake stderr: ${_EIGEN_CMAKE_ERR}")
+    message(FATAL_ERROR "Generating eigen build system .. failed (exit code: ${_EIGEN_CMAKE_SUCCESS})")
   else()
     message(STATUS "Generating eigen build system .. done")
   endif()
@@ -56,14 +62,17 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
                   WORKING_DIRECTORY ${_EIGEN_NATIVE_BUILD_DIR}
                   OUTPUT_VARIABLE _EIGEN_BUILD_OUT
                   ERROR_VARIABLE _EIGEN_BUILD_ERR
-                  RESULT_VARIABLE _EIGEN_BUILD_SUCCESS)
+                  RESULT_VARIABLE _EIGEN_BUILD_SUCCESS
+                  TIMEOUT 300)
 
   # output to logfile
   file(APPEND ${LOGFILE} ${_EIGEN_BUILD_OUT})
   file(APPEND ${LOGFILE} ${_EIGEN_BUILD_ERR})
 
   if (NOT _EIGEN_BUILD_SUCCESS EQUAL 0)
-    message(FATAL_ERROR "Installing eigen headers .. failed")
+    message(STATUS "Build stdout: ${_EIGEN_BUILD_OUT}")
+    message(STATUS "Build stderr: ${_EIGEN_BUILD_ERR}")
+    message(FATAL_ERROR "Installing eigen headers .. failed (exit code: ${_EIGEN_BUILD_SUCCESS})")
   else()
     message(STATUS "Installing eigen headers .. done")
   endif()
