@@ -131,9 +131,15 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
   
     # configure -- 
     if( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
-      set(COINOR_EXTRA_FLAGS "ADD_FFLAGS='${OSX_DEPLOYMENT_FLAG}' ADD_CFLAGS='${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG}' ADD_CXXFLAGS='${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG} -fPIC -std=c++14' --disable-dependency-tracking")
+      set(COINOR_CXXFLAGS "${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG} -fPIC -std=c++14")
+      set(COINOR_CFLAGS "${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG}")
+      set(COINOR_FFLAGS "${OSX_DEPLOYMENT_FLAG}")
+      set(COINOR_EXTRA_ARGS "--disable-dependency-tracking")
     else()
-      set(COINOR_EXTRA_FLAGS "ADD_CXXFLAGS='-fPIC -std=c++14'")
+      set(COINOR_CXXFLAGS "-fPIC -std=c++14")
+      set(COINOR_CFLAGS "")
+      set(COINOR_FFLAGS "")
+      set(COINOR_EXTRA_ARGS "")
     endif()
 
     # Determine build triplet for configure (only needed for Linux with old config.guess)
@@ -159,8 +165,13 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
       set(SHARED_BUILD "--enable-shared=no")		
     endif()
     
-    message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER})")
-#exec_program -> execute_process
+    message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_ARGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} CXXFLAGS=${COINOR_CXXFLAGS})")
+
+    # Set environment variables for configure
+    set(ENV{CXXFLAGS} "${COINOR_CXXFLAGS}")
+    set(ENV{CFLAGS} "${COINOR_CFLAGS}")
+    set(ENV{FFLAGS} "${COINOR_FFLAGS}")
+
     execute_process(
       COMMAND 
         ./configure 
@@ -171,7 +182,7 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
         ${BUILD_TRIPLET}
         --with-lapack=no
         --with-blas=no
-        ${COINOR_EXTRA_FLAGS}
+        ${COINOR_EXTRA_ARGS}
         CXX=${CMAKE_CXX_COMPILER}
         CC=${CMAKE_C_COMPILER}
       WORKING_DIRECTORY ${COINOR_DIR}
@@ -183,11 +194,11 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
     file(APPEND ${LOGFILE} ${COINOR_CONFIGURE_OUT})
 
     if( NOT COINOR_CONFIGURE_SUCCESS EQUAL 0)
-      message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER}) .. failed")
+      message( STATUS "Configure COIN-OR library .. failed")
       message( STATUS ${COINOR_CONFIGURE_ERR})
       message( FATAL_ERROR ${COINOR_CONFIGURE_OUT})
     else()
-      message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER}) .. done")
+      message( STATUS "Configure COIN-OR library .. done")
     endif()
 
     ## make install
