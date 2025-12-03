@@ -131,9 +131,9 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
   
     # configure -- 
     if( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
-      set(COINOR_EXTRA_FLAGS "ADD_FFLAGS='${OSX_DEPLOYMENT_FLAG}' ADD_CFLAGS='${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG}' ADD_CXXFLAGS='${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG} -fPIC' --disable-dependency-tracking")
+      set(COINOR_EXTRA_FLAGS "ADD_FFLAGS='${OSX_DEPLOYMENT_FLAG}' ADD_CFLAGS='${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG}' ADD_CXXFLAGS='${OSX_LIB_FLAG} ${OSX_DEPLOYMENT_FLAG} ${OSX_SYSROOT_FLAG} -fPIC -std=c++14' --disable-dependency-tracking")
     else()
-      set(COINOR_EXTRA_FLAGS "ADD_CXXFLAGS='-fPIC'")
+      set(COINOR_EXTRA_FLAGS "ADD_CXXFLAGS='-fPIC -std=c++14'")
     endif()
 
     # Determine build triplet for configure (only needed for Linux with old config.guess)
