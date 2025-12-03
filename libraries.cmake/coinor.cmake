@@ -160,26 +160,24 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
     endif()
     
     message( STATUS "Configure COIN-OR library (./configure -C --prefix=${PROJECT_BINARY_DIR} ${BUILD_TRIPLET} ${STATIC_BUILD} ${SHARED_BUILD} --with-lapack=no --with-blas=no ${COINOR_EXTRA_FLAGS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER})")
-    exec_program("./configure" "${COINOR_DIR}"
-      ARGS 
-      -C 
-      --prefix=${PROJECT_BINARY_DIR}
-      ${BUILD_TRIPLET}
-      ## Following two lines can be combined with prefix
-      ## But maybe they avoid building the doc into share (wanted?)
-      #--libdir=${CONTRIB_BIN_LIB_DIR} 
-      #--includedir=${CONTRIB_BIN_INCLUDE_DIR}
-      ${STATIC_BUILD}
-      ${SHARED_BUILD}
-      --with-lapack=no
-      --with-blas=no
-      ${COINOR_EXTRA_FLAGS} 
-      CXX=${CMAKE_CXX_COMPILER} 
-      CC=${CMAKE_C_COMPILER}
+#exec_program -> execute_process
+    execute_process(
+      COMMAND 
+        ./configure 
+        -C 
+        --prefix=${PROJECT_BINARY_DIR}
+        ${STATIC_BUILD}
+        ${SHARED_BUILD}
+        --with-lapack=no
+        --with-blas=no
+        ${COINOR_EXTRA_FLAGS}
+        CXX=${CMAKE_CXX_COMPILER}
+        CC=${CMAKE_C_COMPILER}
+      WORKING_DIRECTORY ${COINOR_DIR}
       OUTPUT_VARIABLE COINOR_CONFIGURE_OUT
-      RETURN_VALUE COINOR_CONFIGURE_SUCCESS
-      )
-    
+      ERROR_VARIABLE COINOR_CONFIGURE_ERR
+      RESULT_VARIABLE COINOR_CONFIGURE_SUCCESS
+    )
     ## logfile
     file(APPEND ${LOGFILE} ${COINOR_CONFIGURE_OUT})
 
@@ -192,13 +190,15 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
 
     ## make install
     message( STATUS "Building and installing COIN-OR library (make install).. ")
-    exec_program(${CMAKE_MAKE_PROGRAM} "${COINOR_DIR}"
-      ARGS 
-      install
+    execute_process(
+      COMMAND 
+      ${CMAKE_MAKE_PROGRAM}
+      install 
+      WORKING_DIRECTORY ${COINOR_DIR} 
+        # Explicitly pass as one argument
       OUTPUT_VARIABLE COINOR_MAKE_OUT
-      RETURN_VALUE COINOR_MAKE_SUCCESS
-      )
-
+      RESULT_VARIABLE COINOR_MAKE_SUCCESS
+    )
     ## logfile
     file(APPEND ${LOGFILE} ${COINOR_MAKE_OUT})
 
