@@ -512,6 +512,24 @@ message(STATUS "FORCE_REBUILD: ${FORCE_REBUILD}")
 set( BUILD_SHARED_LIBRARIES Off CACHE BOOL "Builds all contrib libraries as shared libraries.")
 
 ##################################################
+###       ZLIB                                 ###
+##################################################
+
+if (BUILD_TYPE STREQUAL "ALL" OR "ZLIB" IN_LIST BUILD_TYPE)
+  OPENMS_CLEAN_LIB("ZLIB")
+  OPENMS_CONTRIB_BUILD_ZLIB()
+endif()
+
+##################################################
+###       BZIP2                                ###
+##################################################
+
+if (BUILD_TYPE STREQUAL "ALL" OR "BZIP2" IN_LIST BUILD_TYPE)
+  OPENMS_CLEAN_LIB("BZIP2")
+  OPENMS_CONTRIB_BUILD_BZIP2()
+endif()
+
+##################################################
 ###       BOOST                                ###
 ##################################################
 
@@ -545,24 +563,6 @@ endif()
 if (BUILD_TYPE STREQUAL "ALL" OR "XERCESC" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("XERCES")
   OPENMS_CONTRIB_BUILD_XERCESC()
-endif()
-
-##################################################
-###       BZIP2                                ###
-##################################################
-
-if (BUILD_TYPE STREQUAL "ALL" OR "BZIP2" IN_LIST BUILD_TYPE)
-  OPENMS_CLEAN_LIB("BZIP2")
-  OPENMS_CONTRIB_BUILD_BZIP2()
-endif()
-
-##################################################
-###       ZLIB                                 ###
-##################################################
-
-if (BUILD_TYPE STREQUAL "ALL" OR "ZLIB" IN_LIST BUILD_TYPE)
-  OPENMS_CLEAN_LIB("ZLIB")
-  OPENMS_CONTRIB_BUILD_ZLIB()
 endif()
 
 ##################################################
