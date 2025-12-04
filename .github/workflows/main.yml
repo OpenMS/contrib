@@ -88,15 +88,18 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          $ErrorActionPreference = "Stop"
           $NPROC = $env:NUMBER_OF_PROCESSORS
           if (-not $NPROC) { $NPROC = 4 }
           $env:CMAKE_BUILD_PARALLEL_LEVEL = $NPROC
           New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\contrib-build"
           Set-Location "${{ github.workspace }}\contrib-build"
           cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=$NPROC "${{ github.workspace }}\contrib"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\contrib-build-openmp"
           Set-Location "${{ github.workspace }}\contrib-build-openmp"
           cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=$NPROC "${{ github.workspace }}\contrib"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Build contrib (Unix)
         if: runner.os != 'Windows'
