@@ -94,11 +94,11 @@ jobs:
           $env:CMAKE_BUILD_PARALLEL_LEVEL = $NPROC
           New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\contrib-build"
           Set-Location "${{ github.workspace }}\contrib-build"
-          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=$NPROC "${{ github.workspace }}\contrib"
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL  "${{ github.workspace }}\contrib"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\contrib-build-openmp"
           Set-Location "${{ github.workspace }}\contrib-build-openmp"
-          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=$NPROC "${{ github.workspace }}\contrib"
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP "${{ github.workspace }}\contrib"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Build contrib (Unix)
@@ -113,10 +113,10 @@ jobs:
           export CMAKE_BUILD_PARALLEL_LEVEL=${NPROC:-4}
           mkdir -p "$GITHUB_WORKSPACE/contrib-build"
           cd "$GITHUB_WORKSPACE/contrib-build"
-          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL -DNUMBER_OF_JOBS=$CMAKE_BUILD_PARALLEL_LEVEL "$GITHUB_WORKSPACE/contrib"
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=ALL "$GITHUB_WORKSPACE/contrib"
           mkdir -p "$GITHUB_WORKSPACE/contrib-build-openmp"
           cd "$GITHUB_WORKSPACE/contrib-build-openmp"
-          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP -DNUMBER_OF_JOBS=$CMAKE_BUILD_PARALLEL_LEVEL "$GITHUB_WORKSPACE/contrib"
+          cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP "$GITHUB_WORKSPACE/contrib"
 
       - name: Configure Git for Tagging
         if: github.event_name == 'workflow_dispatch'
