@@ -23,6 +23,7 @@ if (MSVC)
                           ${ARCHITECTURE_OPTION_CMAKE}
                           -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                           -D CMAKE_PREFIX_PATH=${PROJECT_BINARY_DIR}
+                          -D CMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib
                           -D BOOST_ROOT=${PROJECT_BINARY_DIR}
                           -D Boost_DIR=${PROJECT_BINARY_DIR}
                           -D ARROW_CSV=ON
