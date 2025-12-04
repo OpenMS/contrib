@@ -116,6 +116,7 @@ else() ## Linux/MacOS
                           "-DBOOST_ROOT=${PROJECT_BINARY_DIR}"
                           "-DBoost_DIR=${PROJECT_BINARY_DIR}"
                           "-DARROW_CSV=ON"
+                          "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib"
                           "-DARROW_PARQUET=ON"
                           "-DARROW_WITH_ZLIB=ON"
                           "-DARROW_WITH_BZIP2=ON"
