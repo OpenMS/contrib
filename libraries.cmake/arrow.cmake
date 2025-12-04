@@ -15,8 +15,7 @@ OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_ARROW "ARROW" "README")
 
 ## build the obj/lib
 if (MSVC)
-  # Set BOOST_ROOT as environment variable so Arrow finds our pre-built Boost
-  set(ENV{BOOST_ROOT} "${PROJECT_BINARY_DIR}")
+  set(ARROW_CXXFLAGS "/I${PROJECT_BINARY_DIR}/include")
   
   message(STATUS "Generating arrow build system .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
@@ -29,6 +28,7 @@ if (MSVC)
                           -D CMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib
                           -D BOOST_ROOT=${PROJECT_BINARY_DIR}
                           -D Boost_DIR=${PROJECT_BINARY_DIR}
+                          -D CMAKE_CXX_FLAGS=${ARROW_CXXFLAGS}
                           -D ARROW_CSV=ON
                           -D ARROW_PARQUET=ON
                           -D ARROW_WITH_ZLIB=ON

@@ -512,6 +512,24 @@ message(STATUS "FORCE_REBUILD: ${FORCE_REBUILD}")
 set( BUILD_SHARED_LIBRARIES Off CACHE BOOL "Builds all contrib libraries as shared libraries.")
 
 ##################################################
+###       BOOST                                ###
+##################################################
+
+if (BUILD_TYPE STREQUAL "ALL" OR "BOOST" IN_LIST BUILD_TYPE)
+  OPENMS_CLEAN_LIB("BOOST")
+  OPENMS_CONTRIB_BUILD_BOOST()
+endif()
+
+##################################################
+###       ARROW                                ###
+##################################################
+if (BUILD_TYPE STREQUAL "ALL" OR "ARROW" IN_LIST BUILD_TYPE)
+  OPENMS_CLEAN_LIB("ARROW")
+  OPENMS_CONTRIB_BUILD_ARROW()
+  OPENMS_COPY_LIBS("ARROW")
+endif()
+
+##################################################
 ###       LIBSVM                               ###
 ##################################################
 
@@ -545,24 +563,6 @@ endif()
 if (BUILD_TYPE STREQUAL "ALL" OR "ZLIB" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("ZLIB")
   OPENMS_CONTRIB_BUILD_ZLIB()
-endif()
-
-##################################################
-###       BOOST                                ###
-##################################################
-
-if (BUILD_TYPE STREQUAL "ALL" OR "BOOST" IN_LIST BUILD_TYPE)
-  OPENMS_CLEAN_LIB("BOOST")
-  OPENMS_CONTRIB_BUILD_BOOST()
-endif()
-
-##################################################
-###       ARROW                                ###
-##################################################
-if (BUILD_TYPE STREQUAL "ALL" OR "ARROW" IN_LIST BUILD_TYPE)
-  OPENMS_CLEAN_LIB("ARROW")
-  OPENMS_CONTRIB_BUILD_ARROW()
-  OPENMS_COPY_LIBS("ARROW")
 endif()
 
 ##################################################
