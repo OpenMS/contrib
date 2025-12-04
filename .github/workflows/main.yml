@@ -163,3 +163,41 @@ jobs:
           tag_name: ${{ steps.generate_tag_name.outputs.TAG_NAME }}
           files: |
             ${{ github.workspace }}/contrib-build/contrib_build-${{runner.os}}.tar.gz
+
+      - name: Determine platform name
+        if: always()
+        id: platform
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+            echo "name=linux" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.os }}" == "ubuntu-24.04-arm" ]]; then
+            echo "name=linux_arm" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            echo "name=macos" >> $GITHUB_OUTPUT
+          elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            echo "name=windows" >> $GITHUB_OUTPUT
+          else
+            echo "name=${{ matrix.os }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Collect build logs
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p "${{ github.workspace }}/build-logs"
+          # Copy and rename logs to distinguish between ALL and OPENMP builds
+          if [ -f "${{ github.workspace }}/contrib-build/contrib_build.log" ]; then
+            cp "${{ github.workspace }}/contrib-build/contrib_build.log" "${{ github.workspace }}/build-logs/contrib_build_all.log"
+          fi
+          if [ -f "${{ github.workspace }}/contrib-build-openmp/contrib_build.log" ]; then
+            cp "${{ github.workspace }}/contrib-build-openmp/contrib_build.log" "${{ github.workspace }}/build-logs/contrib_build_openmp.log"
+          fi
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-${{ steps.platform.outputs.name }}
+          path: ${{ github.workspace }}/build-logs/
+          if-no-files-found: warn
