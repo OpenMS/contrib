@@ -15,6 +15,9 @@ OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_ARROW "ARROW" "README")
 
 ## build the obj/lib
 if (MSVC)
+  # Set BOOST_ROOT as environment variable so Arrow finds our pre-built Boost
+  set(ENV{BOOST_ROOT} "${PROJECT_BINARY_DIR}")
+  
   message(STATUS "Generating arrow build system .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
                           -D ARROW_BUILD_SHARED=${BUILD_SHARED_LIBRARIES}
