@@ -512,6 +512,42 @@ message(STATUS "FORCE_REBUILD: ${FORCE_REBUILD}")
 set( BUILD_SHARED_LIBRARIES Off CACHE BOOL "Builds all contrib libraries as shared libraries.")
 
 ##################################################
+###       ZLIB                                 ###
+##################################################
+
+if (BUILD_TYPE STREQUAL "ALL" OR "ZLIB" IN_LIST BUILD_TYPE)
+  OPENMS_CLEAN_LIB("ZLIB")
+  OPENMS_CONTRIB_BUILD_ZLIB()
+endif()
+
+##################################################
+###       BZIP2                                ###
+##################################################
+
+if (BUILD_TYPE STREQUAL "ALL" OR "BZIP2" IN_LIST BUILD_TYPE)
+  OPENMS_CLEAN_LIB("BZIP2")
+  OPENMS_CONTRIB_BUILD_BZIP2()
+endif()
+
+##################################################
+###       BOOST                                ###
+##################################################
+
+if (BUILD_TYPE STREQUAL "ALL" OR "BOOST" IN_LIST BUILD_TYPE)
+  OPENMS_CLEAN_LIB("BOOST")
+  OPENMS_CONTRIB_BUILD_BOOST()
+endif()
+
+##################################################
+###       ARROW                                ###
+##################################################
+if (BUILD_TYPE STREQUAL "ALL" OR "ARROW" IN_LIST BUILD_TYPE)
+  OPENMS_CLEAN_LIB("ARROW")
+  OPENMS_CONTRIB_BUILD_ARROW()
+  OPENMS_COPY_LIBS("ARROW")
+endif()
+
+##################################################
 ###       LIBSVM                               ###
 ##################################################
 
@@ -528,34 +564,6 @@ if (BUILD_TYPE STREQUAL "ALL" OR "XERCESC" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("XERCES")
   OPENMS_CONTRIB_BUILD_XERCESC()
 endif()
-
-##################################################
-###       BZIP2                                ###
-##################################################
-
-if (BUILD_TYPE STREQUAL "ALL" OR "BZIP2" IN_LIST BUILD_TYPE)
-  OPENMS_CLEAN_LIB("BZIP2")
-  OPENMS_CONTRIB_BUILD_BZIP2()
-endif()
-
-##################################################
-###       ZLIB                                 ###
-##################################################
-
-if (BUILD_TYPE STREQUAL "ALL" OR "ZLIB" IN_LIST BUILD_TYPE)
-  OPENMS_CLEAN_LIB("ZLIB")
-  OPENMS_CONTRIB_BUILD_ZLIB()
-endif()
-
-##################################################
-###       BOOST                                ###
-##################################################
-
-if (BUILD_TYPE STREQUAL "ALL" OR "BOOST" IN_LIST BUILD_TYPE)
-  OPENMS_CLEAN_LIB("BOOST")
-  OPENMS_CONTRIB_BUILD_BOOST()
-endif()
-
 
 ##################################################
 ###       GLPK                                 ###
@@ -614,15 +622,6 @@ if ("OPENMP" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("OPENMP")
   OPENMS_CONTRIB_BUILD_OPENMP()
   OPENMS_COPY_LIBS("OPENMP")
-endif()
-
-##################################################
-###       ARROW                                ###
-##################################################
-if (BUILD_TYPE STREQUAL "ALL" OR "ARROW" IN_LIST BUILD_TYPE)
-  OPENMS_CLEAN_LIB("ARROW")
-  OPENMS_CONTRIB_BUILD_ARROW()
-  OPENMS_COPY_LIBS("ARROW")
 endif()
 
 ## finally copy README.txt to project-binary directory to mark process complete

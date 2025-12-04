@@ -6,7 +6,8 @@ MACRO( OPENMS_CONTRIB_BUILD_ARROW )
 OPENMS_LOGHEADER_LIBRARY("arrow")
 #extract: (takes very long.. so skip if possible)
 if(MSVC)
-  set(ZIP_ARGS x -y -osrc)
+  # -snl allows dangerous symlinks (Arrow has symlinks like python/cmake_modules -> ../cpp/cmake_modules)
+  set(ZIP_ARGS x -y -snld20 -osrc)
 else()
   set(ZIP_ARGS xzf)
 endif()
@@ -14,6 +15,8 @@ OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_ARROW "ARROW" "README")
 
 ## build the obj/lib
 if (MSVC)
+  set(ARROW_CXXFLAGS "/I${PROJECT_BINARY_DIR}/include")
+  
   message(STATUS "Generating arrow build system .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
                           -D ARROW_BUILD_SHARED=${BUILD_SHARED_LIBRARIES}
@@ -22,8 +25,10 @@ if (MSVC)
                           ${ARCHITECTURE_OPTION_CMAKE}
                           -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                           -D CMAKE_PREFIX_PATH=${PROJECT_BINARY_DIR}
+                          -D CMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib
                           -D BOOST_ROOT=${PROJECT_BINARY_DIR}
                           -D Boost_DIR=${PROJECT_BINARY_DIR}
+                          -D CMAKE_CXX_FLAGS=${ARROW_CXXFLAGS}
                           -D ARROW_CSV=ON
                           -D ARROW_PARQUET=ON
                           -D ARROW_WITH_ZLIB=ON
@@ -57,7 +62,9 @@ if (MSVC)
   file(APPEND ${LOGFILE} ${ARROW_BUILD_ERR})
 
   if(NOT ARROW_BUILD_SUCCESS EQUAL 0)
-    message(FATAL_ERROR "Building arrow lib (Debug) .. failed")
+    message(STATUS "Building arrow lib (Debug) .. failed")
+    message(STATUS "Output: ${ARROW_BUILD_OUT}")
+    message(FATAL_ERROR "Error: ${ARROW_BUILD_ERR}")
   else()
     message(STATUS "Building arrow lib (Debug) .. done")
   endif()
@@ -74,7 +81,9 @@ if (MSVC)
   file(APPEND ${LOGFILE} ${ARROW_BUILD_ERR})
 
   if(NOT ARROW_BUILD_SUCCESS EQUAL 0)
-    message(FATAL_ERROR "Building arrow lib (Release) .. failed")
+    message(STATUS "Building arrow lib (Release) .. failed")
+    message(STATUS "Output: ${ARROW_BUILD_OUT}")
+    message(FATAL_ERROR "Error: ${ARROW_BUILD_ERR}")
   else()
     message(STATUS "Building arrow lib (Release) .. done")
   endif()
