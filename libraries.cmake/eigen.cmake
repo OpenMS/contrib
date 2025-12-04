@@ -25,18 +25,25 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
   message(STATUS "  Source dir: ${EIGEN_DIR}")
   message(STATUS "  Build dir: ${_EIGEN_NATIVE_BUILD_DIR}")
 
+  # Use CMAKE_COMMAND to create an empty file for stdin redirection
+  # This prevents child processes from inheriting stdin (which changed from exec_program to execute_process)
+  set(_EIGEN_NULL_INPUT "${_EIGEN_BUILD_DIR}/null_input.txt")
+  file(WRITE "${_EIGEN_NULL_INPUT}" "")
+
   execute_process(COMMAND ${CMAKE_COMMAND}
                   -G "${CMAKE_GENERATOR}"
                   ${ARCHITECTURE_OPTION_CMAKE}
                   -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                   -D BUILD_TESTING:BOOL=OFF
                   -D EIGEN_TEST_NOQT=ON
+                  -D CMAKE_Fortran_COMPILER=NOTFOUND
                   ${EIGEN_DIR}
                   WORKING_DIRECTORY ${_EIGEN_NATIVE_BUILD_DIR}
+                  INPUT_FILE ${_EIGEN_NULL_INPUT}
                   OUTPUT_VARIABLE _EIGEN_CMAKE_OUT
                   ERROR_VARIABLE _EIGEN_CMAKE_ERR
                   RESULT_VARIABLE _EIGEN_CMAKE_SUCCESS
-                  TIMEOUT 300)
+                  TIMEOUT 600)
 
   # output to logfile
   file(APPEND ${LOGFILE} ${_EIGEN_CMAKE_OUT})
@@ -62,8 +69,7 @@ macro( OPENMS_CONTRIB_BUILD_EIGEN )
                   WORKING_DIRECTORY ${_EIGEN_NATIVE_BUILD_DIR}
                   OUTPUT_VARIABLE _EIGEN_BUILD_OUT
                   ERROR_VARIABLE _EIGEN_BUILD_ERR
-                  RESULT_VARIABLE _EIGEN_BUILD_SUCCESS
-                  TIMEOUT 300)
+                  RESULT_VARIABLE _EIGEN_BUILD_SUCCESS)
 
   # output to logfile
   file(APPEND ${LOGFILE} ${_EIGEN_BUILD_OUT})
