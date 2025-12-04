@@ -20,6 +20,7 @@ if (MSVC)
   message(STATUS "Generating arrow build system .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
                           -D ARROW_BUILD_SHARED=${BUILD_SHARED_LIBRARIES}
+                          -D ARROW_BUILD_STATIC=ON
                           -D CMAKE_INSTALL_BINDIR=${PROJECT_BINARY_DIR}/lib
                           -G "${CMAKE_GENERATOR}"
                           ${ARCHITECTURE_OPTION_CMAKE}
@@ -142,6 +143,8 @@ else() ## Linux/MacOS
                           "-DCMAKE_CXX_FLAGS=${ARROW_CXXFLAGS}"
                           "-DBOOST_ROOT=${PROJECT_BINARY_DIR}"
                           "-DBoost_DIR=${PROJECT_BINARY_DIR}"
+                          "-DARROW_BUILD_SHARED=${BUILD_SHARED_LIBRARIES}"
+                          "-DARROW_BUILD_STATIC=ON"
                           "-DARROW_CSV=ON"
                           "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib"
                           "-DARROW_PARQUET=ON"
