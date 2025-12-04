@@ -20,6 +20,7 @@ if (MSVC)
   message(STATUS "Generating arrow build system .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
                           -D ARROW_BUILD_SHARED=${BUILD_SHARED_LIBRARIES}
+                          -D ARROW_BUILD_STATIC=ON
                           -D CMAKE_INSTALL_BINDIR=${PROJECT_BINARY_DIR}/lib
                           -G "${CMAKE_GENERATOR}"
                           ${ARCHITECTURE_OPTION_CMAKE}
@@ -88,6 +89,33 @@ if (MSVC)
     message(STATUS "Building arrow lib (Release) .. done")
   endif()
 
+  # Fix Arrow CMake config files to be relocatable
+  # Arrow generates absolute paths in ArrowTargets.cmake which breaks when the
+  # package is moved to a different location. Replace absolute paths with
+  # relative paths based on CMAKE_CURRENT_LIST_DIR.
+  set(ARROW_CMAKE_DIR "${PROJECT_BINARY_DIR}/lib/cmake/Arrow")
+  set(PARQUET_CMAKE_DIR "${PROJECT_BINARY_DIR}/lib/cmake/Parquet")
+  
+  # Convert absolute build path to relative path for Arrow
+  file(GLOB ARROW_TARGET_FILES "${ARROW_CMAKE_DIR}/ArrowTargets*.cmake")
+  foreach(TARGET_FILE ${ARROW_TARGET_FILES})
+    file(READ "${TARGET_FILE}" TARGET_CONTENT)
+    string(REPLACE "${PROJECT_BINARY_DIR}/lib" "\${_IMPORT_PREFIX}/lib" TARGET_CONTENT "${TARGET_CONTENT}")
+    string(REPLACE "${PROJECT_BINARY_DIR}/include" "\${_IMPORT_PREFIX}/include" TARGET_CONTENT "${TARGET_CONTENT}")
+    file(WRITE "${TARGET_FILE}" "${TARGET_CONTENT}")
+  endforeach()
+  
+  # Convert absolute build path to relative path for Parquet
+  file(GLOB PARQUET_TARGET_FILES "${PARQUET_CMAKE_DIR}/ParquetTargets*.cmake")
+  foreach(TARGET_FILE ${PARQUET_TARGET_FILES})
+    file(READ "${TARGET_FILE}" TARGET_CONTENT)
+    string(REPLACE "${PROJECT_BINARY_DIR}/lib" "\${_IMPORT_PREFIX}/lib" TARGET_CONTENT "${TARGET_CONTENT}")
+    string(REPLACE "${PROJECT_BINARY_DIR}/include" "\${_IMPORT_PREFIX}/include" TARGET_CONTENT "${TARGET_CONTENT}")
+    file(WRITE "${TARGET_FILE}" "${TARGET_CONTENT}")
+  endforeach()
+  
+  message(STATUS "Fixed Arrow/Parquet CMake configs for relocatability")
+
 else() ## Linux/MacOS
 
   # Build list of platform-specific CMake args
@@ -115,6 +143,8 @@ else() ## Linux/MacOS
                           "-DCMAKE_CXX_FLAGS=${ARROW_CXXFLAGS}"
                           "-DBOOST_ROOT=${PROJECT_BINARY_DIR}"
                           "-DBoost_DIR=${PROJECT_BINARY_DIR}"
+                          "-DARROW_BUILD_SHARED=${BUILD_SHARED_LIBRARIES}"
+                          "-DARROW_BUILD_STATIC=ON"
                           "-DARROW_CSV=ON"
                           "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib"
                           "-DARROW_PARQUET=ON"
@@ -161,6 +191,33 @@ else() ## Linux/MacOS
   else()
     message(STATUS "Building arrow lib (Release) .. done")
   endif()
+
+  # Fix Arrow CMake config files to be relocatable
+  # Arrow generates absolute paths in ArrowTargets.cmake which breaks when the
+  # package is moved to a different location. Replace absolute paths with
+  # relative paths based on CMAKE_CURRENT_LIST_DIR.
+  set(ARROW_CMAKE_DIR "${PROJECT_BINARY_DIR}/lib/cmake/Arrow")
+  set(PARQUET_CMAKE_DIR "${PROJECT_BINARY_DIR}/lib/cmake/Parquet")
+  
+  # Convert absolute build path to relative path for Arrow
+  file(GLOB ARROW_TARGET_FILES "${ARROW_CMAKE_DIR}/ArrowTargets*.cmake")
+  foreach(TARGET_FILE ${ARROW_TARGET_FILES})
+    file(READ "${TARGET_FILE}" TARGET_CONTENT)
+    string(REPLACE "${PROJECT_BINARY_DIR}/lib" "\${_IMPORT_PREFIX}/lib" TARGET_CONTENT "${TARGET_CONTENT}")
+    string(REPLACE "${PROJECT_BINARY_DIR}/include" "\${_IMPORT_PREFIX}/include" TARGET_CONTENT "${TARGET_CONTENT}")
+    file(WRITE "${TARGET_FILE}" "${TARGET_CONTENT}")
+  endforeach()
+  
+  # Convert absolute build path to relative path for Parquet
+  file(GLOB PARQUET_TARGET_FILES "${PARQUET_CMAKE_DIR}/ParquetTargets*.cmake")
+  foreach(TARGET_FILE ${PARQUET_TARGET_FILES})
+    file(READ "${TARGET_FILE}" TARGET_CONTENT)
+    string(REPLACE "${PROJECT_BINARY_DIR}/lib" "\${_IMPORT_PREFIX}/lib" TARGET_CONTENT "${TARGET_CONTENT}")
+    string(REPLACE "${PROJECT_BINARY_DIR}/include" "\${_IMPORT_PREFIX}/include" TARGET_CONTENT "${TARGET_CONTENT}")
+    file(WRITE "${TARGET_FILE}" "${TARGET_CONTENT}")
+  endforeach()
+  
+  message(STATUS "Fixed Arrow/Parquet CMake configs for relocatability")
 
 endif()
 
