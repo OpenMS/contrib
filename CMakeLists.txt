@@ -556,6 +556,14 @@ if (BUILD_TYPE STREQUAL "ALL" OR "BOOST" IN_LIST BUILD_TYPE)
   OPENMS_CONTRIB_BUILD_BOOST()
 endif()
 
+##################################################
+###       ARROW                                ###
+##################################################
+if (BUILD_TYPE STREQUAL "ALL" OR "ARROW" IN_LIST BUILD_TYPE)
+  OPENMS_CLEAN_LIB("ARROW")
+  OPENMS_CONTRIB_BUILD_ARROW()
+  OPENMS_COPY_LIBS("ARROW")
+endif()
 
 ##################################################
 ###       GLPK                                 ###
@@ -614,15 +622,6 @@ if ("OPENMP" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("OPENMP")
   OPENMS_CONTRIB_BUILD_OPENMP()
   OPENMS_COPY_LIBS("OPENMP")
-endif()
-
-##################################################
-###       ARROW                                ###
-##################################################
-if (BUILD_TYPE STREQUAL "ALL" OR "ARROW" IN_LIST BUILD_TYPE)
-  OPENMS_CLEAN_LIB("ARROW")
-  OPENMS_CONTRIB_BUILD_ARROW()
-  OPENMS_COPY_LIBS("ARROW")
 endif()
 
 ## finally copy README.txt to project-binary directory to mark process complete
