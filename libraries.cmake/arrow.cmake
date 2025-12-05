@@ -90,28 +90,45 @@ if (MSVC)
   endif()
 
   # Fix Arrow CMake config files to be relocatable
-  # Arrow generates absolute paths in ArrowTargets.cmake which breaks when the
-  # package is moved to a different location. Replace absolute paths with
-  # relative paths based on CMAKE_CURRENT_LIST_DIR.
+  # Arrow generates absolute paths in ArrowTargets.cmake and ArrowTargets-*.cmake 
+  # which breaks when the package is moved to a different location.
   set(ARROW_CMAKE_DIR "${PROJECT_BINARY_DIR}/lib/cmake/Arrow")
   set(PARQUET_CMAKE_DIR "${PROJECT_BINARY_DIR}/lib/cmake/Parquet")
   
-  # Convert absolute build path to relative path for Arrow
+  # Normalize path separators for replacement
+  file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}" PROJECT_BINARY_DIR_NORMALIZED)
+  
+  # Fix 1: Replace hardcoded _IMPORT_PREFIX in ArrowTargets.cmake
+  set(ARROW_RELOCATABLE_REPLACEMENT "get_filename_component(_IMPORT_PREFIX \"\${CMAKE_CURRENT_LIST_DIR}/../../..\" ABSOLUTE)")
+  set(ARROW_ORIGINAL_PATTERN "set(_IMPORT_PREFIX \"${PROJECT_BINARY_DIR_NORMALIZED}\")")
+  
+  message(STATUS "Arrow relocatability fix:")
+  message(STATUS "  Build dir: ${PROJECT_BINARY_DIR_NORMALIZED}")
+  
+  # Process all Arrow cmake files (ArrowTargets.cmake and ArrowTargets-*.cmake)
   file(GLOB ARROW_TARGET_FILES "${ARROW_CMAKE_DIR}/ArrowTargets*.cmake")
   foreach(TARGET_FILE ${ARROW_TARGET_FILES})
     file(READ "${TARGET_FILE}" TARGET_CONTENT)
-    string(REPLACE "${PROJECT_BINARY_DIR}/lib" "\${_IMPORT_PREFIX}/lib" TARGET_CONTENT "${TARGET_CONTENT}")
-    string(REPLACE "${PROJECT_BINARY_DIR}/include" "\${_IMPORT_PREFIX}/include" TARGET_CONTENT "${TARGET_CONTENT}")
+    
+    # Fix the _IMPORT_PREFIX definition (in ArrowTargets.cmake)
+    string(REPLACE "${ARROW_ORIGINAL_PATTERN}" "${ARROW_RELOCATABLE_REPLACEMENT}" TARGET_CONTENT "${TARGET_CONTENT}")
+    
+    # Fix hardcoded paths in IMPORTED_LOCATION and other properties (in ArrowTargets-*.cmake)
+    # Replace absolute paths with ${_IMPORT_PREFIX} relative paths
+    string(REPLACE "\"${PROJECT_BINARY_DIR_NORMALIZED}/" "\"\${_IMPORT_PREFIX}/" TARGET_CONTENT "${TARGET_CONTENT}")
+    
     file(WRITE "${TARGET_FILE}" "${TARGET_CONTENT}")
+    message(STATUS "  Fixed: ${TARGET_FILE}")
   endforeach()
   
-  # Convert absolute build path to relative path for Parquet
+  # Process all Parquet cmake files
   file(GLOB PARQUET_TARGET_FILES "${PARQUET_CMAKE_DIR}/ParquetTargets*.cmake")
   foreach(TARGET_FILE ${PARQUET_TARGET_FILES})
     file(READ "${TARGET_FILE}" TARGET_CONTENT)
-    string(REPLACE "${PROJECT_BINARY_DIR}/lib" "\${_IMPORT_PREFIX}/lib" TARGET_CONTENT "${TARGET_CONTENT}")
-    string(REPLACE "${PROJECT_BINARY_DIR}/include" "\${_IMPORT_PREFIX}/include" TARGET_CONTENT "${TARGET_CONTENT}")
+    string(REPLACE "${ARROW_ORIGINAL_PATTERN}" "${ARROW_RELOCATABLE_REPLACEMENT}" TARGET_CONTENT "${TARGET_CONTENT}")
+    string(REPLACE "\"${PROJECT_BINARY_DIR_NORMALIZED}/" "\"\${_IMPORT_PREFIX}/" TARGET_CONTENT "${TARGET_CONTENT}")
     file(WRITE "${TARGET_FILE}" "${TARGET_CONTENT}")
+    message(STATUS "  Fixed: ${TARGET_FILE}")
   endforeach()
   
   message(STATUS "Fixed Arrow/Parquet CMake configs for relocatability")
@@ -193,28 +210,42 @@ else() ## Linux/MacOS
   endif()
 
   # Fix Arrow CMake config files to be relocatable
-  # Arrow generates absolute paths in ArrowTargets.cmake which breaks when the
-  # package is moved to a different location. Replace absolute paths with
-  # relative paths based on CMAKE_CURRENT_LIST_DIR.
+  # Arrow generates absolute paths in ArrowTargets.cmake and ArrowTargets-*.cmake 
+  # which breaks when the package is moved to a different location.
   set(ARROW_CMAKE_DIR "${PROJECT_BINARY_DIR}/lib/cmake/Arrow")
   set(PARQUET_CMAKE_DIR "${PROJECT_BINARY_DIR}/lib/cmake/Parquet")
   
-  # Convert absolute build path to relative path for Arrow
+  # Fix 1: Replace hardcoded _IMPORT_PREFIX in ArrowTargets.cmake
+  set(ARROW_RELOCATABLE_REPLACEMENT "get_filename_component(_IMPORT_PREFIX \"\${CMAKE_CURRENT_LIST_DIR}/../../..\" ABSOLUTE)")
+  set(ARROW_ORIGINAL_PATTERN "set(_IMPORT_PREFIX \"${PROJECT_BINARY_DIR}\")")
+  
+  message(STATUS "Arrow relocatability fix:")
+  message(STATUS "  Build dir: ${PROJECT_BINARY_DIR}")
+  
+  # Process all Arrow cmake files (ArrowTargets.cmake and ArrowTargets-*.cmake)
   file(GLOB ARROW_TARGET_FILES "${ARROW_CMAKE_DIR}/ArrowTargets*.cmake")
   foreach(TARGET_FILE ${ARROW_TARGET_FILES})
     file(READ "${TARGET_FILE}" TARGET_CONTENT)
-    string(REPLACE "${PROJECT_BINARY_DIR}/lib" "\${_IMPORT_PREFIX}/lib" TARGET_CONTENT "${TARGET_CONTENT}")
-    string(REPLACE "${PROJECT_BINARY_DIR}/include" "\${_IMPORT_PREFIX}/include" TARGET_CONTENT "${TARGET_CONTENT}")
+    
+    # Fix the _IMPORT_PREFIX definition (in ArrowTargets.cmake)
+    string(REPLACE "${ARROW_ORIGINAL_PATTERN}" "${ARROW_RELOCATABLE_REPLACEMENT}" TARGET_CONTENT "${TARGET_CONTENT}")
+    
+    # Fix hardcoded paths in IMPORTED_LOCATION and other properties (in ArrowTargets-*.cmake)
+    # Replace absolute paths with ${_IMPORT_PREFIX} relative paths
+    string(REPLACE "\"${PROJECT_BINARY_DIR}/" "\"\${_IMPORT_PREFIX}/" TARGET_CONTENT "${TARGET_CONTENT}")
+    
     file(WRITE "${TARGET_FILE}" "${TARGET_CONTENT}")
+    message(STATUS "  Fixed: ${TARGET_FILE}")
   endforeach()
   
-  # Convert absolute build path to relative path for Parquet
+  # Process all Parquet cmake files
   file(GLOB PARQUET_TARGET_FILES "${PARQUET_CMAKE_DIR}/ParquetTargets*.cmake")
   foreach(TARGET_FILE ${PARQUET_TARGET_FILES})
     file(READ "${TARGET_FILE}" TARGET_CONTENT)
-    string(REPLACE "${PROJECT_BINARY_DIR}/lib" "\${_IMPORT_PREFIX}/lib" TARGET_CONTENT "${TARGET_CONTENT}")
-    string(REPLACE "${PROJECT_BINARY_DIR}/include" "\${_IMPORT_PREFIX}/include" TARGET_CONTENT "${TARGET_CONTENT}")
+    string(REPLACE "${ARROW_ORIGINAL_PATTERN}" "${ARROW_RELOCATABLE_REPLACEMENT}" TARGET_CONTENT "${TARGET_CONTENT}")
+    string(REPLACE "\"${PROJECT_BINARY_DIR}/" "\"\${_IMPORT_PREFIX}/" TARGET_CONTENT "${TARGET_CONTENT}")
     file(WRITE "${TARGET_FILE}" "${TARGET_CONTENT}")
+    message(STATUS "  Fixed: ${TARGET_FILE}")
   endforeach()
   
   message(STATUS "Fixed Arrow/Parquet CMake configs for relocatability")
