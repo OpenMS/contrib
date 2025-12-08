@@ -21,12 +21,12 @@ if (MSVC)
   execute_process(COMMAND ${CMAKE_COMMAND}
                           -D ARROW_BUILD_SHARED=${BUILD_SHARED_LIBRARIES}
                           -D ARROW_BUILD_STATIC=ON
-                          -D CMAKE_INSTALL_BINDIR=${PROJECT_BINARY_DIR}/lib
+                          -D CMAKE_INSTALL_BINDIR=lib
                           -G "${CMAKE_GENERATOR}"
                           ${ARCHITECTURE_OPTION_CMAKE}
                           -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                           -D CMAKE_PREFIX_PATH=${PROJECT_BINARY_DIR}
-                          -D CMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib
+                          -D CMAKE_INSTALL_LIBDIR=lib
                           -D BOOST_ROOT=${PROJECT_BINARY_DIR}
                           -D Boost_DIR=${PROJECT_BINARY_DIR}
                           -D CMAKE_CXX_FLAGS=${ARROW_CXXFLAGS}
