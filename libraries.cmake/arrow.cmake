@@ -21,12 +21,12 @@ if (MSVC)
   execute_process(COMMAND ${CMAKE_COMMAND}
                           -D ARROW_BUILD_SHARED=${BUILD_SHARED_LIBRARIES}
                           -D ARROW_BUILD_STATIC=ON
-                          -D CMAKE_INSTALL_BINDIR=${PROJECT_BINARY_DIR}/lib
+                          -D CMAKE_INSTALL_BINDIR=lib
                           -G "${CMAKE_GENERATOR}"
                           ${ARCHITECTURE_OPTION_CMAKE}
                           -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                           -D CMAKE_PREFIX_PATH=${PROJECT_BINARY_DIR}
-                          -D CMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib
+                          -D CMAKE_INSTALL_LIBDIR=lib
                           -D BOOST_ROOT=${PROJECT_BINARY_DIR}
                           -D Boost_DIR=${PROJECT_BINARY_DIR}
                           -D CMAKE_CXX_FLAGS=${ARROW_CXXFLAGS}
@@ -98,40 +98,6 @@ if (MSVC)
   # Normalize path separators for replacement
   file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}" PROJECT_BINARY_DIR_NORMALIZED)
   
-  # Fix 1: Replace hardcoded _IMPORT_PREFIX in ArrowTargets.cmake
-  set(ARROW_RELOCATABLE_REPLACEMENT "get_filename_component(_IMPORT_PREFIX \"\${CMAKE_CURRENT_LIST_DIR}/../../..\" ABSOLUTE)")
-  set(ARROW_ORIGINAL_PATTERN "set(_IMPORT_PREFIX \"${PROJECT_BINARY_DIR_NORMALIZED}\")")
-  
-  message(STATUS "Arrow relocatability fix:")
-  message(STATUS "  Build dir: ${PROJECT_BINARY_DIR_NORMALIZED}")
-  
-  # Process all Arrow cmake files (ArrowTargets.cmake and ArrowTargets-*.cmake)
-  file(GLOB ARROW_TARGET_FILES "${ARROW_CMAKE_DIR}/ArrowTargets*.cmake")
-  foreach(TARGET_FILE ${ARROW_TARGET_FILES})
-    file(READ "${TARGET_FILE}" TARGET_CONTENT)
-    
-    # Fix the _IMPORT_PREFIX definition (in ArrowTargets.cmake)
-    string(REPLACE "${ARROW_ORIGINAL_PATTERN}" "${ARROW_RELOCATABLE_REPLACEMENT}" TARGET_CONTENT "${TARGET_CONTENT}")
-    
-    # Fix hardcoded paths in IMPORTED_LOCATION and other properties (in ArrowTargets-*.cmake)
-    # Replace absolute paths with ${_IMPORT_PREFIX} relative paths
-    string(REPLACE "\"${PROJECT_BINARY_DIR_NORMALIZED}/" "\"\${_IMPORT_PREFIX}/" TARGET_CONTENT "${TARGET_CONTENT}")
-    
-    file(WRITE "${TARGET_FILE}" "${TARGET_CONTENT}")
-    message(STATUS "  Fixed: ${TARGET_FILE}")
-  endforeach()
-  
-  # Process all Parquet cmake files
-  file(GLOB PARQUET_TARGET_FILES "${PARQUET_CMAKE_DIR}/ParquetTargets*.cmake")
-  foreach(TARGET_FILE ${PARQUET_TARGET_FILES})
-    file(READ "${TARGET_FILE}" TARGET_CONTENT)
-    string(REPLACE "${ARROW_ORIGINAL_PATTERN}" "${ARROW_RELOCATABLE_REPLACEMENT}" TARGET_CONTENT "${TARGET_CONTENT}")
-    string(REPLACE "\"${PROJECT_BINARY_DIR_NORMALIZED}/" "\"\${_IMPORT_PREFIX}/" TARGET_CONTENT "${TARGET_CONTENT}")
-    file(WRITE "${TARGET_FILE}" "${TARGET_CONTENT}")
-    message(STATUS "  Fixed: ${TARGET_FILE}")
-  endforeach()
-  
-  message(STATUS "Fixed Arrow/Parquet CMake configs for relocatability")
 
 else() ## Linux/MacOS
 
