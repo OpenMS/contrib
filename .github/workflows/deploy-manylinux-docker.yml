@@ -48,16 +48,19 @@ jobs:
           if [[ "${{ matrix.arch }}" == "amd64" ]]; then
             echo "dockerfile=dockerfiles/pyopenms/manylinux/Dockerfile" >> $GITHUB_ENV
             echo "platform_tag=amd64" >> $GITHUB_ENV
+            echo "docker_platform=linux/amd64" >> $GITHUB_ENV
           else
             echo "dockerfile=dockerfiles/pyopenms/manylinux/ARM64_Dockerfile" >> $GITHUB_ENV
             echo "platform_tag=arm64" >> $GITHUB_ENV
+            echo "docker_platform=linux/arm64" >> $GITHUB_ENV
           fi
       - name: Build and Push Docker Image (${{ matrix.arch }})
         uses: docker/build-push-action@v3
         with:
           push: true
           file: ${{ env.dockerfile }}
-          context: .          
+          context: .
+          platforms: ${{ env.docker_platform }}          
           build-args: |
             OPENMS_BRANCH=${{ steps.extract_branch.outputs.branch }}
             OPENMS_VERSION=${{ steps.tag_name.outputs.tag }}
