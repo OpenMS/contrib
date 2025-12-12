@@ -27,7 +27,7 @@ jobs:
           - os: ubuntu-latest
             CMAKE_ARGS: ""
           - os: macos-latest
-            CMAKE_ARGS: -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9
+            CMAKE_ARGS: -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_OSX_DEPLOYMENT_TARGET=14
           - os: windows-latest
             CMAKE_ARGS: -G"Visual Studio 17 2022" -A"x64"
           - os: ubuntu-24.04-arm
