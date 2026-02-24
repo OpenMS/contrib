@@ -157,4 +157,32 @@ else() ## Linux/MacOS
 
 endif()
 
+# Fix minizip-ng CMake config files to be relocatable
+# minizip-ng uses raw path variables (${ZLIB_LIBRARIES}) in target_link_libraries(... PUBLIC ...)
+# which embeds absolute paths in the exported targets file. This breaks when the
+# contrib archive is extracted to a different location.
+set(MZ_CMAKE_DIR "${PROJECT_BINARY_DIR}/lib/cmake/minizip-ng")
+
+# Normalize path separators for replacement
+file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}" PROJECT_BINARY_DIR_NORMALIZED)
+
+set(MZ_RELOCATABLE_REPLACEMENT "get_filename_component(_IMPORT_PREFIX \"\${CMAKE_CURRENT_LIST_DIR}/../../..\" ABSOLUTE)")
+set(MZ_ORIGINAL_PATTERN "set(_IMPORT_PREFIX \"${PROJECT_BINARY_DIR_NORMALIZED}\")")
+
+message(STATUS "minizip-ng relocatability fix:")
+message(STATUS "  Build dir: ${PROJECT_BINARY_DIR_NORMALIZED}")
+
+file(GLOB MZ_TARGET_FILES "${MZ_CMAKE_DIR}/minizip-ng*.cmake")
+foreach(TARGET_FILE ${MZ_TARGET_FILES})
+  file(READ "${TARGET_FILE}" TARGET_CONTENT)
+  # Fix the _IMPORT_PREFIX definition
+  string(REPLACE "${MZ_ORIGINAL_PATTERN}" "${MZ_RELOCATABLE_REPLACEMENT}" TARGET_CONTENT "${TARGET_CONTENT}")
+  # Fix hardcoded paths in IMPORTED_LOCATION and INTERFACE_LINK_LIBRARIES
+  string(REPLACE "\"${PROJECT_BINARY_DIR_NORMALIZED}/" "\"\${_IMPORT_PREFIX}/" TARGET_CONTENT "${TARGET_CONTENT}")
+  file(WRITE "${TARGET_FILE}" "${TARGET_CONTENT}")
+  message(STATUS "  Fixed: ${TARGET_FILE}")
+endforeach()
+
+message(STATUS "Fixed minizip-ng CMake configs for relocatability")
+
 ENDMACRO( OPENMS_CONTRIB_BUILD_MINIZIP_NG )
