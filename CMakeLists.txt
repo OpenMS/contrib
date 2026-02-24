@@ -91,8 +91,8 @@
 ##       - however: exec_process seems to handle our arguments incorrectly (at least on Windows). Check functionality before you commit!
 
 # Determine what to build (all or single library)
-set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP,ARROW")
-set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "KISSFFT" "HDF5" "OPENMP" "ARROW")
+set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP,ARROW,MINIZIP_NG")
+set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "KISSFFT" "HDF5" "OPENMP" "ARROW" "MINIZIP_NG")
 
 # check build type
 if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
@@ -197,6 +197,7 @@ set(KISSFFT_DIR ${CONTRIB_BIN_SOURCE_DIR}/kissfft)
 set(HDF5_DIR ${CONTRIB_BIN_SOURCE_DIR}/hdfsrc)
 set(OPENMP_DIR ${CONTRIB_BIN_SOURCE_DIR}/openmp-12.0.1.src)
 set(ARROW_DIR ${CONTRIB_BIN_SOURCE_DIR}/arrow-apache-arrow-23.0.0/cpp)
+set(MINIZIP_NG_DIR ${CONTRIB_BIN_SOURCE_DIR}/minizip-ng-4.0.7)
 
 ## source(archive) paths
 ## PLEASE upload all source archives to
@@ -211,7 +212,7 @@ set(ARROW_DIR ${CONTRIB_BIN_SOURCE_DIR}/arrow-apache-arrow-23.0.0/cpp)
 ##  set(ARCHIVE_ZLIB_SHA256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
 ## NOTE: for local development you can simply place the *.tar.gz in the binary
 ##       directory to prevent the download and sha256 verification
-## LIBRARIES: BZIP2, ZLIB, BOOST, XERCES, LIBSVM, GLPK, COINOR, EIGEN, KISSFFT, HDF5, OPENMP, ARROW
+## LIBRARIES: BZIP2, ZLIB, BOOST, XERCES, LIBSVM, GLPK, COINOR, EIGEN, KISSFFT, HDF5, OPENMP, ARROW, MINIZIP_NG
 
 set(ARCHIVE_BZIP2 bzip2-1.0.5.tar.gz)
 set(ARCHIVE_BZIP2_TAR bzip2-1.0.5.tar)
@@ -261,6 +262,10 @@ set(ARCHIVE_ARROW arrow-apache-arrow-23.0.0.tar.gz )
 set(ARCHIVE_ARROW_TAR arrow-apache-arrow-23.0.0.tar )
 set(ARCHIVE_ARROW_SHA256 "7510f4b578febb3af5b3e93ad4616ae3cb680b0f651217ebb29f4c7e5ea952f3")
 
+set(ARCHIVE_MINIZIP_NG minizip-ng-4.0.7.tar.gz)
+set(ARCHIVE_MINIZIP_NG_TAR minizip-ng-4.0.7.tar)
+set(ARCHIVE_MINIZIP_NG_SHA256 "a87f1f734f97095fe1ef0018217c149d53d0f78438bcb77af38adc21dff2dfbc")
+
 ## necessary for clean up .. change if install process of library changes
 set(INCLUDE_DIR_BOOST ${CONTRIB_BIN_INCLUDE_DIR}/boost)
 set(INCLUDE_DIR_XERCES ${CONTRIB_BIN_INCLUDE_DIR}/xercesc)
@@ -270,6 +275,7 @@ set(INCLUDE_DIR_EIGEN ${CONTRIB_BIN_INCLUDE_DIR}/eigen3)
 set(INCLUDE_DIR_KISSFFT ${CONTRIB_BIN_INCLUDE_DIR}/kissfft)
 set(INCLUDE_DIR_OPENMP ${CONTRIB_BIN_INCLUDE_DIR}/openmp.src)
 set(INCLUDE_DIR_ARROW ${CONTRIB_BIN_INCLUDE_DIR}/arrow)
+set(INCLUDE_DIR_MINIZIP_NG ${CONTRIB_BIN_INCLUDE_DIR}/minizip-ng)
 
 ## hack for simple libs that do not have include directories
 set(INCLUDE_FILES_LIBSVM ${CONTRIB_BIN_INCLUDE_DIR}/svm.h)
@@ -484,6 +490,7 @@ include ("${CMAKE_SOURCE_DIR}/libraries.cmake/kissfft.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/hdf5.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/openmp.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/arrow.cmake")
+include ("${CMAKE_SOURCE_DIR}/libraries.cmake/minizip_ng.cmake")
 
 ## build mac os x specific C/C++ flags
 set( OPENMS_CONTRIB_MACOSX_MIXED_MODE 0 CACHE INTERNAL "building multiple architectures on MacOSX" FORCE)
@@ -545,6 +552,15 @@ if (BUILD_TYPE STREQUAL "ALL" OR "ARROW" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("ARROW")
   OPENMS_CONTRIB_BUILD_ARROW()
   OPENMS_COPY_LIBS("ARROW")
+endif()
+
+##################################################
+###       MINIZIP_NG                           ###
+##################################################
+if (BUILD_TYPE STREQUAL "ALL" OR "MINIZIP_NG" IN_LIST BUILD_TYPE)
+  OPENMS_CLEAN_LIB("MINIZIP_NG")
+  OPENMS_CONTRIB_BUILD_MINIZIP_NG()
+  OPENMS_COPY_LIBS("MINIZIP_NG")
 endif()
 
 ##################################################
