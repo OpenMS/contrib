@@ -35,6 +35,7 @@ if (MSVC)
                           -D ARROW_WITH_ZLIB=ON
                           -D ARROW_WITH_BZIP2=ON
                           -D ARROW_WITH_ZSTD=ON
+                          -D ARROW_WITH_SNAPPY=ON
                           .
                   WORKING_DIRECTORY ${ARROW_DIR}
                   OUTPUT_VARIABLE ARROW_CMAKE_OUT
@@ -134,6 +135,7 @@ else() ## Linux/MacOS
                           "-DARROW_WITH_ZLIB=ON"
                           "-DARROW_WITH_BZIP2=ON"
                           "-DARROW_WITH_ZSTD=ON"
+                          "-DARROW_WITH_SNAPPY=ON"
                           .
                   WORKING_DIRECTORY ${ARROW_DIR}
                   OUTPUT_VARIABLE ARROW_CMAKE_OUT
