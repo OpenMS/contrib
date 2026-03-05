@@ -13,6 +13,12 @@ else()
 endif()
 OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_ARROW "ARROW" "README")
 
+## Arrow dependencies not built by the contrib (Snappy, zstd, Thrift, xsimd, RapidJSON)
+## are fetched and built as bundled dependencies by Arrow's own build system.
+## This avoids requiring these as system packages (fixes build on e.g. Debian 12).
+## Dependencies already provided by contrib (zlib, bzip2, boost) are found via CMAKE_PREFIX_PATH.
+## Note: building Arrow requires internet access for the bundled dependency downloads.
+
 ## build the obj/lib
 if (MSVC)
   set(ARROW_CXXFLAGS "/I${PROJECT_BINARY_DIR}/include")
@@ -36,6 +42,11 @@ if (MSVC)
                           -D ARROW_WITH_BZIP2=ON
                           -D ARROW_WITH_ZSTD=ON
                           -D ARROW_WITH_SNAPPY=ON
+                          -D Snappy_SOURCE=BUNDLED
+                          -D zstd_SOURCE=BUNDLED
+                          -D Thrift_SOURCE=BUNDLED
+                          -D xsimd_SOURCE=BUNDLED
+                          -D RapidJSON_SOURCE=BUNDLED
                           .
                   WORKING_DIRECTORY ${ARROW_DIR}
                   OUTPUT_VARIABLE ARROW_CMAKE_OUT
@@ -136,6 +147,11 @@ else() ## Linux/MacOS
                           "-DARROW_WITH_BZIP2=ON"
                           "-DARROW_WITH_ZSTD=ON"
                           "-DARROW_WITH_SNAPPY=ON"
+                          "-DSnappy_SOURCE=BUNDLED"
+                          "-Dzstd_SOURCE=BUNDLED"
+                          "-DThrift_SOURCE=BUNDLED"
+                          "-Dxsimd_SOURCE=BUNDLED"
+                          "-DRapidJSON_SOURCE=BUNDLED"
                           .
                   WORKING_DIRECTORY ${ARROW_DIR}
                   OUTPUT_VARIABLE ARROW_CMAKE_OUT
