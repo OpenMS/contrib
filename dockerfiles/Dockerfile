@@ -19,6 +19,7 @@ RUN apt-get -y update \
     zlib1g-dev \
     libxerces-c-dev \
     libbz2-dev \
+    libcurl4-openssl-dev \
     libomp-dev \
     libhdf5-dev\
     libboost-date-time1.74-dev \
