@@ -91,8 +91,8 @@
 ##       - however: exec_process seems to handle our arguments incorrectly (at least on Windows). Check functionality before you commit!
 
 # Determine what to build (all or single library)
-set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP,ARROW,LIBZIP")
-set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "KISSFFT" "HDF5" "OPENMP" "ARROW" "LIBZIP")
+set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP,ARROW,LIBZIP,CURL")
+set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "KISSFFT" "HDF5" "OPENMP" "ARROW" "LIBZIP" "CURL")
 
 # check build type
 if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
@@ -198,6 +198,7 @@ set(HDF5_DIR ${CONTRIB_BIN_SOURCE_DIR}/hdfsrc)
 set(OPENMP_DIR ${CONTRIB_BIN_SOURCE_DIR}/openmp-12.0.1.src)
 set(ARROW_DIR ${CONTRIB_BIN_SOURCE_DIR}/arrow-apache-arrow-23.0.0/cpp)
 set(LIBZIP_DIR ${CONTRIB_BIN_SOURCE_DIR}/libzip-1.11.4)
+set(CURL_DIR ${CONTRIB_BIN_SOURCE_DIR}/curl-8.12.1)
 
 ## source(archive) paths
 ## PLEASE upload all source archives to
@@ -212,7 +213,7 @@ set(LIBZIP_DIR ${CONTRIB_BIN_SOURCE_DIR}/libzip-1.11.4)
 ##  set(ARCHIVE_ZLIB_SHA256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
 ## NOTE: for local development you can simply place the *.tar.gz in the binary
 ##       directory to prevent the download and sha256 verification
-## LIBRARIES: BZIP2, ZLIB, BOOST, XERCES, LIBSVM, GLPK, COINOR, EIGEN, KISSFFT, HDF5, OPENMP, ARROW, LIBZIP
+## LIBRARIES: BZIP2, ZLIB, BOOST, XERCES, LIBSVM, GLPK, COINOR, EIGEN, KISSFFT, HDF5, OPENMP, ARROW, LIBZIP, CURL
 
 set(ARCHIVE_BZIP2 bzip2-1.0.5.tar.gz)
 set(ARCHIVE_BZIP2_TAR bzip2-1.0.5.tar)
@@ -266,6 +267,10 @@ set(ARCHIVE_LIBZIP libzip-1.11.4.tar.gz)
 set(ARCHIVE_LIBZIP_TAR libzip-1.11.4.tar)
 set(ARCHIVE_LIBZIP_SHA256 "82e9f2f2421f9d7c2466bbc3173cd09595a88ea37db0d559a9d0a2dc60dc722e")
 
+set(ARCHIVE_CURL curl-8.12.1.tar.gz)
+set(ARCHIVE_CURL_TAR curl-8.12.1.tar)
+set(ARCHIVE_CURL_SHA256 "7b40ea64947e0b440716a4d7f0b7aa56230a5341c8377d7b609649d4aea8dbcf")
+
 ## necessary for clean up .. change if install process of library changes
 set(INCLUDE_DIR_BOOST ${CONTRIB_BIN_INCLUDE_DIR}/boost)
 set(INCLUDE_DIR_XERCES ${CONTRIB_BIN_INCLUDE_DIR}/xercesc)
@@ -275,6 +280,7 @@ set(INCLUDE_DIR_EIGEN ${CONTRIB_BIN_INCLUDE_DIR}/eigen3)
 set(INCLUDE_DIR_KISSFFT ${CONTRIB_BIN_INCLUDE_DIR}/kissfft)
 set(INCLUDE_DIR_OPENMP ${CONTRIB_BIN_INCLUDE_DIR}/openmp.src)
 set(INCLUDE_DIR_ARROW ${CONTRIB_BIN_INCLUDE_DIR}/arrow)
+set(INCLUDE_DIR_CURL ${CONTRIB_BIN_INCLUDE_DIR}/curl)
 
 ## hack for simple libs that do not have include directories
 set(INCLUDE_FILES_LIBSVM ${CONTRIB_BIN_INCLUDE_DIR}/svm.h)
@@ -490,6 +496,7 @@ include ("${CMAKE_SOURCE_DIR}/libraries.cmake/hdf5.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/openmp.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/arrow.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/libzip.cmake")
+include ("${CMAKE_SOURCE_DIR}/libraries.cmake/curl.cmake")
 
 ## build mac os x specific C/C++ flags
 set( OPENMS_CONTRIB_MACOSX_MIXED_MODE 0 CACHE INTERNAL "building multiple architectures on MacOSX" FORCE)
@@ -628,6 +635,15 @@ if (BUILD_TYPE STREQUAL "ALL" OR "LIBZIP" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("LIBZIP")
   OPENMS_CONTRIB_BUILD_LIBZIP()
   OPENMS_COPY_LIBS("LIBZIP")
+endif()
+
+##################################################
+###       CURL                                 ###
+##################################################
+if (BUILD_TYPE STREQUAL "ALL" OR "CURL" IN_LIST BUILD_TYPE)
+  OPENMS_CLEAN_LIB("CURL")
+  OPENMS_CONTRIB_BUILD_CURL()
+  OPENMS_COPY_LIBS("CURL")
 endif()
 
 ##################################################

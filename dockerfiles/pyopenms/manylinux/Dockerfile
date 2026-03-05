@@ -9,7 +9,7 @@ COPY . /contrib
 
 RUN yum install -y wget
 RUN yum install -y xz qt6-qtbase-devel qt6-qtsvg-devel
-RUN yum install -y libtool cmake3
+RUN yum install -y libtool cmake3 libcurl-devel
 
 # Build contrib for the current checked out branch
 # During cleanup: removes archives

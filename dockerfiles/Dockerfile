@@ -31,6 +31,7 @@ RUN apt-get -y update \
     libqt5opengl5-dev \
     libeigen3-dev \
     coinor-libcoinmp-dev \
+    libcurl4-openssl-dev \
   && rm -rf /var/lib/apt/lists/* \
   && update-ca-certificates
 
