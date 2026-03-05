@@ -59,12 +59,12 @@ jobs:
         shell: bash
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
-            sudo apt-get -y install make autoconf automake tar patch libtool gcc libthrift-dev 
+            sudo apt-get -y install make autoconf automake tar patch libtool gcc
           elif [ "$RUNNER_OS" == "Windows" ]; then
             # choco install important_windows_software
             echo "Nothing to install"
           elif [ "$RUNNER_OS" == "macOS" ]; then
-            brew install autoconf automake libtool thrift
+            brew install autoconf automake libtool
           else
             echo "$RUNNER_OS not supported"
             exit 1
