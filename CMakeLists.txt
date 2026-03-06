@@ -91,7 +91,7 @@
 ##       - however: exec_process seems to handle our arguments incorrectly (at least on Windows). Check functionality before you commit!
 
 # Determine what to build (all or single library)
-set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,COINOR,BZIP2,ZLIB,GLPK,KISSFFT,OPENMP,ARROW,LIBZIP,CURL")
+set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,COINOR,BZIP2,ZLIB,GLPK,EIGEN,KISSFFT,HDF5,OPENMP,ARROW,LIBZIP,CURL")
 set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "KISSFFT" "HDF5" "OPENMP" "ARROW" "LIBZIP" "CURL")
 
 # check build type
@@ -552,6 +552,15 @@ if (BUILD_TYPE STREQUAL "ALL" OR "BOOST" IN_LIST BUILD_TYPE)
 endif()
 
 ##################################################
+###       CURL                                 ###
+##################################################
+if (BUILD_TYPE STREQUAL "ALL" OR "CURL" IN_LIST BUILD_TYPE)
+  OPENMS_CLEAN_LIB("CURL")
+  OPENMS_CONTRIB_BUILD_CURL()
+  OPENMS_COPY_LIBS("CURL")
+endif()
+
+##################################################
 ###       ARROW                                ###
 ##################################################
 if (BUILD_TYPE STREQUAL "ALL" OR "ARROW" IN_LIST BUILD_TYPE)
@@ -635,15 +644,6 @@ if (BUILD_TYPE STREQUAL "ALL" OR "LIBZIP" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("LIBZIP")
   OPENMS_CONTRIB_BUILD_LIBZIP()
   OPENMS_COPY_LIBS("LIBZIP")
-endif()
-
-##################################################
-###       CURL                                 ###
-##################################################
-if (BUILD_TYPE STREQUAL "ALL" OR "CURL" IN_LIST BUILD_TYPE)
-  OPENMS_CLEAN_LIB("CURL")
-  OPENMS_CONTRIB_BUILD_CURL()
-  OPENMS_COPY_LIBS("CURL")
 endif()
 
 ##################################################

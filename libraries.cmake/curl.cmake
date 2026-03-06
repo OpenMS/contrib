@@ -6,9 +6,9 @@ MACRO( OPENMS_CONTRIB_BUILD_CURL )
 OPENMS_LOGHEADER_LIBRARY("curl")
 
 if(MSVC)
-  set(ZIP_ARGS "x -y -osrc")
+  set(ZIP_ARGS x -y -osrc)
 else()
-  set(ZIP_ARGS "xzf")
+  set(ZIP_ARGS xzf)
 endif()
 OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_CURL "CURL" "CMakeLists.txt")
 
@@ -42,7 +42,7 @@ execute_process(COMMAND ${CMAKE_COMMAND}
                 ${ARCHITECTURE_OPTION_CMAKE}
                 -D CMAKE_BUILD_TYPE=Release
                 -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
-                -D BUILD_SHARED_LIBS=ON
+                -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
                 -D BUILD_CURL_EXE=OFF
                 -D BUILD_TESTING=OFF
                 -D CURL_DISABLE_LDAP=ON

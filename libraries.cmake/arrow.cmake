@@ -42,6 +42,8 @@ if (MSVC)
                           -D ARROW_WITH_BZIP2=ON
                           -D ARROW_WITH_ZSTD=ON
                           -D ARROW_WITH_SNAPPY=ON
+                          -D ARROW_S3=ON
+                          -D AWSSDK_SOURCE=BUNDLED
                           -D Snappy_SOURCE=BUNDLED
                           -D zstd_SOURCE=BUNDLED
                           -D Thrift_SOURCE=BUNDLED
@@ -147,6 +149,8 @@ else() ## Linux/MacOS
                           "-DARROW_WITH_BZIP2=ON"
                           "-DARROW_WITH_ZSTD=ON"
                           "-DARROW_WITH_SNAPPY=ON"
+                          "-DARROW_S3=ON"
+                          "-DAWSSDK_SOURCE=BUNDLED"
                           "-DSnappy_SOURCE=BUNDLED"
                           "-Dzstd_SOURCE=BUNDLED"
                           "-DThrift_SOURCE=BUNDLED"
