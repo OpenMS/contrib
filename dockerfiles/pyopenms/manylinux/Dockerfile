@@ -7,9 +7,12 @@ ARG OPENMS_VERSION="latest"
 # Make source files from context available in docker
 COPY . /contrib
 
-RUN yum install -y wget
-RUN yum install -y xz qt6-qtbase-devel qt6-qtsvg-devel
-RUN yum install -y libtool cmake3
+RUN yum install -y \
+    wget \
+    xz qt6-qtbase-devel qt6-qtsvg-devel \
+    libtool cmake3 libcurl-devel \
+  && yum clean all \
+  && rm -rf /var/cache/yum
 
 # Build contrib for the current checked out branch
 # During cleanup: removes archives
