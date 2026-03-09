@@ -10,7 +10,7 @@ COPY . /contrib
 RUN yum install -y \
     wget \
     xz qt6-qtbase-devel qt6-qtsvg-devel \
-    libtool cmake3 libcurl-devel \
+    libtool cmake3 libcurl-devel openssl-devel \
   && yum clean all \
   && rm -rf /var/cache/yum
 
