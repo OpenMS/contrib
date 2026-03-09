@@ -13,6 +13,8 @@ jobs:
     strategy:
       matrix:
         arch: [amd64, arm64]
+    outputs:
+      tag_name: ${{ steps.tag_name.outputs.tag }}
     steps:
       - name: Extract branch name
         shell: bash
@@ -25,7 +27,7 @@ jobs:
             BRANCH=${{ steps.extract_branch.outputs.branch }}
             ## use latest to follow docker conventions
             if [[ "$BRANCH" == "master" ]]
-            then 
+            then
               BRANCH="latest"
             fi
             ## Remove release/ from release branch name
@@ -60,9 +62,28 @@ jobs:
           push: true
           file: ${{ env.dockerfile }}
           context: .
-          platforms: ${{ env.docker_platform }}          
+          platforms: ${{ env.docker_platform }}
           build-args: |
             OPENMS_BRANCH=${{ steps.extract_branch.outputs.branch }}
             OPENMS_VERSION=${{ steps.tag_name.outputs.tag }}
           tags: |
             ghcr.io/openms/contrib_manylinux_2_34:${{ steps.tag_name.outputs.tag }}-${{ env.platform_tag }}
+
+  create-multiarch-manifest:
+    needs: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create multi-arch manifest
+        run: |
+          docker buildx imagetools create \
+            -t ghcr.io/openms/contrib_manylinux_2_34:${{ needs.Deploy.outputs.tag_name }} \
+            ghcr.io/openms/contrib_manylinux_2_34:${{ needs.Deploy.outputs.tag_name }}-amd64 \
+            ghcr.io/openms/contrib_manylinux_2_34:${{ needs.Deploy.outputs.tag_name }}-arm64
