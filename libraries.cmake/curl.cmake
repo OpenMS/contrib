@@ -43,6 +43,7 @@ execute_process(COMMAND ${CMAKE_COMMAND}
                 -D CMAKE_BUILD_TYPE=Release
                 -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                 -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBRARIES}
+                -D CMAKE_POSITION_INDEPENDENT_CODE=ON
                 -D BUILD_CURL_EXE=OFF
                 -D BUILD_TESTING=OFF
                 -D CURL_DISABLE_LDAP=ON
