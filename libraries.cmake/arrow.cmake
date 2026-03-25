@@ -64,8 +64,7 @@ if (MSVC)
                           -D ARROW_WITH_BZIP2=ON
                           -D ARROW_WITH_ZSTD=ON
                           -D ARROW_WITH_SNAPPY=ON
-                          -D ARROW_S3=ON
-                          -D AWSSDK_SOURCE=BUNDLED
+                          -D ARROW_S3=OFF
                           -D Snappy_SOURCE=BUNDLED
                           -D zstd_SOURCE=BUNDLED
                           -D Thrift_SOURCE=BUNDLED
