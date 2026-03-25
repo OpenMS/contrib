@@ -6,12 +6,34 @@ MACRO( OPENMS_CONTRIB_BUILD_ARROW )
 OPENMS_LOGHEADER_LIBRARY("arrow")
 #extract: (takes very long.. so skip if possible)
 if(MSVC)
-  # -snl allows dangerous symlinks (Arrow has symlinks like python/cmake_modules -> ../cpp/cmake_modules)
-  set(ZIP_ARGS x -y -snld20 -osrc)
+  # Arrow's archive contains symbolic links (e.g., python/cmake_modules -> ../cpp/cmake_modules).
+  # 7-Zip cannot create symlinks on Windows without admin privileges (issue #177).
+  # Use cmake -E tar instead, which handles symlinks gracefully by copying target content.
+  download_contrib_archive(ARROW)
+  if(NOT EXISTS ${ARROW_DIR}/CMakeLists.txt)
+    message(STATUS "Extracting ARROW ..")
+    file(MAKE_DIRECTORY "${CONTRIB_BIN_SOURCE_DIR}")
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} -E tar xzf "${PROJECT_BINARY_DIR}/archives/${ARCHIVE_ARROW}"
+      WORKING_DIRECTORY "${CONTRIB_BIN_SOURCE_DIR}"
+      OUTPUT_VARIABLE ZIP_OUT
+      ERROR_VARIABLE ZIP_ERR
+      RESULT_VARIABLE EXTRACT_SUCCESS
+    )
+    if(NOT EXTRACT_SUCCESS EQUAL 0)
+      message(STATUS "Extracting ARROW .. failed")
+      message(STATUS "${ZIP_ERR}")
+      message(FATAL_ERROR "${ZIP_OUT}")
+    else()
+      message(STATUS "Extracting ARROW .. done")
+    endif()
+  else()
+    message(STATUS "Extracting ARROW .. skipped (already exists)")
+  endif()
 else()
   set(ZIP_ARGS xzf)
+  OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_ARROW "ARROW" "README")
 endif()
-OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_ARROW "ARROW" "README")
 
 ## Arrow dependencies not built by the contrib (Snappy, zstd, Thrift, xsimd, RapidJSON)
 ## are fetched and built as bundled dependencies by Arrow's own build system.
