@@ -477,8 +477,6 @@ if(APPLE)
     message(STATUS "${OSX_SYSROOT_FLAG}")
   endif()
 
-  # force cmake > 3.10 to force enable c++20 support
-cmake_minimum_required(VERSION 3.10.0 FATAL_ERROR)
 endif()
 
 ## include extract/patch/build macros
