@@ -118,6 +118,7 @@ if (MSVC)
   message(STATUS "Generating arrow build system (Debug) .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
                           ${ARROW_COMMON_CMAKE_ARGS}
+                          -DARROW_MIMALLOC=OFF    ## patching MIMALLOC fails in Debug mode for Arrow 29.0
                           # Setting CMAKE_BUILD_TYPE causes Arrow to propagate this
                           # value to its bundled ExternalProject dependencies via
                           # ARROW_EP_BUILD_TYPE, ensuring they use the Debug MSVC
@@ -135,7 +136,7 @@ if (MSVC)
   file(APPEND ${LOGFILE} ${ARROW_CMAKE_ERR})
 
   if(NOT ARROW_CMAKE_SUCCESS EQUAL 0)
-    message(FATAL_ERROR "Generating arrow build system (Debug) .. failed")
+    message(FATAL_ERROR "Generating arrow build system (Debug) .. failed. See ${LOGFILE} for details.")
   else()
     message(STATUS "Generating arrow build system (Debug) .. done")
   endif()
@@ -221,39 +222,6 @@ if (MSVC)
   
   # Normalize path separators for replacement
   file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}" PROJECT_BINARY_DIR_NORMALIZED)
-
-  # Ensure ArrowTargets.cmake (installed from the Release build tree) also
-  # includes the Debug target definitions installed from the Debug build tree.
-  # Modern CMake (>= 3.22) generates a GLOB-based umbrella file so both configs
-  # are picked up automatically; the block below is a safety net for older CMake
-  # or edge cases where the GLOB is absent.
-  set(_ARROW_TARGETS_FILE "${ARROW_CMAKE_DIR}/ArrowTargets.cmake")
-  if(EXISTS "${ARROW_CMAKE_DIR}/ArrowTargets-debug.cmake" AND
-     EXISTS "${_ARROW_TARGETS_FILE}")
-    file(READ "${_ARROW_TARGETS_FILE}" _ARROW_TARGETS_CONTENT)
-    if(NOT "${_ARROW_TARGETS_CONTENT}" MATCHES "ArrowTargets-debug")
-      file(APPEND "${_ARROW_TARGETS_FILE}"
-           "\n# Include Debug configuration targets\n"
-           "if(EXISTS \"\${CMAKE_CURRENT_LIST_DIR}/ArrowTargets-debug.cmake\")\n"
-           "  include(\"\${CMAKE_CURRENT_LIST_DIR}/ArrowTargets-debug.cmake\")\n"
-           "endif()\n")
-      message(STATUS "Added ArrowTargets-debug.cmake include to ArrowTargets.cmake")
-    endif()
-  endif()
-  set(_PARQUET_TARGETS_FILE "${PARQUET_CMAKE_DIR}/ParquetTargets.cmake")
-  if(EXISTS "${PARQUET_CMAKE_DIR}/ParquetTargets-debug.cmake" AND
-     EXISTS "${_PARQUET_TARGETS_FILE}")
-    file(READ "${_PARQUET_TARGETS_FILE}" _PARQUET_TARGETS_CONTENT)
-    if(NOT "${_PARQUET_TARGETS_CONTENT}" MATCHES "ParquetTargets-debug")
-      file(APPEND "${_PARQUET_TARGETS_FILE}"
-           "\n# Include Debug configuration targets\n"
-           "if(EXISTS \"\${CMAKE_CURRENT_LIST_DIR}/ParquetTargets-debug.cmake\")\n"
-           "  include(\"\${CMAKE_CURRENT_LIST_DIR}/ParquetTargets-debug.cmake\")\n"
-           "endif()\n")
-      message(STATUS "Added ParquetTargets-debug.cmake include to ParquetTargets.cmake")
-    endif()
-  endif()
-  
 
 else() ## Linux/MacOS
 
