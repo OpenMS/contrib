@@ -44,33 +44,88 @@ endif()
 ## build the obj/lib
 if (MSVC)
   set(ARROW_CXXFLAGS "/I${PROJECT_BINARY_DIR}/include")
-  
-  message(STATUS "Generating arrow build system .. ")
+
+  # Use separate build directories for Debug and Release so that the bundled
+  # ExternalProject dependencies (Snappy, zstd, Thrift, etc.) are compiled with
+  # the correct runtime (/MDd for Debug, /MD for Release).  Arrow's build system
+  # derives ARROW_EP_BUILD_TYPE from CMAKE_BUILD_TYPE; passing CMAKE_BUILD_TYPE
+  # explicitly therefore controls the runtime used for the bundled deps.
+  set(ARROW_BUILD_DIR_DEBUG   "${ARROW_DIR}/build_debug")
+  set(ARROW_BUILD_DIR_RELEASE "${ARROW_DIR}/build_release")
+
+  # Patch ArrowConfig.cmake.in so the installed config file references
+  # arrow_bundled_dependenciesd.lib for the Debug configuration and
+  # arrow_bundled_dependencies.lib for Release.  This is necessary because the
+  # merged bundled-dependencies library is not a regular CMake target and
+  # therefore does not automatically gain a debug postfix.
+  #
+  # Two targeted single-line replacements are used to avoid fragile multiline
+  # string matching that may break with different line-ending conventions:
+  #   1. Add the if/else postfix variable inside the foreach loop header.
+  #   2. Insert ${_arrow_bundled_dep_postfix} into the IMPORTED_LOCATION path.
+  set(_ARROW_CONFIG_TEMPLATE "${ARROW_DIR}/src/arrow/ArrowConfig.cmake.in")
+  if(EXISTS "${_ARROW_CONFIG_TEMPLATE}")
+    file(READ "${_ARROW_CONFIG_TEMPLATE}" _ARROW_CFG_CONTENT)
+    if(NOT "${_ARROW_CFG_CONTENT}" MATCHES "_arrow_bundled_dep_postfix")
+      # Step 1: after "foreach(CONFIGURATION ...)" inject the postfix variable.
+      string(REPLACE
+        "foreach(CONFIGURATION \${arrow_static_configurations})"
+        "foreach(CONFIGURATION \${arrow_static_configurations})\n    if(CONFIGURATION STREQUAL \"DEBUG\")\n      set(_arrow_bundled_dep_postfix \"d\")\n    else()\n      set(_arrow_bundled_dep_postfix \"\")\n    endif()"
+        _ARROW_CFG_CONTENT "${_ARROW_CFG_CONTENT}")
+      # Step 2: insert the postfix variable before ${CMAKE_STATIC_LIBRARY_SUFFIX}
+      # in the IMPORTED_LOCATION for arrow_bundled_dependencies.
+      string(REPLACE
+        "arrow_bundled_dependencies\${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        "arrow_bundled_dependencies\${_arrow_bundled_dep_postfix}\${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        _ARROW_CFG_CONTENT "${_ARROW_CFG_CONTENT}")
+      file(WRITE "${_ARROW_CONFIG_TEMPLATE}" "${_ARROW_CFG_CONTENT}")
+      message(STATUS "Patched ArrowConfig.cmake.in for debug bundled-dependency postfix")
+    else()
+      message(STATUS "ArrowConfig.cmake.in already patched for debug bundled-dependency postfix (skipped)")
+    endif()
+  endif()
+
+  # Common CMake arguments shared by both Debug and Release configurations
+  set(ARROW_COMMON_CMAKE_ARGS
+      -D ARROW_BUILD_SHARED=${BUILD_SHARED_LIBRARIES}
+      -D ARROW_BUILD_STATIC=ON
+      -D CMAKE_INSTALL_BINDIR=lib
+      -G "${CMAKE_GENERATOR}"
+      ${ARCHITECTURE_OPTION_CMAKE}
+      -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
+      -D CMAKE_PREFIX_PATH=${PROJECT_BINARY_DIR}
+      -D CMAKE_INSTALL_LIBDIR=lib
+      -D BOOST_ROOT=${PROJECT_BINARY_DIR}
+      -D Boost_DIR=${PROJECT_BINARY_DIR}
+      -D CMAKE_CXX_FLAGS=${ARROW_CXXFLAGS}
+      -D ARROW_CSV=ON
+      -D ARROW_PARQUET=ON
+      -D ARROW_WITH_ZLIB=ON
+      -D ARROW_WITH_BZIP2=ON
+      -D ARROW_WITH_ZSTD=ON
+      -D ARROW_WITH_SNAPPY=ON
+      -D ARROW_S3=OFF
+      -D Snappy_SOURCE=BUNDLED
+      -D zstd_SOURCE=BUNDLED
+      -D Thrift_SOURCE=BUNDLED
+      -D xsimd_SOURCE=BUNDLED
+      -D RapidJSON_SOURCE=BUNDLED
+      # CMAKE_DEBUG_POSTFIX=d ensures arrow_static, parquet_static and other
+      # regular CMake library targets install as e.g. arrow_staticd.lib in Debug.
+      -D CMAKE_DEBUG_POSTFIX=d)
+
+  # ---- Debug build ----
+  message(STATUS "Generating arrow build system (Debug) .. ")
   execute_process(COMMAND ${CMAKE_COMMAND}
-                          -D ARROW_BUILD_SHARED=${BUILD_SHARED_LIBRARIES}
-                          -D ARROW_BUILD_STATIC=ON
-                          -D CMAKE_INSTALL_BINDIR=lib
-                          -G "${CMAKE_GENERATOR}"
-                          ${ARCHITECTURE_OPTION_CMAKE}
-                          -D CMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
-                          -D CMAKE_PREFIX_PATH=${PROJECT_BINARY_DIR}
-                          -D CMAKE_INSTALL_LIBDIR=lib
-                          -D BOOST_ROOT=${PROJECT_BINARY_DIR}
-                          -D Boost_DIR=${PROJECT_BINARY_DIR}
-                          -D CMAKE_CXX_FLAGS=${ARROW_CXXFLAGS}
-                          -D ARROW_CSV=ON
-                          -D ARROW_PARQUET=ON
-                          -D ARROW_WITH_ZLIB=ON
-                          -D ARROW_WITH_BZIP2=ON
-                          -D ARROW_WITH_ZSTD=ON
-                          -D ARROW_WITH_SNAPPY=ON
-                          -D ARROW_S3=OFF
-                          -D Snappy_SOURCE=BUNDLED
-                          -D zstd_SOURCE=BUNDLED
-                          -D Thrift_SOURCE=BUNDLED
-                          -D xsimd_SOURCE=BUNDLED
-                          -D RapidJSON_SOURCE=BUNDLED
-                          .
+                          ${ARROW_COMMON_CMAKE_ARGS}
+                          -DARROW_MIMALLOC=OFF    ## patching MIMALLOC fails in Debug mode for Arrow 29.0
+                          # Setting CMAKE_BUILD_TYPE causes Arrow to propagate this
+                          # value to its bundled ExternalProject dependencies via
+                          # ARROW_EP_BUILD_TYPE, ensuring they use the Debug MSVC
+                          # runtime (/MDd).
+                          -D CMAKE_BUILD_TYPE=Debug
+                          -S ${ARROW_DIR}
+                          -B ${ARROW_BUILD_DIR_DEBUG}
                   WORKING_DIRECTORY ${ARROW_DIR}
                   OUTPUT_VARIABLE ARROW_CMAKE_OUT
                   ERROR_VARIABLE ARROW_CMAKE_ERR
@@ -81,14 +136,14 @@ if (MSVC)
   file(APPEND ${LOGFILE} ${ARROW_CMAKE_ERR})
 
   if(NOT ARROW_CMAKE_SUCCESS EQUAL 0)
-    message(FATAL_ERROR "Generating arrow build system .. failed")
+    message(FATAL_ERROR "Generating arrow build system (Debug) .. failed. See ${LOGFILE} for details.")
   else()
-    message(STATUS "Generating arrow build system .. done")
+    message(STATUS "Generating arrow build system (Debug) .. done")
   endif()
 
   message(STATUS "Building arrow lib (Debug) .. ")
-  execute_process(COMMAND ${CMAKE_COMMAND} --build ${ARROW_DIR} --target INSTALL --config Debug
-                  WORKING_DIRECTORY ${ARROW_DIR}
+  execute_process(COMMAND ${CMAKE_COMMAND} --build ${ARROW_BUILD_DIR_DEBUG} --target INSTALL --config Debug
+                  WORKING_DIRECTORY ${ARROW_BUILD_DIR_DEBUG}
                   OUTPUT_VARIABLE ARROW_BUILD_OUT
                   ERROR_VARIABLE ARROW_BUILD_ERR
                   RESULT_VARIABLE ARROW_BUILD_SUCCESS)
@@ -105,13 +160,48 @@ if (MSVC)
     message(STATUS "Building arrow lib (Debug) .. done")
   endif()
 
-  # rebuild as release
-  message(STATUS "Building arrow lib (Release) .. ")
-  execute_process(COMMAND ${CMAKE_COMMAND} --build ${ARROW_DIR} --target INSTALL --config Release
+  # Rename the debug bundled-dependencies library so it coexists with the
+  # release version.  Arrow's arrow_bundled_dependencies merged static library
+  # is installed via install(FILES ...) and therefore does not automatically
+  # respect CMAKE_DEBUG_POSTFIX.  We rename it here so that the Debug build
+  # installs as arrow_bundled_dependenciesd.lib and the subsequent Release build
+  # installs as arrow_bundled_dependencies.lib.
+  if(EXISTS "${PROJECT_BINARY_DIR}/lib/arrow_bundled_dependencies.lib")
+    file(RENAME
+         "${PROJECT_BINARY_DIR}/lib/arrow_bundled_dependencies.lib"
+         "${PROJECT_BINARY_DIR}/lib/arrow_bundled_dependenciesd.lib")
+    message(STATUS "Renamed debug arrow_bundled_dependencies.lib -> arrow_bundled_dependenciesd.lib")
+  endif()
+
+  # ---- Release build ----
+  message(STATUS "Generating arrow build system (Release) .. ")
+  execute_process(COMMAND ${CMAKE_COMMAND}
+                          ${ARROW_COMMON_CMAKE_ARGS}
+                          -D CMAKE_BUILD_TYPE=Release
+                          -S ${ARROW_DIR}
+                          -B ${ARROW_BUILD_DIR_RELEASE}
                   WORKING_DIRECTORY ${ARROW_DIR}
+                  OUTPUT_VARIABLE ARROW_CMAKE_OUT
+                  ERROR_VARIABLE ARROW_CMAKE_ERR
+                  RESULT_VARIABLE ARROW_CMAKE_SUCCESS)
+
+  # output to logfile
+  file(APPEND ${LOGFILE} ${ARROW_CMAKE_OUT})
+  file(APPEND ${LOGFILE} ${ARROW_CMAKE_ERR})
+
+  if(NOT ARROW_CMAKE_SUCCESS EQUAL 0)
+    message(FATAL_ERROR "Generating arrow build system (Release) .. failed")
+  else()
+    message(STATUS "Generating arrow build system (Release) .. done")
+  endif()
+
+  message(STATUS "Building arrow lib (Release) .. ")
+  execute_process(COMMAND ${CMAKE_COMMAND} --build ${ARROW_BUILD_DIR_RELEASE} --target INSTALL --config Release
+                  WORKING_DIRECTORY ${ARROW_BUILD_DIR_RELEASE}
                   OUTPUT_VARIABLE ARROW_BUILD_OUT
                   ERROR_VARIABLE ARROW_BUILD_ERR
                   RESULT_VARIABLE ARROW_BUILD_SUCCESS)
+
   # output to logfile
   file(APPEND ${LOGFILE} ${ARROW_BUILD_OUT})
   file(APPEND ${LOGFILE} ${ARROW_BUILD_ERR})
@@ -132,7 +222,6 @@ if (MSVC)
   
   # Normalize path separators for replacement
   file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}" PROJECT_BINARY_DIR_NORMALIZED)
-  
 
 else() ## Linux/MacOS
 
