@@ -25,81 +25,165 @@ MACRO( OPENMS_CONTRIB_BUILD_BOOST)
     set(_BOOST_PARALLEL_JOBS 2)
   endif()
   
-  if(MSVC) ## build boost library for windows
-    
-    ## omitting the version (i.e. 'toolset=msvc'), causes Boost to use the latest(!) VS it can find the system -- irrespective of the current env (and its cl.exe)
-    set(TOOLSET "toolset=msvc-${CONTRIB_MSVC_TOOLSET_VERSION}") 
-    
-    if (NOT QUICKBUILD)
-      ## not a Visual Studio project .. just build by hand
-      message(STATUS "Bootstrapping Boost libraries (bootstrap.bat) ...")
-      execute_process(COMMAND bootstrap.bat
+  if(MSVC) ## build boost library for windows (Boost CMake superproject)
+
+    ## ------------------------------------------------------------------------
+    ## Boost is built via its native CMake "superproject" (the boost-1.87.0
+    ## archive ships tools/cmake + per-library CMakeLists.txt since 1.82) instead
+    ## of bootstrap.bat + b2/bjam. This removes the Boost.Build engine bootstrap
+    ## entirely, which is what breaks on Visual Studio 2026 (b2's build.bat does
+    ## not know the vc145 toolset and aborts with "Unknown toolset: vcunk").
+    ##
+    ## We re-invoke cmake with the SAME generator + the SAME architecture token
+    ## (${ARCHITECTURE_OPTION_CMAKE}, i.e. "-A;x64" / "-A;Win32") that the sibling
+    ## nested builds zlib.cmake/bzip2.cmake already use. The MSVC toolset is thus
+    ## inherited from the parent contrib configure (no toolset= pinning, no silent
+    ## fallback to a newer VS than the active cl.exe), and the platform handling is
+    ## byte-for-byte identical to the zlib/bzip2 trees Boost depends on.
+    ## NOTE: we deliberately do NOT use CMAKE_GENERATOR_PLATFORM here -- it is never
+    ## set anywhere in the contrib and would be passed as an empty "-A" argument.
+    ##
+    ## CRT contract: OpenMS uses the dynamic CRT (Boost_USE_STATIC_RUNTIME OFF in
+    ## build_system_macros.cmake). We pin /MD,/MDd explicitly via
+    ## CMAKE_MSVC_RUNTIME_LIBRARY so Boost matches regardless of BOOST_RUNTIME_LINK
+    ## defaults; this reproduces the old "runtime-link=shared".
+    ## ------------------------------------------------------------------------
+
+    ## fresh out-of-source build dir for the nested configure
+    set(BOOST_CMAKE_BUILD_DIR "${BOOST_DIR}/build-openms")
+    file(MAKE_DIRECTORY "${BOOST_CMAKE_BUILD_DIR}")
+
+    ## static libs by default; shared only if the contrib was asked for shared libs.
+    ## BUILD_SHARED_LIBS is ORTHOGONAL to the CRT: static .lib + dynamic CRT (/MD)
+    ## is exactly the old link=static + runtime-link=shared.
+    set(BOOST_BUILD_SHARED OFF)
+    if (BUILD_SHARED_LIBRARIES)
+      set(BOOST_BUILD_SHARED ON)
+    endif()
+
+    ## NOTE: we build the FULL Boost (no BOOST_INCLUDE_LIBRARIES restriction). Downstream
+    ## contrib consumers (Arrow + its bundled Thrift) and OpenMS itself pull in many
+    ## header-only Boost libraries (uuid, multiprecision, locale, scope_exit, ...), so the
+    ## install must carry the COMPLETE header tree -- exactly what the old b2 "install"
+    ## produced. Restricting to a handful of libs only installs their headers and breaks
+    ## those consumers. Python/MPI stay off (boost-cmake superproject defaults).
+
+    ## ------------------------------------------------------------------------
+    ## Boost.Iostreams compression backends: ALL OFF.
+    ## A single nested configure cannot supply per-config (Debug /MDd vs Release
+    ## /MD) external zlib/bzip2 to a multi-config VS generator -- find_package(ZLIB)
+    ## / find_package(BZip2) inside Boost.Iostreams runs ONCE and would freeze one
+    ## .lib path, mixing a Release /MD libbz2.lib into the Debug /MDd Boost build
+    ## (the exact mixed-CRT corruption cmake_findExternalLibs.cmake warns against).
+    ## This is behavior-equivalent for OpenMS: OpenMS uses no iostreams compression
+    ## filter (only filtering_ostream + null_sink in src/topp/FileInfo.cpp) and
+    ## links ZLIB::ZLIB / BZip2::BZip2 directly. (Subsumes the old NO_LZMA/NO_ZSTD.)
+    ## ------------------------------------------------------------------------
+
+    message(STATUS "Configuring Boost (CMake superproject) .. ")
+    execute_process(COMMAND ${CMAKE_COMMAND}
+                            -G "${CMAKE_GENERATOR}"
+                            ${ARCHITECTURE_OPTION_CMAKE}
+                            -S "${BOOST_DIR}"
+                            -B "${BOOST_CMAKE_BUILD_DIR}"
+                            "-DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}"
+                            ## let an even-newer CMake still configure Boost 1.87's
+                            ## cmake_minimum_required(3.5...) (harmless otherwise)
+                            -D CMAKE_POLICY_VERSION_MINIMUM=3.5
+                            ## pin dynamic CRT (/MD,/MDd), matching Boost_USE_STATIC_RUNTIME OFF
+                            "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+                            ## static .lib archives unless contrib was asked for shared
+                            -D BUILD_SHARED_LIBS=${BOOST_BUILD_SHARED}
+                            ## dynamic CRT == old runtime-link=shared (belt-and-suspenders
+                            ## with CMAKE_MSVC_RUNTIME_LIBRARY above)
+                            -D BOOST_RUNTIME_LINK=shared
+                            ## tagged lib names (-mt/-gd/-x64, no vcXXX) + flat include/boost
+                            ## dir == old --layout=tagged (cosmetic under CONFIG-mode consumption)
+                            -D BOOST_INSTALL_LAYOUT=tagged
+                            ## BoostConfig.cmake -> ${PROJECT_BINARY_DIR}/lib/cmake/Boost-1.87.0
+                            -D BOOST_INSTALL_CMAKEDIR=lib/cmake
+                            ## regex without ICU (== old --disable-icu): keep the COMPILED
+                            ## Boost::regex target but make find_package(ICU) impossible
+                            -D BOOST_REGEX_STANDALONE=OFF
+                            -D BOOST_LOCALE_ENABLE_ICU=OFF
+                            -D CMAKE_DISABLE_FIND_PACKAGE_ICU=ON
+                            "-DICU_ROOT=${PROJECT_BINARY_DIR}/no-icu"
+                            ## iostreams: all compression backends OFF (see comment above)
+                            -D BOOST_IOSTREAMS_ENABLE_ZLIB=OFF
+                            -D BOOST_IOSTREAMS_ENABLE_BZIP2=OFF
+                            -D BOOST_IOSTREAMS_ENABLE_LZMA=OFF
+                            -D BOOST_IOSTREAMS_ENABLE_ZSTD=OFF
+                    WORKING_DIRECTORY ${BOOST_DIR}
+                    OUTPUT_VARIABLE BOOST_CMAKE_OUT
+                    ERROR_VARIABLE BOOST_CMAKE_ERR
+                    RESULT_VARIABLE BOOST_CMAKE_SUCCESS)
+
+    file(APPEND ${LOGFILE} "${BOOST_CMAKE_OUT}")
+    file(APPEND ${LOGFILE} "${BOOST_CMAKE_ERR}")
+
+    if (NOT BOOST_CMAKE_SUCCESS EQUAL 0)
+      message(STATUS "Configuring Boost (CMake superproject) .. failed")
+      message(FATAL_ERROR "Configuring Boost failed:\n${BOOST_CMAKE_OUT}\n${BOOST_CMAKE_ERR}")
+    else()
+      message(STATUS "Configuring Boost (CMake superproject) .. done")
+    endif()
+
+    ## Build + install BOTH Debug and Release into the SAME prefix (multi-config VS
+    ## generator). This reproduces b2 --build-type=complete: the two install passes
+    ## MERGE, so each per-component *-config.cmake imported target carries both
+    ## IMPORTED_LOCATION_DEBUG (the -gd libs) and IMPORTED_LOCATION_RELEASE, and
+    ## config-mode find_package picks the right variant per consumer. Do NOT prune
+    ## either config: dropping Debug breaks Debug OpenMS builds (missing -mt-gd libs).
+    foreach(_BOOST_CFG Debug Release)
+      message(STATUS "Building Boost library (${_BOOST_CFG}) .. ")
+      execute_process(COMMAND ${CMAKE_COMMAND} --build "${BOOST_CMAKE_BUILD_DIR}"
+                              --config ${_BOOST_CFG}
+                              -j ${_BOOST_PARALLEL_JOBS}
                       WORKING_DIRECTORY ${BOOST_DIR}
-                      OUTPUT_VARIABLE BOOST_BOOTSTRAP_OUT
-                      ERROR_VARIABLE BOOST_BOOTSTRAP_OUT   # use same variable for stderr as stdout to merge streams
-                      RESULT_VARIABLE BOOST_BOOTSTRAP_SUCCESS)
-      
-      file(APPEND  ${LOGFILE} ${BOOST_BOOTSTRAP_OUT})
-      
-      ## check for failed bootstrapping. Even if failing the return code can be 0 (indicating success), so we additionally check the output 
-      if ((NOT BOOST_BOOTSTRAP_SUCCESS EQUAL 0) OR (BOOST_BOOTSTRAP_OUT MATCHES "[fF]ailed"))
-        message(STATUS "Bootstrapping Boost libraries (bootstrap.bat) ... failed\nOutput was:\n ${BOOST_BOOTSTRAP_OUT}\nEnd of output.\n")
-        message(STATUS "Renaming bootstrap.log to bootstrap_firstTry.log")
-        file(RENAME ${BOOST_DIR}/bootstrap.log ${BOOST_DIR}/bootstrap_firstTry.log)
-        ### on some command lines bootstrapping fail (e.g. the toolset is too new) or will give:
-        # "Building Boost.Build engine. The input line is too long."
-        ## ,thus we provide a backup bjam.exe(32bit), which hopefully works on all target systems.
-        ## However this bjam results in a version mismatch and a warning (that you can ignore).
-        message(STATUS " ... trying fallback with backup bjam.exe ...")
-        configure_file("${PROJECT_SOURCE_DIR}/patches/boost/bjam.exe" "${BOOST_DIR}/bjam.exe" COPYONLY)
+                      OUTPUT_VARIABLE BOOST_BUILD_OUT
+                      ERROR_VARIABLE BOOST_BUILD_ERR
+                      RESULT_VARIABLE BOOST_BUILD_SUCCESS)
+
+      file(APPEND ${LOGFILE} "${BOOST_BUILD_OUT}")
+      file(APPEND ${LOGFILE} "${BOOST_BUILD_ERR}")
+
+      if (NOT BOOST_BUILD_SUCCESS EQUAL 0)
+        message(STATUS "Building Boost library (${_BOOST_CFG}) .. failed")
+        message(FATAL_ERROR "Building Boost (${_BOOST_CFG}) failed:\n${BOOST_BUILD_OUT}\n${BOOST_BUILD_ERR}")
       else()
-        message(STATUS "Bootstrapping Boost libraries (bootstrap.bat) ... done")
+        message(STATUS "Building Boost library (${_BOOST_CFG}) .. done")
       endif()
 
-      set(BOOST_CMD_ARGS "${BOOST_ARG}" 
-                         "-j" "${_BOOST_PARALLEL_JOBS}"
-                         "install" 
-                         "--prefix=${PROJECT_BINARY_DIR}" 
-                         "--layout=tagged"                   # create libnames without vcXXX in filename; include dir is /include/boost (as opposed to "versioned" where /include/boost-1.52/boost plus ...vc110.lib
-                         "--with-filesystem"
-                         "--with-math"
-                         "--with-date_time"
-                         "--with-iostreams"
-                         "--with-regex"
-                         "--with-system"
-                         "--with-thread"
-                         "--build-type=complete"
-                         "--disable-icu"
-                         "-s"
-                         "NO_LZMA=1" 
-                         "-s" 
-                         "NO_ZSTD=1"
-                         "runtime-link=shared"
-                         "link=${BOOST_BUILD_TYPE}" 
-                         "${TOOLSET}")
+      message(STATUS "Installing Boost library (${_BOOST_CFG}) .. ")
+      execute_process(COMMAND ${CMAKE_COMMAND} --install "${BOOST_CMAKE_BUILD_DIR}"
+                              --config ${_BOOST_CFG}
+                      WORKING_DIRECTORY ${BOOST_DIR}
+                      OUTPUT_VARIABLE BOOST_INSTALL_OUT
+                      ERROR_VARIABLE BOOST_INSTALL_ERR
+                      RESULT_VARIABLE BOOST_INSTALL_SUCCESS)
 
-     ## WARNING: boost call is not "space in path" save yet (the easy way of using \" does not work out of the box
-     message(STATUS "Building Boost library (bjam ${BOOST_CMD_ARGS}) .. ")
-     execute_process(COMMAND b2.exe ${BOOST_CMD_ARGS}
-                     WORKING_DIRECTORY ${BOOST_DIR}
-                     OUTPUT_VARIABLE BUILD_BOOST_OUT
-                     ERROR_VARIABLE BUILD_BOOST_ERR
-                     RESULT_VARIABLE BUILD_BOOST)
-      
-     # output to logfile
-     file(APPEND ${LOGFILE} ${BUILD_BOOST_OUT})
+      file(APPEND ${LOGFILE} "${BOOST_INSTALL_OUT}")
+      file(APPEND ${LOGFILE} "${BOOST_INSTALL_ERR}")
 
-     if (NOT BUILD_BOOST EQUAL 0)
-       message(STATUS "Building Boost library (bjam ${BOOST_CMD_ARGS}) .. failed")
-       message(STATUS "BUILD_BOOST_OUT = ${BUILD_BOOST_OUT}")
-       message(STATUS "BUILD_BOOST_ERR = ${BUILD_BOOST_ERR}")
-       message(STATUS "BUILD_BOOST = ${BUILD_BOOST}")
-       message(FATAL_ERROR ${BUILD_BOOST_OUT})
-     else()
-       message(STATUS "Building Boost library (bjam ${BOOST_CMD_ARGS}) .. done")
-     endif()
-    
-   endif() ## end quickbuild
+      if (NOT BOOST_INSTALL_SUCCESS EQUAL 0)
+        message(STATUS "Installing Boost library (${_BOOST_CFG}) .. failed")
+        message(FATAL_ERROR "Installing Boost (${_BOOST_CFG}) failed:\n${BOOST_INSTALL_OUT}\n${BOOST_INSTALL_ERR}")
+      else()
+        message(STATUS "Installing Boost library (${_BOOST_CFG}) .. done")
+      endif()
+    endforeach()
+
+    ## Fail LOUDLY at contrib-build time (not later at OpenMS configure) if the
+    ## a core compiled component failed to install: assert each
+    ## expected per-component config dir exists under the install prefix.
+    foreach(_BOOST_COMP date_time iostreams regex system thread)
+      file(GLOB _BOOST_COMP_CFG "${PROJECT_BINARY_DIR}/lib/cmake/boost_${_BOOST_COMP}-*")
+      if (NOT _BOOST_COMP_CFG)
+        message(FATAL_ERROR "Boost component '${_BOOST_COMP}' did not install a CMake config dir "
+                            "under ${PROJECT_BINARY_DIR}/lib/cmake/boost_${_BOOST_COMP}-* -- "
+                            "the Boost build is incomplete.")
+      endif()
+    endforeach()
  
   else() ## LINUX/MAC
 

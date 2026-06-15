@@ -226,6 +226,17 @@ set(ARCHIVE_ZLIB_SHA256 "9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f
 set(ARCHIVE_BOOST boost-1.87.0.tar.gz)
 set(ARCHIVE_BOOST_TAR  boost-1.87.0.tar)
 set(ARCHIVE_BOOST_SHA256 "73af4e4716603abd741fe43d1ab10dea4692975ba868160883d55a1dfc3b7d17")
+if(MSVC)
+  ## Windows builds Boost via its native CMake "superproject" (see libraries.cmake/boost.cmake),
+  ## which requires the MODULAR source layout (libs/*/include + a top-level CMakeLists.txt). The
+  ## canonical boost.org tarball above only ships the unified boost/ header tree, so on MSVC we
+  ## use boostorg's dedicated "-cmake" release archive (mirrored to OpenMS/contrib-sources). It
+  ## extracts to the same boost-1.87.0/ directory, so BOOST_DIR (set above) is unchanged. Unix
+  ## keeps the unified tarball + b2 build untouched.
+  set(ARCHIVE_BOOST boost-1.87.0-cmake.tar.gz)
+  set(ARCHIVE_BOOST_TAR  boost-1.87.0-cmake.tar)
+  set(ARCHIVE_BOOST_SHA256 "78fbf579e3caf0f47517d3fb4d9301852c3154bfecdc5eeebd9b2b0292366f5b")
+endif()
 
 set(ARCHIVE_XERCES Xerces-C_3_2_0.tar.gz)
 set(ARCHIVE_XERCES_TAR  Xerces-C_3_2_0.tar)
