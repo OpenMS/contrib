@@ -37,7 +37,22 @@ MACRO( OPENMS_CONTRIB_BUILD_COINOR)
 	  set(ENV{WindowsSDKVersion} "10.0.17763.0") # fallback, just to have a value. If this is incorrect, at least VS will tell you what to use
 	endif()
 	
-    set(MSBUILD_ARGS_SLN "${COINOR_DIR}/CoinMP/MSVisualStudio/v${CONTRIB_VS_VERSION}/CoinMP.sln")
+    ## The vendored CoinMP archive (CoinMP-1.8.3-vs22) ships MSBuild solution/project files only
+    ## up to v17 (VS2022). Newer Visual Studio toolchains share the v14x ABI and are binary
+    ## compatible, so for VS2026 (v18) and beyond we reuse the v17 solution and let MSBuild
+    ## retarget the PlatformToolset to the toolchain actually installed (see CONTRIB_MSBUILD_PLATFORMTOOLSET
+    ## below, which OPENMS_BUILDLIB passes to MSBuild as /p:PlatformToolset).
+    set(_COINMP_SLN_VERSION ${CONTRIB_VS_VERSION})
+    set(CONTRIB_MSBUILD_PLATFORMTOOLSET "")
+    if (CONTRIB_VS_VERSION GREATER 17)
+      set(_COINMP_SLN_VERSION 17)
+      ## derive e.g. "14.5" -> "v145"
+      string(REPLACE "." "" _COINMP_TOOLSET_DIGITS "${CONTRIB_MSVC_TOOLSET_VERSION}")
+      set(CONTRIB_MSBUILD_PLATFORMTOOLSET "v${_COINMP_TOOLSET_DIGITS}")
+      message(STATUS "CoinMP: reusing the v17 (VS2022) solution and retargeting PlatformToolset to ${CONTRIB_MSBUILD_PLATFORMTOOLSET}")
+    endif()
+
+    set(MSBUILD_ARGS_SLN "${COINOR_DIR}/CoinMP/MSVisualStudio/v${_COINMP_SLN_VERSION}/CoinMP.sln")
     set(MSBUILD_ARGS_TARGET "libCbc")
     OPENMS_BUILDLIB("CoinOR-Cbc (Debug)" MSBUILD_ARGS_SLN MSBUILD_ARGS_TARGET "Debug" COINOR_DIR)
     OPENMS_BUILDLIB("CoinOR-Cbc (Release)" MSBUILD_ARGS_SLN MSBUILD_ARGS_TARGET "Release" COINOR_DIR)

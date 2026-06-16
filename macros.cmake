@@ -234,6 +234,12 @@ MACRO ( OPENMS_BUILDLIB libname solutionfile_varname target_varname config worki
   if(NOT CONTRIB_MSVC_VERSION STREQUAL "8")
     list(APPEND MSBUILD_ARGS /maxcpucount)
   endif()
+  ## Retarget the solution's PlatformToolset when we reuse an older solution on a newer
+  ## Visual Studio (e.g. the v17 CoinMP solution on VS2026). The command-line global property
+  ## overrides the <PlatformToolset> pinned in every vcxproj of the solution.
+  if(DEFINED CONTRIB_MSBUILD_PLATFORMTOOLSET AND NOT CONTRIB_MSBUILD_PLATFORMTOOLSET STREQUAL "")
+    list(APPEND MSBUILD_ARGS /p:PlatformToolset=${CONTRIB_MSBUILD_PLATFORMTOOLSET})
+  endif()
 
   execute_process(
     COMMAND ${MSBUILD_EXECUTABLE} ${MSBUILD_ARGS}

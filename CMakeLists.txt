@@ -226,6 +226,17 @@ set(ARCHIVE_ZLIB_SHA256 "9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f
 set(ARCHIVE_BOOST boost-1.87.0.tar.gz)
 set(ARCHIVE_BOOST_TAR  boost-1.87.0.tar)
 set(ARCHIVE_BOOST_SHA256 "73af4e4716603abd741fe43d1ab10dea4692975ba868160883d55a1dfc3b7d17")
+if(MSVC)
+  ## Windows builds Boost via its native CMake "superproject" (see libraries.cmake/boost.cmake),
+  ## which requires the MODULAR source layout (libs/*/include + a top-level CMakeLists.txt). The
+  ## canonical boost.org tarball above only ships the unified boost/ header tree, so on MSVC we
+  ## use boostorg's dedicated "-cmake" release archive (mirrored to OpenMS/contrib-sources). It
+  ## extracts to the same boost-1.87.0/ directory, so BOOST_DIR (set above) is unchanged. Unix
+  ## keeps the unified tarball + b2 build untouched.
+  set(ARCHIVE_BOOST boost-1.87.0-cmake.tar.gz)
+  set(ARCHIVE_BOOST_TAR  boost-1.87.0-cmake.tar)
+  set(ARCHIVE_BOOST_SHA256 "78fbf579e3caf0f47517d3fb4d9301852c3154bfecdc5eeebd9b2b0292366f5b")
+endif()
 
 set(ARCHIVE_XERCES Xerces-C_3_2_0.tar.gz)
 set(ARCHIVE_XERCES_TAR  Xerces-C_3_2_0.tar)
@@ -335,11 +346,14 @@ if (MSVC)
   elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 17.*") ## VS2022
     set(TMP_VS_VERSION "17")
     set(TMP_MSVC_TOOLSET_VERSION "14.3")
+  elseif (CMAKE_GENERATOR MATCHES ".*Visual Studio 18.*") ## VS2026
+    set(TMP_VS_VERSION "18")
+    set(TMP_MSVC_TOOLSET_VERSION "14.5") ## v145 (MSVC 14.5x); ABI-compatible with the v14x family
   else()
     if (OVERRIDE_GENERATOR)
       message(FATAL_ERROR "Chosen to override the Generator check, proceed with caution.")
     else()
-      message(FATAL_ERROR "Please use 'Visual Studio ??' (??={14, 15, 16, 17}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
+      message(FATAL_ERROR "Please use 'Visual Studio ??' (??={14, 15, 16, 17, 18}) as Generator - identical to the MSVC toolchain you plan to use for OpenMS! Note that you must not use NMake or alike for the contrib (nor for OpenMS). There will be errors (mostly missing libraries). Under very special circumstances, you can override this with -DOVERRIDE_GENERATOR=On.")
     endif()
   endif()
   ## For coinor to find the correct names of the VS solutions
