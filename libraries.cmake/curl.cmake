@@ -76,6 +76,35 @@ else()
     set(_CURL_INSTALL_TARGET "install")
 endif()
 
+# On MSVC (multi-config generator) we must build & install the Debug variant as
+# well, otherwise only a Release libcurl.lib (compiled /MD -> MSVCRT) is produced.
+# Linking that release lib into a Debug OpenMS.dll (which uses /MDd -> MSVCRTD)
+# triggers LNK4098 'defaultlib MSVCRT conflicts'. Building Debug first yields
+# libcurld.lib + CURLTargets-debug.cmake so the debug CRT is used consistently.
+# The configure step pins CMAKE_BUILD_TYPE=Release, but for the VS multi-config
+# generator that is ignored and the per-config --config Debug below takes effect.
+if(MSVC)
+  message(STATUS "Building curl (Debug) .. ")
+  execute_process(COMMAND ${CMAKE_COMMAND} --build ${_CURL_NATIVE_BUILD_DIR} --target ${_CURL_INSTALL_TARGET} --config Debug
+                  WORKING_DIRECTORY ${_CURL_NATIVE_BUILD_DIR}
+                  OUTPUT_VARIABLE _CURL_BUILD_OUT
+                  ERROR_VARIABLE _CURL_BUILD_ERR
+                  RESULT_VARIABLE _CURL_BUILD_SUCCESS)
+
+  # output to logfile
+  file(APPEND ${LOGFILE} ${_CURL_BUILD_OUT})
+  file(APPEND ${LOGFILE} ${_CURL_BUILD_ERR})
+
+  if (NOT _CURL_BUILD_SUCCESS EQUAL 0)
+    message(STATUS "Building curl (Debug) .. failed")
+    message(STATUS "Output: ${_CURL_BUILD_OUT}")
+    message(STATUS "Error: ${_CURL_BUILD_ERR}")
+    message(FATAL_ERROR "curl build (Debug) failed. Check the log file for details: ${LOGFILE}")
+  else()
+    message(STATUS "Building curl (Debug) .. done")
+  endif()
+endif()
+
 message(STATUS "Building curl (Release) .. ")
 execute_process(COMMAND ${CMAKE_COMMAND} --build ${_CURL_NATIVE_BUILD_DIR} --target ${_CURL_INSTALL_TARGET} --config Release
                 WORKING_DIRECTORY ${_CURL_NATIVE_BUILD_DIR}
