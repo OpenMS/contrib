@@ -22,10 +22,6 @@ HDF5
  	- URL: https://www.hdfgroup.org/solutions/hdf5/
  	- licensetexts/License.hdf5.txt
 
-Kiss FFT
-	- URL: http://kissfft.sourceforge.net/
-	- licensetexts/License.bsd.kissfft.txt
-	
 libSVM
 	- URL: http://www.csie.ntu.edu.tw/~cjlin/libsvm/
 	- License.libSVM.txt
