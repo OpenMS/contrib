@@ -91,8 +91,8 @@
 ##       - however: exec_process seems to handle our arguments incorrectly (at least on Windows). Check functionality before you commit!
 
 # Determine what to build (all or single library)
-set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,COINOR,BZIP2,ZLIB,GLPK,EIGEN,KISSFFT,HDF5,OPENMP,ARROW,LIBZIP,CURL")
-set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "KISSFFT" "HDF5" "OPENMP" "ARROW" "LIBZIP" "CURL")
+set( BUILD_TYPE LIST CACHE STRING "Can be used to restrict building to a single library: ALL,LIBSVM,XERCESC,BOOST,COINOR,BZIP2,ZLIB,GLPK,EIGEN,HDF5,OPENMP,ARROW,LIBZIP,CURL")
+set( VALID_BUILD_TYPES "ALL" "LIBSVM" "XERCESC" "BOOST" "COINOR" "BZIP2" "ZLIB" "GLPK" "EIGEN" "HDF5" "OPENMP" "ARROW" "LIBZIP" "CURL")
 
 # check build type
 if (BUILD_TYPE STREQUAL "HELP" OR BUILD_TYPE STREQUAL "LIST")
@@ -193,7 +193,6 @@ set(LIBSVM_DIR ${CONTRIB_BIN_SOURCE_DIR}/libsvm-3.12)
 set(GLPK_DIR ${CONTRIB_BIN_SOURCE_DIR}/glpk-4.46)
 set(COINOR_DIR ${CONTRIB_BIN_SOURCE_DIR}/CoinMP-1.8.3)
 set(EIGEN_DIR ${CONTRIB_BIN_SOURCE_DIR}/eigen-3.4.0)
-set(KISSFFT_DIR ${CONTRIB_BIN_SOURCE_DIR}/kissfft)
 set(HDF5_DIR ${CONTRIB_BIN_SOURCE_DIR}/hdfsrc)
 set(OPENMP_DIR ${CONTRIB_BIN_SOURCE_DIR}/openmp-12.0.1.src)
 set(ARROW_DIR ${CONTRIB_BIN_SOURCE_DIR}/arrow-apache-arrow-23.0.0/cpp)
@@ -213,7 +212,7 @@ set(CURL_DIR ${CONTRIB_BIN_SOURCE_DIR}/curl-8.12.1)
 ##  set(ARCHIVE_ZLIB_SHA256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
 ## NOTE: for local development you can simply place the *.tar.gz in the binary
 ##       directory to prevent the download and sha256 verification
-## LIBRARIES: BZIP2, ZLIB, BOOST, XERCES, LIBSVM, GLPK, COINOR, EIGEN, KISSFFT, HDF5, OPENMP, ARROW, LIBZIP, CURL
+## LIBRARIES: BZIP2, ZLIB, BOOST, XERCES, LIBSVM, GLPK, COINOR, EIGEN, HDF5, OPENMP, ARROW, LIBZIP, CURL
 
 set(ARCHIVE_BZIP2 bzip2-1.0.5.tar.gz)
 set(ARCHIVE_BZIP2_TAR bzip2-1.0.5.tar)
@@ -258,10 +257,6 @@ set(ARCHIVE_EIGEN eigen-3.4.0.tar.gz)
 set(ARCHIVE_EIGEN_TAR  eigen-3.4.0.tar)
 set(ARCHIVE_EIGEN_SHA256 "8586084f71f9bde545ee7fa6d00288b264a2b7ac3607b974e54d13e7162c1c72")
 
-set(ARCHIVE_KISSFFT kissfft-130.tar.gz)
-set(ARCHIVE_KISSFFT_TAR kissfft-130.tar)
-set(ARCHIVE_KISSFFT_SHA256 "d846005b3a4b45202f3b288b2d6b5b1df544526ae6aaffe8707770bd09093064")
-
 set(ARCHIVE_HDF5 hdf5-1_14_3.tar.gz)
 set(ARCHIVE_HDF5_TAR hdf5-1_14_3.tar)
 set(ARCHIVE_HDF5_SHA256 "126b800e9b87f65e7e7ffa58ee006607bab03a8e11e5209ea3d5c0c331321d43")
@@ -288,7 +283,6 @@ set(INCLUDE_DIR_XERCES ${CONTRIB_BIN_INCLUDE_DIR}/xercesc)
 set(INCLUDE_DIR_GLPK ${CONTRIB_BIN_INCLUDE_DIR}/GLPK)
 set(INCLUDE_DIR_COINOR ${CONTRIB_BIN_INCLUDE_DIR}/coin)
 set(INCLUDE_DIR_EIGEN ${CONTRIB_BIN_INCLUDE_DIR}/eigen3)
-set(INCLUDE_DIR_KISSFFT ${CONTRIB_BIN_INCLUDE_DIR}/kissfft)
 set(INCLUDE_DIR_OPENMP ${CONTRIB_BIN_INCLUDE_DIR}/openmp.src)
 set(INCLUDE_DIR_ARROW ${CONTRIB_BIN_INCLUDE_DIR}/arrow)
 set(INCLUDE_DIR_CURL ${CONTRIB_BIN_INCLUDE_DIR}/curl)
@@ -503,7 +497,6 @@ include ("${CMAKE_SOURCE_DIR}/libraries.cmake/bzip2.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/zlib.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/coinor.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/eigen.cmake")
-include ("${CMAKE_SOURCE_DIR}/libraries.cmake/kissfft.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/hdf5.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/openmp.cmake")
 include ("${CMAKE_SOURCE_DIR}/libraries.cmake/arrow.cmake")
@@ -627,16 +620,6 @@ if (BUILD_TYPE STREQUAL "ALL" OR "EIGEN" IN_LIST BUILD_TYPE)
   OPENMS_CLEAN_LIB("EIGEN")
   OPENMS_CONTRIB_BUILD_EIGEN()
   OPENMS_COPY_LIBS("EIGEN")
-endif()
-
-##################################################
-###       KISSFFT                              ###
-##################################################
-
-if ("KISSFFT" IN_LIST BUILD_TYPE)
-  OPENMS_CLEAN_LIB("KISSFFT")
-  OPENMS_CONTRIB_BUILD_KISSFFT()
-  OPENMS_COPY_LIBS("KISSFFT")
 endif()
 
 ##################################################

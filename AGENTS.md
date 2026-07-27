@@ -64,7 +64,7 @@ on `CMAKE_BUILD_TYPE` to produce the debug lib on MSVC.
 
 ### Header-only / no-CRT exceptions
 Libraries that emit no code with a CRT directive don't trigger this and may stay
-Release-only: e.g. `eigen` (header-only) and `kissfft`. If in doubt, check the
+Release-only: e.g. `eigen` (header-only). If in doubt, check the
 produced `.lib` for a release CRT directive:
 
 ```bash
