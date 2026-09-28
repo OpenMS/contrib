@@ -39,6 +39,16 @@ Requirements
 - libtool
 - 7zip on Windows
 
+Licenses
+============
+
+Building a library also installs its license and notice files, as its source distribution has them,
+to `share/licenses/<library>/` in the build directory. `SOURCE.txt` next to them names the source
+archive the library was built from and where it is published. `share/licenses/arrow/bundled/` holds
+the files of the dependencies Arrow builds and links itself (e.g. Snappy, zstd, Thrift), with Arrow's
+list of their versions. Software that is built against the contrib and redistributes its libraries,
+such as the pyOpenMS wheels, ships the folders of the libraries it links.
+
 Notes
 ============
 Note that in case you do a partial build, it is wise to install BZIP2 and ZLIB first, since other libraries (e.g. BOOST) depend on it.
