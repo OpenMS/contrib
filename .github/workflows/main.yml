@@ -23,20 +23,29 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        # ARCHIVE_NAME is the release asset each job uploads. It must be unique per job:
+        # both Linux jobs have runner.os == 'Linux', so naming the archive after runner.os
+        # made the arm64 archive and the x64 archive overwrite each other in the release.
+        # The x64, macOS and Windows names are unchanged because downstream workflows
+        # download them by name.
         include:
           - os: ubuntu-latest
             CMAKE_ARGS: ""
             CMAKE_VERSION: '3.29.x'
+            ARCHIVE_NAME: contrib_build-Linux.tar.gz
           - os: macos-latest
             CMAKE_ARGS: -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_OSX_DEPLOYMENT_TARGET=14
             CMAKE_VERSION: '3.29.x'
+            ARCHIVE_NAME: contrib_build-macOS.tar.gz
           - os: windows-latest
             # windows-latest is Windows Server 2025 + Visual Studio 2026 (since June 2026).
             # The "Visual Studio 18 2026" generator requires CMake >= 4.2 (see CMAKE_VERSION below).
             CMAKE_ARGS: -G"Visual Studio 18 2026" -A"x64"
             CMAKE_VERSION: '4.3.x'
+            ARCHIVE_NAME: contrib_build-Windows.tar.gz
           - os: ubuntu-24.04-arm
             CMAKE_ARGS: ""
+            ARCHIVE_NAME: contrib_build-Linux-arm64.tar.gz
 
     steps:
       - name: Transfer variable TAG_NAME between jobs to be available as step output in this job
@@ -144,7 +153,7 @@ jobs:
         run: |
           cd "${{ github.workspace }}/contrib-build"
           rm -rf archives src CMakeFiles
-          tar -czvf "contrib_build-${{ runner.os }}.tar.gz" $(ls -d lib) $(ls -d bin) $(ls -d include) $(ls -d share)
+          tar -czvf "${{ matrix.ARCHIVE_NAME }}" $(ls -d lib) $(ls -d bin) $(ls -d include) $(ls -d share)
         shell: bash
         
       - name: Create Release (Windows)
@@ -156,7 +165,7 @@ jobs:
         with:
           tag_name: ${{ steps.generate_tag_name.outputs.TAG_NAME }}
           files: |
-            ${{ steps.normalize_ws.outputs.NORMALIZED_WORKSPACE }}/contrib-build/contrib_build-${{runner.os}}.tar.gz
+            ${{ steps.normalize_ws.outputs.NORMALIZED_WORKSPACE }}/contrib-build/${{ matrix.ARCHIVE_NAME }}
 
       - name: Create Release (Mac and Linux)
         if: github.event_name == 'workflow_dispatch' && !startsWith(matrix.os, 'windows')
@@ -167,7 +176,7 @@ jobs:
         with:
           tag_name: ${{ steps.generate_tag_name.outputs.TAG_NAME }}
           files: |
-            ${{ github.workspace }}/contrib-build/contrib_build-${{runner.os}}.tar.gz
+            ${{ github.workspace }}/contrib-build/${{ matrix.ARCHIVE_NAME }}
 
       - name: Determine platform name
         if: always()
