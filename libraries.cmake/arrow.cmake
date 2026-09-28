@@ -33,6 +33,14 @@ if(MSVC)
 else()
   set(ZIP_ARGS xzf)
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_ARROW "ARROW" "README")
+  if(APPLE)
+    ## Newer Xcode versions report their libtool as "Apple Inc. version cctools_ld-<version>",
+    ## which Arrow 23.0.0 does not accept as Apple's libtool ("libtool found appears not to be
+    ## Apple's libtool"). The patch applies the regex of apache/arrow#49370.
+    set(PATCH_FILE "${PROJECT_SOURCE_DIR}/patches/arrow/BuildUtils.cmake.diff")
+    set(PATCHED_FILE "${ARROW_DIR}/cmake_modules/BuildUtils.cmake")
+    OPENMS_PATCH( PATCH_FILE ARROW_DIR PATCHED_FILE)
+  endif()
 endif()
 
 ## Arrow dependencies not built by the contrib (Snappy, zstd, Thrift, xsimd, RapidJSON)
@@ -351,3 +359,55 @@ else() ## Linux/MacOS
 endif()
 
 ENDMACRO( OPENMS_CONTRIB_BUILD_ARROW )
+
+## Installs the license and notice files of the dependencies Arrow bundles (see above) to
+## share/licenses/arrow/bundled/<dependency>/, together with Arrow's list of their versions and
+## download addresses (cpp/thirdparty/versions.txt). Arrow fetches them into its own build tree,
+## as ExternalProjects (<dep>_ep-prefix/src/<dep>_ep, or src/<dep>_ep where Arrow sets PREFIX to
+## the build directory) or with FetchContent (_deps/<dep>-src); which ones depends on the platform
+## and options (e.g. mimalloc in Release builds, the AWS SDK where ARROW_S3 is on). The license
+## files are those at the top of each source tree.
+MACRO( OPENMS_INSTALL_ARROW_BUNDLED_LICENSES )
+  set(_arrow_bundled_dir "${PROJECT_BINARY_DIR}/share/licenses/arrow/bundled")
+  message(STATUS "Installing license files of Arrow's bundled dependencies .. ")
+  file(REMOVE_RECURSE "${_arrow_bundled_dir}")
+  if(MSVC)
+    set(_arrow_build_dirs "${ARROW_BUILD_DIR_DEBUG}" "${ARROW_BUILD_DIR_RELEASE}")
+  else()
+    set(_arrow_build_dirs "${ARROW_DIR}")
+  endif()
+  set(_arrow_bundled_deps)
+  foreach(_arrow_build_dir ${_arrow_build_dirs})
+    file(GLOB _arrow_dep_dirs LIST_DIRECTORIES true
+         "${_arrow_build_dir}/*_ep-prefix/src/*_ep"
+         "${_arrow_build_dir}/src/*_ep"
+         "${_arrow_build_dir}/_deps/*-src")
+    foreach(_arrow_dep_dir ${_arrow_dep_dirs})
+      if(NOT IS_DIRECTORY "${_arrow_dep_dir}")
+        continue()
+      endif()
+      get_filename_component(_arrow_dep "${_arrow_dep_dir}" NAME)
+      string(REGEX REPLACE "(_ep|-src)$" "" _arrow_dep "${_arrow_dep}")
+      file(GLOB _arrow_dep_files LIST_DIRECTORIES false "${_arrow_dep_dir}/*")
+      set(_arrow_dep_licenses)
+      foreach(_arrow_dep_file ${_arrow_dep_files})
+        get_filename_component(_arrow_dep_file_name "${_arrow_dep_file}" NAME)
+        string(TOLOWER "${_arrow_dep_file_name}" _arrow_dep_file_name)
+        if(_arrow_dep_file_name MATCHES "^(licen[cs]e|copying|copyright|notice)")
+          list(APPEND _arrow_dep_licenses "${_arrow_dep_file}")
+        endif()
+      endforeach()
+      if(NOT _arrow_dep_licenses)
+        message(FATAL_ERROR "Installing license files of Arrow's bundled dependencies .. failed: no license file at the top of ${_arrow_dep_dir}")
+      endif()
+      file(COPY ${_arrow_dep_licenses} DESTINATION "${_arrow_bundled_dir}/${_arrow_dep}")
+      list(APPEND _arrow_bundled_deps ${_arrow_dep})
+    endforeach()
+  endforeach()
+  if(NOT _arrow_bundled_deps)
+    message(FATAL_ERROR "Installing license files of Arrow's bundled dependencies .. failed: none found in ${_arrow_build_dirs}")
+  endif()
+  file(COPY "${ARROW_DIR}/thirdparty/versions.txt" DESTINATION "${_arrow_bundled_dir}")
+  list(REMOVE_DUPLICATES _arrow_bundled_deps)
+  message(STATUS "Installing license files of Arrow's bundled dependencies .. done (${_arrow_bundled_deps})")
+ENDMACRO( OPENMS_INSTALL_ARROW_BUNDLED_LICENSES )

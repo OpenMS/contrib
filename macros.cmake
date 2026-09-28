@@ -75,10 +75,13 @@ macro(validate_archive libname)
 endmacro()
 
 
+## where the source archives of the libraries are published
+set(CONTRIB_ARCHIVE_URL "https://github.com/OpenMS/contrib-sources/releases/download/3.6.0/")
+
 ## downloads the archive for the given library
 ## @param libname The library that should be downloaded
 macro(download_contrib_archive libname)
-  set(_BASE_URL "https://github.com/OpenMS/contrib-sources/releases/download/3.6.0/")
+  set(_BASE_URL "${CONTRIB_ARCHIVE_URL}")
 
   # the files/folders where downloads are stored
   set(_archive_folder "${PROJECT_BINARY_DIR}/archives")
@@ -515,6 +518,39 @@ MACRO(OPENMS_COPY_LIBS libname)
     message(STATUS "Copying ${libname} libraries .. done")
   endif()
 ENDMACRO(OPENMS_COPY_LIBS libname)
+
+#############################################################################################
+###################################  LICENSE MACROS  ########################################
+#############################################################################################
+
+## Installs the license and notice files of a library, as its source distribution has them, to
+## share/licenses/<name>/, and writes SOURCE.txt there, which names the source archive it was built
+## from and where that is published. Software that is built against the contrib and redistributes
+## its libraries, such as the pyOpenMS wheels, ships these folders with them.
+## @param name Name of the folder under share/licenses
+## @param libname Name of the library as in ARCHIVE_<libname>, the archive the files come from
+## @param source_dir Directory the files are given relative to
+## @param ARGN The license and notice files
+MACRO(OPENMS_INSTALL_LICENSES name libname source_dir)
+  set(_license_dir "${PROJECT_BINARY_DIR}/share/licenses/${name}")
+  message(STATUS "Installing ${name} license files .. ")
+  file(REMOVE_RECURSE "${_license_dir}")
+  foreach(_license_file ${ARGN})
+    if(NOT EXISTS "${source_dir}/${_license_file}")
+      message(FATAL_ERROR "Installing ${name} license files .. failed: ${source_dir}/${_license_file} does not exist")
+    endif()
+    get_filename_component(_license_subdir "${_license_file}" DIRECTORY)
+    file(COPY "${source_dir}/${_license_file}" DESTINATION "${_license_dir}/${_license_subdir}")
+  endforeach()
+  file(WRITE "${_license_dir}/SOURCE.txt"
+       "Built from the source archive ${ARCHIVE_${libname}}\n"
+       "(SHA-256 ${ARCHIVE_${libname}_SHA256}), which is available at\n"
+       "${CONTRIB_ARCHIVE_URL}${ARCHIVE_${libname}}\n"
+       "\n"
+       "The scripts that build it, and the patches they apply, are in the OpenMS contrib:\n"
+       "https://github.com/OpenMS/contrib\n")
+  message(STATUS "Installing ${name} license files .. done")
+ENDMACRO(OPENMS_INSTALL_LICENSES)
 
 ########
 ########
