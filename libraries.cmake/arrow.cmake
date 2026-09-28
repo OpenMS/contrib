@@ -33,6 +33,14 @@ if(MSVC)
 else()
   set(ZIP_ARGS xzf)
   OPENMS_SMARTEXTRACT(ZIP_ARGS ARCHIVE_ARROW "ARROW" "README")
+  if(APPLE)
+    ## Newer Xcode versions report their libtool as "Apple Inc. version cctools_ld-<version>",
+    ## which Arrow 23.0.0 does not accept as Apple's libtool ("libtool found appears not to be
+    ## Apple's libtool"). The patch applies the regex of apache/arrow#49370.
+    set(PATCH_FILE "${PROJECT_SOURCE_DIR}/patches/arrow/BuildUtils.cmake.diff")
+    set(PATCHED_FILE "${ARROW_DIR}/cmake_modules/BuildUtils.cmake")
+    OPENMS_PATCH( PATCH_FILE ARROW_DIR PATCHED_FILE)
+  endif()
 endif()
 
 ## Arrow dependencies not built by the contrib (Snappy, zstd, Thrift, xsimd, RapidJSON)
