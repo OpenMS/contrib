@@ -1,58 +1,35 @@
 name: CI
-# builds and (manually) releases the contrib for mac, linux and windows
-# note: prepare job is run first to determine a tag that can be used by all OS runners 
+# Builds the contrib for mac, linux and windows.
+# The contrib is retired (see README.md): this workflow no longer tags or publishes
+# releases. The existing releases stay online for older OpenMS versions.
 
 on:
   push:
   workflow_dispatch:  # This allows you to manually trigger the workflow from the GitHub UI
 
 jobs:
-  prepare: # separate job to generate tag name exactly once based on the date
-    runs-on: ubuntu-latest
-    outputs:
-      TAG_NAME: ${{ steps.generate_tag_name.outputs.TAG_NAME }} # map step output to job output
-    steps:
-      - name: Generate tag name
-        id: generate_tag_name
-        run: echo "TAG_NAME=$(date +'%Y-%m-%d-%H%M%S')" >> $GITHUB_OUTPUT
-        
   build:
-    needs: prepare
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        # ARCHIVE_NAME is the release asset each job uploads. It must be unique per job:
-        # both Linux jobs have runner.os == 'Linux', so naming the archive after runner.os
-        # made the arm64 archive and the x64 archive overwrite each other in the release.
-        # The x64, macOS and Windows names are unchanged because downstream workflows
-        # download them by name.
         include:
           - os: ubuntu-latest
             CMAKE_ARGS: ""
             CMAKE_VERSION: '3.29.x'
-            ARCHIVE_NAME: contrib_build-Linux.tar.gz
           - os: macos-latest
             CMAKE_ARGS: -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_OSX_DEPLOYMENT_TARGET=14
             CMAKE_VERSION: '3.29.x'
-            ARCHIVE_NAME: contrib_build-macOS.tar.gz
           - os: windows-latest
             # windows-latest is Windows Server 2025 + Visual Studio 2026 (since June 2026).
             # The "Visual Studio 18 2026" generator requires CMake >= 4.2 (see CMAKE_VERSION below).
             CMAKE_ARGS: -G"Visual Studio 18 2026" -A"x64"
             CMAKE_VERSION: '4.3.x'
-            ARCHIVE_NAME: contrib_build-Windows.tar.gz
           - os: ubuntu-24.04-arm
             CMAKE_ARGS: ""
-            ARCHIVE_NAME: contrib_build-Linux-arm64.tar.gz
 
     steps:
-      - name: Transfer variable TAG_NAME between jobs to be available as step output in this job
-        id: generate_tag_name
-        run: echo "TAG_NAME=${{needs.prepare.outputs.TAG_NAME}}" >> $GITHUB_OUTPUT
-        shell: bash
-
       - uses: actions/checkout@v4
         with:
           path: contrib
@@ -83,15 +60,6 @@ jobs:
             echo "$RUNNER_OS not supported"
             exit 1
           fi
-
-      # Normalize path to only contain front slashes
-      - name: Normalize path on windows
-        if: startsWith(matrix.os, 'windows')
-        id: normalize_ws
-        run: |
-          $normalizedWorkspace = $env:GITHUB_WORKSPACE -replace '\\', '/'
-          Write-Output "NORMALIZED_WORKSPACE=$normalizedWorkspace" >> $env:GITHUB_OUTPUT
-        shell: pwsh
 
       - name: Set up Visual Studio shell
         uses: egor-tensin/vs-shell@v2
@@ -131,52 +99,6 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/contrib-build-openmp"
           cd "$GITHUB_WORKSPACE/contrib-build-openmp"
           cmake ${{ matrix.CMAKE_ARGS }} -DBUILD_TYPE=OPENMP "$GITHUB_WORKSPACE/contrib"
-
-      - name: Configure Git for Tagging
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'actions@github.com'
-
-      - name: Create and Push Tag
-        if: github.event_name == 'workflow_dispatch'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cd "${{ github.workspace }}/contrib"
-          git tag ${{ steps.generate_tag_name.outputs.TAG_NAME }}
-          git push origin ${{ steps.generate_tag_name.outputs.TAG_NAME }}
-        shell: bash
-
-      - name: Clean build and package
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          cd "${{ github.workspace }}/contrib-build"
-          rm -rf archives src CMakeFiles
-          tar -czvf "${{ matrix.ARCHIVE_NAME }}" $(ls -d lib) $(ls -d bin) $(ls -d include) $(ls -d share)
-        shell: bash
-        
-      - name: Create Release (Windows)
-        if: github.event_name == 'workflow_dispatch' && startsWith(matrix.os, 'windows')
-        id: create_release_win
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.generate_tag_name.outputs.TAG_NAME }}
-          files: |
-            ${{ steps.normalize_ws.outputs.NORMALIZED_WORKSPACE }}/contrib-build/${{ matrix.ARCHIVE_NAME }}
-
-      - name: Create Release (Mac and Linux)
-        if: github.event_name == 'workflow_dispatch' && !startsWith(matrix.os, 'windows')
-        id: create_release_mac_linux
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.generate_tag_name.outputs.TAG_NAME }}
-          files: |
-            ${{ github.workspace }}/contrib-build/${{ matrix.ARCHIVE_NAME }}
 
       - name: Determine platform name
         if: always()
