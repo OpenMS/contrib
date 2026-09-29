@@ -1,6 +1,16 @@
 OpenMS contributing libraries
 =============
 
+> [!IMPORTANT]
+> **The contrib is retired.** OpenMS builds its third-party libraries with
+> [vcpkg](https://vcpkg.io) now; see
+> [Building OpenMS](https://github.com/OpenMS/OpenMS#building-openms) and
+> [OpenMS/OpenMS#10327](https://github.com/OpenMS/OpenMS/issues/10327). This repository no longer publishes releases or Docker
+> images. The existing releases, the `ghcr.io/openms/contrib` and
+> `ghcr.io/openms/contrib_manylinux_2_34` images and
+> [contrib-sources](https://github.com/OpenMS/contrib-sources) stay available,
+> so older OpenMS versions and their release branches keep building against them.
+
 This directory contains the OpenMS contrib package.
 
 If you downloaded a stable release of OpenMS,

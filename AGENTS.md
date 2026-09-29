@@ -1,5 +1,9 @@
 # OpenMS contrib — Agent Notes
 
+> **Retired:** OpenMS builds its dependencies with vcpkg now (https://github.com/OpenMS/OpenMS/issues/10327).
+> This repository no longer publishes releases or images; see README.md. Do not
+> add libraries or new build features here.
+
 Context for AI agents (and humans) working on the OpenMS **contrib** tree — the
 vendored third-party dependencies that get compiled and installed into
 `<contrib>/build/` and then linked into OpenMS. Follows the
